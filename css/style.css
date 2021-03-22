@@ -1431,7 +1431,7 @@ pre .javascript .function {
   font-size: 1.1rem;
   margin-bottom: 3px;
   color: var(--second-text-color);
-  background: var(--background-color);
+  background: var(--shadow-color);
   cursor: pointer;
   box-shadow: 1px 1px 3px var(--shadow-color);
   border-right: none;
