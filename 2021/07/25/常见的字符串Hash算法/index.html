@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="DazzlingOkami">
+    
+    <title>
+        
+            常见的字符串Hash算法 |
+        
+        Dazzling Okami
+    </title>
+    <link rel="shortcut icon" href="/images/blog.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/css/font-awesome.min.css">
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/face.jpg","favicon":"/images/blog.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"trigger":"auto","unescape":false,"preload":true},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.3.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Dazzling Okami
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content normal-code-theme">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">常见的字符串Hash算法</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/face.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>DazzlingOkami</span>
+                        <span class="level">Lv1</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i> 2021-07-25 22:43:01
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="常见hash算法的碰撞概率统计"><a href="#常见hash算法的碰撞概率统计" class="headerlink" title="常见hash算法的碰撞概率统计"></a>常见hash算法的碰撞概率统计</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>10万</th>
+<th>50万</th>
+<th>100万</th>
+<th>500万</th>
+<th>1000万</th>
+<th>一亿</th>
+<th>1000万次的平均执行时间</th>
+<th>一亿次的平均执行时间</th>
+<th>一亿次的平均长度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BKDRHash</td>
+<td>0.00002</td>
+<td>0.000112</td>
+<td>0.000251</td>
+<td>0.0011894</td>
+<td>0.0023321</td>
+<td>0.0229439</td>
+<td>0.0064134</td>
+<td>0.00968998</td>
+<td>9</td>
+</tr>
+<tr>
+<td>APHash</td>
+<td>0</td>
+<td>0.000052</td>
+<td>0.000122</td>
+<td>0.0005794</td>
+<td>0.0011712</td>
+<td>0.01155826</td>
+<td>0.0061518</td>
+<td>0.01088634</td>
+<td>10</td>
+</tr>
+<tr>
+<td>DJBHash</td>
+<td>0.00001</td>
+<td>0.00011</td>
+<td>0.000204</td>
+<td>0.0011782</td>
+<td>0.0023154</td>
+<td>0.02294341</td>
+<td>0.0064836</td>
+<td>0.01098645</td>
+<td>9</td>
+</tr>
+<tr>
+<td>JSHash</td>
+<td>0</td>
+<td>0.000188</td>
+<td>0.00032</td>
+<td>0.001464</td>
+<td>0.0029323</td>
+<td>0.02876141</td>
+<td>0.0063464</td>
+<td>0.00904354</td>
+<td>9</td>
+</tr>
+<tr>
+<td>RSHash</td>
+<td>0.00001</td>
+<td>0.000122</td>
+<td>0.000245</td>
+<td>0.001154</td>
+<td>0.00233</td>
+<td>0.02290588</td>
+<td>0.0063627</td>
+<td>0.01168532</td>
+<td>9</td>
+</tr>
+<tr>
+<td>SDBMHash</td>
+<td>0.00002</td>
+<td>0.000132</td>
+<td>0.000235</td>
+<td>0.001175</td>
+<td>0.0023435</td>
+<td>0.02294529</td>
+<td>0.0064155</td>
+<td>0.01201398</td>
+<td>9</td>
+</tr>
+<tr>
+<td>PJWHash</td>
+<td>0.00312</td>
+<td>0.015032</td>
+<td>0.029957</td>
+<td>0.1386394</td>
+<td>0.251465</td>
+<td>0.83290663</td>
+<td>0.0067549</td>
+<td>0.00601705</td>
+<td>8</td>
+</tr>
+<tr>
+<td>ELFHash</td>
+<td>0.00096</td>
+<td>0.005584</td>
+<td>0.011239</td>
+<td>0.0539746</td>
+<td>0.1028391</td>
+<td>0.52002744</td>
+<td>0.0060441</td>
+<td>0.00704438</td>
+<td>9</td>
+</tr>
+<tr>
+<td>MurmurHash</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0.0066868</td>
+<td>0.01194736</td>
+<td>19</td>
+</tr>
+<tr>
+<td>CityHash</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0.0066179</td>
+<td>0.01129171</td>
+<td>19</td>
+</tr>
+<tr>
+<td>FNVHash</td>
+<td>0.00005</td>
+<td>0.000186</td>
+<td>0.000349</td>
+<td>0.0016688</td>
+<td>0.0033469</td>
+<td>0.03279751</td>
+<td>0.0061614</td>
+<td>0.01018707</td>
+<td>9</td>
+</tr>
+<tr>
+<td>crc64</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0.0064459</td>
+<td>0.01242473</td>
+<td>19</td>
+</tr>
+</tbody></table>
+<p>1.BKDR hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">bkdr_hash</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> seed = <span class="number">131</span>; <span class="comment">// the magic number, 31, 131, 1313, 13131, etc.. orz..</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> hash = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *p = (<span class="keyword">unsigned</span> <span class="keyword">char</span> *)str;</span><br><span class="line">    <span class="keyword">while</span> (*p)</span><br><span class="line">        hash = hash * seed + (*p++);</span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.AP hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">ap_hash</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> hash = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; *str; i++)</span><br><span class="line">        <span class="keyword">if</span> ((i &amp; <span class="number">1</span>) == <span class="number">0</span>)</span><br><span class="line">            hash ^= ((hash &lt;&lt; <span class="number">7</span>) ^ (*str++) ^ (hash &gt;&gt; <span class="number">3</span>));</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            hash ^= (~((hash &lt;&lt; <span class="number">11</span>) ^ (*str++) ^ (hash &gt;&gt; <span class="number">5</span>)));</span><br><span class="line">    <span class="keyword">return</span> (hash &amp; <span class="number">0x7FFFFFFF</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.DJB hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">hash_djbx33a</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str, <span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> hash = <span class="number">0U</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">size_t</span> i = <span class="number">0</span>;i &lt; len; ++i) &#123;</span><br><span class="line">        hash = hash * <span class="number">33</span> + (<span class="keyword">unsigned</span> <span class="keyword">long</span>)str[i];</span><br><span class="line">        <span class="comment">/* or, hash = ((hash &lt;&lt; 5) + hash) + (unsigned long)str[i]; </span></span><br><span class="line"><span class="comment">         * where, hash * 33 = ((hash &lt;&lt; 5) + hash)</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">djb2</span><span class="params">(<span class="keyword">char</span> s[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> hash = <span class="number">5381</span>; <span class="comment">/* init value */</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (s[i] != <span class="string">&#x27;\0&#x27;</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        hash = ((hash &lt;&lt; <span class="number">5</span>) + hash) + s[i];</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.JS hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">js_hash</span><span class="params">(<span class="keyword">char</span>*str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> hash = <span class="number">1315423911</span> ;</span><br><span class="line">    <span class="keyword">while</span>(*str)</span><br><span class="line">    &#123;</span><br><span class="line">        hash ^=((hash &lt;&lt;<span class="number">5</span> ) + (*str++) + (hash &gt;&gt;<span class="number">2</span> ));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5.RS hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">RSHash</span><span class="params">( <span class="keyword">char</span> * str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> b = <span class="number">378551</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> a = <span class="number">63689</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> hash = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(*str)</span><br><span class="line">    &#123;</span><br><span class="line">        hash = hash * a + (*str++);</span><br><span class="line">        a *= b;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (hash &amp; <span class="number">0x7FFFFFFF</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>6.SDBM hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">sdbm</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> hash = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> c;</span><br><span class="line">    <span class="keyword">while</span> (c = *str++)</span><br><span class="line">        hash = c + (hash &lt;&lt; <span class="number">6</span>) + (hash &lt;&lt; <span class="number">16</span>) - hash;</span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>sdbm_hash.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Licensed to the Apache Software Foundation (ASF) under one or more</span></span><br><span class="line"><span class="comment"> * contributor license agreements.  See the NOTICE file distributed with</span></span><br><span class="line"><span class="comment"> * this work for additional information regarding copyright ownership.</span></span><br><span class="line"><span class="comment"> * The ASF licenses this file to You under the Apache License, Version 2.0</span></span><br><span class="line"><span class="comment"> * (the &quot;License&quot;); you may not use this file except in compliance with</span></span><br><span class="line"><span class="comment"> * the License.  You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></span><br><span class="line"><span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment"> * See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment"> * limitations under the License.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * sdbm - ndbm work-alike hashed database library</span></span><br><span class="line"><span class="comment"> * based on Per-Aake Larson&#x27;s Dynamic Hashing algorithms. BIT 18 (1978).</span></span><br><span class="line"><span class="comment"> * author: oz@nexus.yorku.ca</span></span><br><span class="line"><span class="comment"> * status: ex-public domain. keep it that way.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * hashing routine</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;apr_sdbm.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;sdbm_private.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * polynomial conversion ignoring overflows</span></span><br><span class="line"><span class="comment"> * [this seems to work remarkably well, in fact better</span></span><br><span class="line"><span class="comment"> * then the ndbm hash function. Replace at your own risk]</span></span><br><span class="line"><span class="comment"> * use: 65599  nice.</span></span><br><span class="line"><span class="comment"> *      65587  even better. </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">sdbm_hash</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">register</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> n = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DUFF<span class="comment">/* go ahead and use the loop-unrolled version */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> DUFF</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HASHCn = *str++ + 65599 * n</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (len &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">register</span> <span class="keyword">int</span> loop = (len + <span class="number">8</span> - <span class="number">1</span>) &gt;&gt; <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span>(len &amp; (<span class="number">8</span> - <span class="number">1</span>)) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0</span>:<span class="keyword">do</span> &#123; </span><br><span class="line">               HASHC;<span class="keyword">case</span> <span class="number">7</span>:HASHC;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">6</span>:HASHC; <span class="keyword">case</span> <span class="number">5</span>:HASHC;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">4</span>:HASHC; <span class="keyword">case</span> <span class="number">3</span>:HASHC;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:HASHC;<span class="keyword">case</span> <span class="number">1</span>:HASHC;</span><br><span class="line">            &#125; <span class="keyword">while</span> (--loop);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="keyword">while</span> (len--)</span><br><span class="line">        n = *str++ + <span class="number">65599</span> * n;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>7.PJWHash hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment"> * A generic hash function HashPJW better than ElfHash point, </span></span><br><span class="line"><span class="comment"> * but depending on the context.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;limits.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BITS_IN_int     ( sizeof(int) * CHAR_BIT )</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> THREE_QUARTERS  ((int) ((BITS_IN_int * 3) / 4))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ONE_EIGHTH      ((int) (BITS_IN_int / 8))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HIGH_BITS       ( ~((unsigned int)(~0) &gt;&gt; ONE_EIGHTH ))</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">HashPJW</span> <span class="params">( <span class="keyword">const</span> <span class="keyword">char</span> * datum )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> hash_value, i;</span><br><span class="line">    <span class="keyword">for</span> ( hash_value = <span class="number">0</span>; *datum; ++datum )</span><br><span class="line">    &#123;</span><br><span class="line">        hash_value = ( hash_value &lt;&lt; ONE_EIGHTH ) + *datum;</span><br><span class="line">        <span class="keyword">if</span> (( i = hash_value &amp; HIGH_BITS ) != <span class="number">0</span> )</span><br><span class="line">            hash_value = ( hash_value ^ ( i &gt;&gt; THREE_QUARTERS )) &amp; ~HIGH_BITS;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ( hash_value );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>8.ELFHash hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> *    This function hash the input string &#x27;name&#x27; using the ELF hash</span></span><br><span class="line"><span class="comment"> *    function for strings.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(<span class="keyword">char</span>* name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> g;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(*name) &#123;</span><br><span class="line">        h = (h&lt;&lt;<span class="number">4</span>) + *name++;</span><br><span class="line">        <span class="keyword">if</span> ((g = (h &amp; <span class="number">0xf0000000</span>)))</span><br><span class="line">            h ^= g&gt;&gt;<span class="number">24</span>;</span><br><span class="line">        h &amp;=~ g;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>9.Murmur hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">murmur3_32</span><span class="params">(<span class="keyword">const</span> <span class="keyword">uint8_t</span>* key, <span class="keyword">size_t</span> len, <span class="keyword">uint32_t</span> seed)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> h = seed;</span><br><span class="line">    <span class="keyword">if</span> (len &gt; <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">uint32_t</span>* key_x4 = (<span class="keyword">const</span> <span class="keyword">uint32_t</span>*) key;</span><br><span class="line">        <span class="keyword">size_t</span> i = len &gt;&gt; <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="keyword">uint32_t</span> k = *key_x4++;</span><br><span class="line">            k *= <span class="number">0xcc9e2d51</span>;</span><br><span class="line">            k = (k &lt;&lt; <span class="number">15</span>) | (k &gt;&gt; <span class="number">17</span>);</span><br><span class="line">            k *= <span class="number">0x1b873593</span>;</span><br><span class="line">            h ^= k;</span><br><span class="line">            h = (h &lt;&lt; <span class="number">13</span>) | (h &gt;&gt; <span class="number">19</span>);</span><br><span class="line">            h = (h * <span class="number">5</span>) + <span class="number">0xe6546b64</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (--i);</span><br><span class="line">        key = (<span class="keyword">const</span> <span class="keyword">uint8_t</span>*) key_x4;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (len &amp; <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">size_t</span> i = len &amp; <span class="number">3</span>;</span><br><span class="line">        <span class="keyword">uint32_t</span> k = <span class="number">0</span>;</span><br><span class="line">        key = &amp;key[i - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">        k &lt;&lt;= <span class="number">8</span>;</span><br><span class="line">        k |= *key--;</span><br><span class="line">        &#125; <span class="keyword">while</span> (--i);</span><br><span class="line">        k *= <span class="number">0xcc9e2d51</span>;</span><br><span class="line">        k = (k &lt;&lt; <span class="number">15</span>) | (k &gt;&gt; <span class="number">17</span>);</span><br><span class="line">        k *= <span class="number">0x1b873593</span>;</span><br><span class="line">        h ^= k;</span><br><span class="line">    &#125;</span><br><span class="line">    h ^= len;</span><br><span class="line">    h ^= h &gt;&gt; <span class="number">16</span>;</span><br><span class="line">    h *= <span class="number">0x85ebca6b</span>;</span><br><span class="line">    h ^= h &gt;&gt; <span class="number">13</span>;</span><br><span class="line">    h *= <span class="number">0xc2b2ae35</span>;</span><br><span class="line">    h ^= h &gt;&gt; <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>10.City hash function</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment"> * CityHash 的主要优点是大部分步骤包含了至少两步独立的数学运算</span></span><br><span class="line"><span class="comment"> * 代码较同类流行算法复杂</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<p>11.FNVHash<br>FNV-1 hash</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hash &#x3D; FNV_offset_basis</span><br><span class="line">for each byte_of_data to be hashed</span><br><span class="line">    hash &#x3D; hash × FNV_prime</span><br><span class="line">    hash &#x3D; hash XOR byte_of_data</span><br><span class="line">return hash</span><br></pre></td></tr></table></figure>
+<p>FNV-1a hash</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hash &#x3D; FNV_offset_basis</span><br><span class="line">for each byte_of_data to be hashed</span><br><span class="line">    hash &#x3D; hash XOR byte_of_data</span><br><span class="line">    hash &#x3D; hash × FNV_prime</span><br><span class="line">return hash</span><br></pre></td></tr></table></figure>
+<h2 id="其它的比较"><a href="#其它的比较" class="headerlink" title="其它的比较"></a>其它的比较</h2><table>
+<thead>
+<tr>
+<th>Hash函数</th>
+<th>数据1</th>
+<th>数据2</th>
+<th>数据3</th>
+<th>数据4</th>
+<th>数据1得分</th>
+<th>数据2得分</th>
+<th>数据3得分</th>
+<th>数据4得分</th>
+<th>平均分</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BKDRHash</td>
+<td>2</td>
+<td>0</td>
+<td>4774</td>
+<td>481</td>
+<td>96.55</td>
+<td>100</td>
+<td>90.95</td>
+<td>82.05</td>
+<td>92.64</td>
+</tr>
+<tr>
+<td>APHash</td>
+<td>2</td>
+<td>3</td>
+<td>4754</td>
+<td>493</td>
+<td>96.55</td>
+<td>88.46</td>
+<td>100</td>
+<td>51.28</td>
+<td>86.28</td>
+</tr>
+<tr>
+<td>DJBHash</td>
+<td>2</td>
+<td>2</td>
+<td>4975</td>
+<td>474</td>
+<td>96.55</td>
+<td>92.31</td>
+<td>0</td>
+<td>100</td>
+<td>83.43</td>
+</tr>
+<tr>
+<td>JSHash</td>
+<td>1</td>
+<td>4</td>
+<td>4761</td>
+<td>506</td>
+<td>100</td>
+<td>84.62</td>
+<td>96.83</td>
+<td>17.95</td>
+<td>81.94</td>
+</tr>
+<tr>
+<td>RSHash</td>
+<td>1</td>
+<td>0</td>
+<td>4861</td>
+<td>505</td>
+<td>100</td>
+<td>100</td>
+<td>51.58</td>
+<td>20.51</td>
+<td>75.96</td>
+</tr>
+<tr>
+<td>SDBMHash</td>
+<td>3</td>
+<td>2</td>
+<td>4849</td>
+<td>504</td>
+<td>93.1</td>
+<td>92.31</td>
+<td>57.01</td>
+<td>23.08</td>
+<td>72.41</td>
+</tr>
+<tr>
+<td>PJWHash</td>
+<td>30</td>
+<td>26</td>
+<td>4878</td>
+<td>513</td>
+<td>0</td>
+<td>0</td>
+<td>43.89</td>
+<td>0</td>
+<td>21.95</td>
+</tr>
+<tr>
+<td>ELFHash</td>
+<td>30</td>
+<td>26</td>
+<td>4878</td>
+<td>513</td>
+<td>0</td>
+<td>0</td>
+<td>43.89</td>
+<td>0</td>
+<td>21.95</td>
+</tr>
+</tbody></table>
+<p>其中数据1为100000个字母和数字组成的随机串哈希冲突个数。数据2为100000个有意义的英文句子哈希冲突个数。数据3为数据1的哈希值与1000003(大素数)求模后存储到线性表中冲突的个数。数据4为数据1的哈希值与10000019(更大素数)求模后存储到线性表中冲突的个数。</p>
+<p>经过比较，得出以上平均得分。平均数为平方平均数。可以发现，BKDRHash无论是在实际效果还是编码实现中，效果都是最突出的。APHash也是较为优秀的算法。DJBHash,JSHash,RSHash与SDBMHash各有千秋。PJWHash与ELFHash效果最差，但得分相似，其算法本质是相似的。</p>
+<p>在信息修竞赛中，要本着易于编码调试的原则，个人认为BKDRHash是最适合记忆和使用的。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：常见的字符串Hash算法</li>
+        <li>本文作者：DazzlingOkami</li>
+        <li>创建时间：2021-07-25 22:43:01</li>
+        <li>
+            本文链接：https://dazzlingokami.github.io/2021/07/25/常见的字符串Hash算法/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2021/11/02/SVC%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">SVC系统调用的编程使用方法</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/07/25/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E6%A0%88%E5%9B%9E%E6%BA%AF%E6%9C%BA%E5%88%B6/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">ARM嵌入式开发中的栈回溯机制</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">DazzlingOkami</a>
+        </div>
+        
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.3.0</a>
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/main.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/header-shrink.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/back2top.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/dark-light-toggle.js"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/local-search.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.3.0/source/js/code-copy.js"></script>
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
