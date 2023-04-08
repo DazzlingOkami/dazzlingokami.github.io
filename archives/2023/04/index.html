@@ -9,7 +9,7 @@
     
     <title>
         
-            单片机总线选择焦虑 |
+            归档: 2023/4 |
         
         Dazzling Okami
     </title>
@@ -65,7 +65,7 @@
                         </li>
                     
                         <li class="menu-item">
-                            <a class=""
+                            <a class="active"
                                href="/archives"
                             >
                                 归档
@@ -107,7 +107,7 @@
                 </li>
             
                 <li class="drawer-menu-item flex-center">
-                    <a class=""
+                    <a class="active"
                        href="/archives">归档</a>
                 </li>
             
@@ -132,126 +132,156 @@
 
                 
                     <div class="fade-in-down-animation">
-    <div class="article-content-container">
-
-        <div class="article-title">
-            <span class="title-hover-animation">单片机总线选择焦虑</span>
-        </div>
-
+    <div class="archive-container ">
         
-            <div class="article-header">
-                <div class="avatar">
-                    <img src="/images/face.jpg">
-                </div>
-                <div class="info">
-                    <div class="author">
-                        <span class="name">DazzlingOkami</span>
-                        
-                            <span class="author-label">Lv3</span>
-                        
-                    </div>
-                    <div class="meta-info">
-                        <div class="article-meta-info">
-    <span class="article-date article-meta-item">
-        <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-12-09 18:12:32</span>
-        <span class="mobile">2022-12-09 18:12</span>
-    </span>
+<div class="archive-list-container">
     
-    
-
-    
-    
-    
-    
-</div>
-
-                    </div>
-                </div>
+        <section class="archive-item">
+            <div class="archive-item-header">
+                <span class="archive-year">2023</span>
+                <span class="archive-year-post-count">[1]</span>
             </div>
-        
-
-        <div class="article-content markdown-body">
-            <blockquote>
-<p>当你有多个选择，但是每个选择都不完美时，就会出现选择焦虑！</p>
-</blockquote>
-<hr>
-<p>最近在优化单片机上USB协议栈内的代码，我发现了一个我之前没有被注意到的地方，那就是写入到USB端点上的数据是由DMA自动完成的，涉及到DMA的内存区域都需要特别对待，而我之前就是将它当作普通内存处理，也就是普通内存的缓存策略(庆幸运行了这么久居然没出错)。</p>
-<p>由于单片机内的内存分布比较复杂，所以我决定在解决这个问题时顺便优化一下内存布局。这是单片机的总线连接情况，看起来比较复杂。</p>
-<p><img src="bus.png" alt="总线结构"></p>
-<p>仔细看看总线的连接情况，发现一个很蠢的事情，目前USBHS1(可以理解为USB的专用DMA)操作的数据位于AXISRAM上，中间要经过一个D2-to-D1 AHB bus的通道，我认为这太不合理了，因为D2域也有三块内存，我决定将USB的缓存调整到D2的SRAM3上，毕竟AXISRAM内存与CPU的交互较多，这样USB的DMA传输数据就几乎能独享到SRAM3的内存总线带宽了，而不用占用D1域的总线矩阵。这样还有一个好处是使用MPU配置缓存策略也比较方便。</p>
-<p><img src="bus_c.png" alt="总线结构"></p>
-<p>不过我改完了之后就发现了新的问题。因为USB协议栈中实现了大容量存储设备实例，需要用到内存卡SDMMC1，这就出现一个新的问题。SD卡的数据操作也是专用的DMA，我使用的是SDMMC1，硬件已经决定了我无法调整到SDMMC2上。观察D1总线矩阵就能看到，SDMMC1无法访问到D2域上。</p>
-<p><img src="bus_node.png" alt="总线结构"></p>
-<p>要解决这个问题就只能让MDAM或者CPU帮忙，把数据从D2域拷贝到D1域的AXISRAM中，然后SDMMC的DMA就能操作数据了。</p>
-<p>为了优化数据总线上的负载反而带来了更多的数据总线操作，这就更蠢了。</p>
-<p>在这里纠结了好久，最后选择在AXISRAM末尾使用约8K字节的数据用来作为USB的缓存，并将它配置为非缓存的模式。</p>
-<p>还是感觉不爽😔，为什么D1域上的SDMMC1不能访问D2，是故意这样设计的吗？</p>
-
-        </div>
-
-        
-            <div class="post-copyright-info">
-                <div class="article-copyright-info-container">
-    <ul>
-        <li>本文标题：单片机总线选择焦虑</li>
-        <li>本文作者：DazzlingOkami</li>
-        <li>创建时间：2022-12-09 18:12:32</li>
-        <li>
-            本文链接：https://dazzlingokami.github.io/2022/12/09/单片机总线选择焦虑/
-        </li>
-        <li>
-            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
-        </li>
-    </ul>
-</div>
-
-            </div>
-        
-
-        
-
-        
-            <div class="article-nav">
+            <ul class="article-list">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
+                    <li class="article-item">
+                        <a class="article-title"
                            href="/2023/04/07/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothread%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">更优雅的使用Protothread协程框架</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
+                        >更优雅的使用Protothread协程框架</a>
+                        <span class="article-date">04-07</span>
+                    </li>
                 
-                
-                    <div class="article-next">
-                        <a class="next"
-                           rel="next"
-                           href="/2022/11/10/%E5%AE%9E%E7%8E%B0%E7%8B%AC%E6%9C%89%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%80%BB%E7%BA%BF/"
-                        >
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">实现独有的硬件通信总线</span>
-                                <span class="post-nav-item">下一篇</span>
-                            </span>
-                            <span class="right arrow-icon flex-center">
-                              <i class="fas fa-chevron-right"></i>
-                            </span>
-                        </a>
-                    </div>
-                
+            </ul>
+        </section>
+    
+        <section class="archive-item">
+            <div class="archive-item-header">
+                <span class="archive-year">2022</span>
+                <span class="archive-year-post-count">[8]</span>
             </div>
-        
+            <ul class="article-list">
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/12/09/%E5%8D%95%E7%89%87%E6%9C%BA%E6%80%BB%E7%BA%BF%E9%80%89%E6%8B%A9%E7%84%A6%E8%99%91/"
+                        >单片机总线选择焦虑</a>
+                        <span class="article-date">12-09</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/11/10/%E5%AE%9E%E7%8E%B0%E7%8B%AC%E6%9C%89%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%80%BB%E7%BA%BF/"
+                        >实现独有的硬件通信总线</a>
+                        <span class="article-date">11-10</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/09/10/%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E8%B0%A8%E6%85%8E%E6%93%8D%E4%BD%9CCache/"
+                        >我们需要谨慎操作Cache</a>
+                        <span class="article-date">09-10</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/09/06/FreeRTOS%E4%B8%AD%E5%8D%8F%E7%A8%8B%E6%94%AF%E6%8C%81%E4%BD%8E%E5%8A%9F%E8%80%97%E5%90%97/"
+                        >FreeRTOS中协程支持低功耗吗</a>
+                        <span class="article-date">09-06</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/08/11/FreeRTOS%E4%B8%8A%E5%AE%9E%E7%8E%B0swap%E6%9C%BA%E5%88%B6/"
+                        >FreeRTOS上实现swap机制</a>
+                        <span class="article-date">08-11</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/07/25/%E5%86%85%E5%AD%98%E9%99%B7%E9%98%B1%EF%BC%8C%E4%B8%80%E7%A7%8D%E5%86%85%E5%AD%98%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/"
+                        >内存陷阱，一种内存调试方法</a>
+                        <span class="article-date">07-25</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/05/30/nRF52x%E8%BF%90%E8%A1%8C%E8%93%9D%E7%89%99%E5%8D%8F%E8%AE%AE%E6%A0%88+FreeRTOS%E7%9A%84%E5%8E%9F%E7%90%86/"
+                        >nRF52x运行蓝牙协议栈+FreeRTOS的原理</a>
+                        <span class="article-date">05-30</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2022/03/28/Exception%20Failure%20-%20Breaking%20the%20STM32F1%20Read-Out%20Protection/"
+                        >Exception Failure - Breaking the STM32F1 Read-Out Protection</a>
+                        <span class="article-date">03-28</span>
+                    </li>
+                
+            </ul>
+        </section>
+    
+        <section class="archive-item">
+            <div class="archive-item-header">
+                <span class="archive-year">2021</span>
+                <span class="archive-year-post-count">[7]</span>
+            </div>
+            <ul class="article-list">
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/12/18/%E7%BB%9F%E8%AE%A1FreeRTOS%E4%B8%AD%E5%90%84%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%88%A9%E7%94%A8%E7%8E%87/"
+                        >统计FreeRTOS中各个线程的处理器利用率</a>
+                        <span class="article-date">12-18</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/11/06/%E5%9C%A8RTOS%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%A4%84%E7%90%86Fault%E5%BC%82%E5%B8%B8/"
+                        >在RTOS中如何优雅的处理Fault异常</a>
+                        <span class="article-date">11-06</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/11/02/SVC%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/"
+                        >SVC系统调用的编程使用方法</a>
+                        <span class="article-date">11-02</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/06/01/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E6%A0%88%E5%9B%9E%E6%BA%AF%E6%9C%BA%E5%88%B6/"
+                        >ARM嵌入式开发中的栈回溯机制</a>
+                        <span class="article-date">06-01</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/04/15/%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2Hash%E7%AE%97%E6%B3%95/"
+                        >常见的字符串Hash算法</a>
+                        <span class="article-date">04-15</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/03/22/Macro%20returning%20the%20number%20of%20arguments%20it%20is%20given%20in%20C/"
+                        >Macro returning the number of arguments it is given in C?</a>
+                        <span class="article-date">03-22</span>
+                    </li>
+                
+                    <li class="article-item">
+                        <a class="article-title"
+                           href="/2021/01/21/Recommended%20C%20style%20and%20coding%20rules/"
+                        >Recommended C style and coding rules</a>
+                        <span class="article-date">01-21</span>
+                    </li>
+                
+            </ul>
+        </section>
+    
+</div>
 
-        
     </div>
 </div>
-
 
                 
             </div>
@@ -287,19 +317,6 @@
         </div>
     </div>
 
-    
-        <div class="post-tools">
-            <div class="post-tools-container">
-    <ul class="tools-list">
-        <!-- TOC aside toggle -->
-        
-
-        <!-- go comment -->
-        
-    </ul>
-</div>
-
-        </div>
     
 
     <div class="right-bottom-side-tools">

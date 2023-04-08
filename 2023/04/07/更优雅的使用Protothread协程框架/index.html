@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="DazzlingOkami">
+    
+    <title>
+        
+            更优雅的使用Protothread协程框架 |
+        
+        Dazzling Okami
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/blog.svg">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/css/font-awesome.min.css">
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/face.jpg","favicon":"/images/blog.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"trigger":"auto","unescape":false,"preload":true},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Dazzling Okami
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">更优雅的使用Protothread协程框架</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/face.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">DazzlingOkami</span>
+                        
+                            <span class="author-label">Lv3</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2023-04-07 16:07:35</span>
+        <span class="mobile">2023-04-07 16:07</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="PT协程框架"><a href="#PT协程框架" class="headerlink" title="PT协程框架"></a>PT协程框架</h2><p>PT(<a class="link"   target="_blank" rel="noopener" href="https://github.com/gburd/pt" >Protothreads<i class="fas fa-external-link-alt"></i></a>)是一个轻量级的多任务框架，区别于一般基于栈的RTOS，它实现多任务的基本原理是通过语句间的任意跳转来实现任务切换。所以实现多任务的开销比较小。</p>
+<p>我们看一段示例代码来了解其用法。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * This is a very small example that shows how to use</span></span><br><span class="line"><span class="comment"> * protothreads. The program consists of two protothreads that wait</span></span><br><span class="line"><span class="comment"> * for each other to toggle a variable.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* We must always include pt.h in our protothreads code. */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;pt.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt; /* For printf(). */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Two flags that the two protothread functions use. */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> protothread1_flag, protothread2_flag;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The first protothread function. A protothread function must always</span></span><br><span class="line"><span class="comment"> * return an integer, but must never explicitly return - returning is</span></span><br><span class="line"><span class="comment"> * performed inside the protothread statements.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The protothread function is driven by the main loop further down in</span></span><br><span class="line"><span class="comment"> * the code.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">protothread1(struct pt *pt)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/* A protothread function must begin with PT_BEGIN() which takes a</span></span><br><span class="line"><span class="comment">     pointer to a struct pt. */</span></span><br><span class="line">  PT_BEGIN(pt);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* We loop forever here. */</span></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">/* Wait until the other protothread has set its flag. */</span></span><br><span class="line">    PT_WAIT_UNTIL(pt, protothread2_flag != <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Protothread 1 running\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* We then reset the other protothread&#x27;s flag, and set our own</span></span><br><span class="line"><span class="comment">       flag so that the other protothread can run. */</span></span><br><span class="line">    protothread2_flag = <span class="number">0</span>;</span><br><span class="line">    protothread1_flag = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* And we loop. */</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* All protothread functions must end with PT_END() which takes a</span></span><br><span class="line"><span class="comment">     pointer to a struct pt. */</span></span><br><span class="line">  PT_END(pt);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The second protothread function. This is almost the same as the</span></span><br><span class="line"><span class="comment"> * first one.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">protothread2(struct pt *pt)</span><br><span class="line">&#123;</span><br><span class="line">  PT_BEGIN(pt);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">/* Let the other protothread run. */</span></span><br><span class="line">    protothread2_flag = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Wait until the other protothread has set its flag. */</span></span><br><span class="line">    PT_WAIT_UNTIL(pt, protothread1_flag != <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Protothread 2 running\n&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* We then reset the other protothread&#x27;s flag. */</span></span><br><span class="line">    protothread1_flag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* And we loop. */</span></span><br><span class="line">  &#125;</span><br><span class="line">  PT_END(pt);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Finally, we have the main loop. Here is where the protothreads are</span></span><br><span class="line"><span class="comment"> * initialized and scheduled. First, however, we define the</span></span><br><span class="line"><span class="comment"> * protothread state variables pt1 and pt2, which hold the state of</span></span><br><span class="line"><span class="comment"> * the two protothreads.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">pt</span> <span class="title">pt1</span>, <span class="title">pt2</span>;</span></span><br><span class="line"><span class="keyword">int</span></span><br><span class="line">main(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/* Initialize the protothread state variables with PT_INIT(). */</span></span><br><span class="line">  PT_INIT(&amp;pt1);</span><br><span class="line">  PT_INIT(&amp;pt2);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * Then we schedule the two protothreads by repeatedly calling their</span></span><br><span class="line"><span class="comment">   * protothread functions and passing a pointer to the protothread</span></span><br><span class="line"><span class="comment">   * state variables as arguments.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">    protothread1(&amp;pt1);</span><br><span class="line">    protothread2(&amp;pt2);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个任务就是一个单独的函数和一个记录任务状态的句柄。通过在一个循环中一直执行所有任务相关的函数就能够实现多任务的效果，因为它是非抢占式的，如果某个任务函数如果不需要执行的时机就退出该函数并将执行时机转移到下一个任务。由于句柄记录了函数内部执行的位置，所以下次进入函数能够恢复任务的执行。<br>相比于传统的RTOS，PT协程的用法不是足够的灵活，任务不能动态的创建，任务的调度是提前分配好的，如果需要实时的创建或者删除一个任务，上面的这种写法就不是很方便。</p>
+<h2 id="基于PT实现一套更优雅的任务框架"><a href="#基于PT实现一套更优雅的任务框架" class="headerlink" title="基于PT实现一套更优雅的任务框架"></a>基于PT实现一套更优雅的任务框架</h2><p>主要是要解决PT协程框架不能动态创建任务的问题，可以使用链表将所有的任务管理起来，将创建好的任务就放入到链表中，如果任务结束或删除就将其从链表中删除。实现一个调度器自动调度链表中的所有任务。为了完全保留原始PT的用法，这里只新增任务创建和调度的实现，其余用法保持不变。</p>
+<p>这里链表的引用参考Linux内核链表，其实现和使用都很简单。</p>
+<p>首先需要定义一个全局的链表，用于管理所有的任务。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pt_os.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;list.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">LIST_HEAD(pt_pool);</span><br></pre></td></tr></table></figure>
+<p>剩余的内容就只需要在头文件中实现即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pt_os.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _PT_OS_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _PT_OS_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;pt.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;list.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_node</span> <span class="title">list</span>;</span></span><br><span class="line">    PT_THREAD((*task)(struct pt *pt));</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">pt</span> <span class="title">pt</span>;</span></span><br><span class="line">&#125; <span class="keyword">pt_item_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">list_node</span> <span class="title">pt_pool</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Run pt os.</span></span><br><span class="line"><span class="comment"> * OS_SCHEDULE() executes an infinite loop.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * Example usage:</span></span><br><span class="line"><span class="comment"> * @code&#123;c&#125;</span></span><br><span class="line"><span class="comment"> * int main(void)&#123;</span></span><br><span class="line"><span class="comment"> *     //...</span></span><br><span class="line"><span class="comment"> *     for(;;)&#123;</span></span><br><span class="line"><span class="comment"> *         OS_SCHEDULE();</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> *     return 0;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> * @endcode</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OS_SCHEDULE()                                           \</span></span><br><span class="line">    <span class="keyword">do</span>                                                          \</span><br><span class="line">    &#123;                                                           \</span><br><span class="line">        <span class="keyword">pt_item_t</span> *pt_item;                                     \</span><br><span class="line">        list_for_each_entry(&amp;pt_pool, pt_item, <span class="keyword">pt_item_t</span>, <span class="built_in">list</span>) \</span><br><span class="line">        &#123;                                                       \</span><br><span class="line">            <span class="keyword">if</span> (pt_item-&gt;task(&amp;(pt_item-&gt;pt)) &gt;= PT_EXITED)     \</span><br><span class="line">            &#123;                                                   \</span><br><span class="line">                list_delete(&amp;(pt_item-&gt;<span class="built_in">list</span>));                  \</span><br><span class="line">            &#125;                                                   \</span><br><span class="line">        &#125;                                                       \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * Create a new pt task.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * Example usage:</span></span><br><span class="line"><span class="comment"> * @code&#123;c&#125;</span></span><br><span class="line"><span class="comment"> * PT_THREAD(iwdg_task(struct pt *pt))&#123;</span></span><br><span class="line"><span class="comment"> *      static struct timer periodic_timer;</span></span><br><span class="line"><span class="comment"> *      PT_BEGIN(pt);</span></span><br><span class="line"><span class="comment"> *      timer_set(&amp;periodic_timer, 100);</span></span><br><span class="line"><span class="comment"> *      while(1)&#123;</span></span><br><span class="line"><span class="comment"> *          HAL_IWDG_Refresh(&amp;hiwdg);</span></span><br><span class="line"><span class="comment"> *          PT_WAIT_UNTIL(pt, timer_expired(&amp;periodic_timer));</span></span><br><span class="line"><span class="comment"> *          timer_reset(&amp;periodic_timer);</span></span><br><span class="line"><span class="comment"> *      &#125;</span></span><br><span class="line"><span class="comment"> *      PT_END(pt);</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * int main(void)&#123;</span></span><br><span class="line"><span class="comment"> *     OS_TASK_RUN(iwdg_task);</span></span><br><span class="line"><span class="comment"> *     //...</span></span><br><span class="line"><span class="comment"> *     for(;;)&#123;</span></span><br><span class="line"><span class="comment"> *         OS_SCHEDULE();</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> *     return 0;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> * @endcode</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OS_TASK_RUN(func)                                \</span></span><br><span class="line">    <span class="keyword">do</span>                                               \</span><br><span class="line">    &#123;                                                \</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">pt_item_t</span> pt_##_func;                 \</span><br><span class="line">        pt_##_func.task = func;                      \</span><br><span class="line">        PT_INIT(&amp;(pt_##_func.pt));                   \</span><br><span class="line">        list_add_head(&amp;pt_pool, &amp;(pt_##_func.<span class="built_in">list</span>)); \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>这里定义任务结构pt_item_t，相比与原生PT，每个任务会多占用12字节的RAM，此外就没有多余的开销了。使用OS_TASK_RUN()方法可以创建一个新的任务，它可以将PT任务添加到任务列表中。OS_SCHEDULE()方法用于调度所有的PT任务，它需要放入到一个循环中一直执行，当某个任务执行推出后可以将它从任务列表中删除。</p>
+<p>这里存在一些现在，任务的入口不能传递参数，如果一定要实现这个功能那也是很容易的，对pt_item_t中的任务签名做调整即可。一个PT任务函数不能同时创建两个与之相关联的任务，这主要是OS_TASK_RUN()的实现导致的，我想大部分PT任务函数都不具有重入的特性，这里可能也无伤大雅。</p>
+<p>通过这段短小的代码(大约20行)就拓展了原生PT的实现，达到任务的自动调度，任务的动态创建和删除，这样在资源受限的单片机内能够实现更加灵活的异步编程。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：更优雅的使用Protothread协程框架</li>
+        <li>本文作者：DazzlingOkami</li>
+        <li>创建时间：2023-04-07 16:07:35</li>
+        <li>
+            本文链接：https://dazzlingokami.github.io/2023/04/07/更优雅的使用Protothread协程框架/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/12/09/%E5%8D%95%E7%89%87%E6%9C%BA%E6%80%BB%E7%BA%BF%E9%80%89%E6%8B%A9%E7%84%A6%E8%99%91/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">单片机总线选择焦虑</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2023&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">DazzlingOkami</a>
+        </div>
+        
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/main.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/header-shrink.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/back2top.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/dark-light-toggle.js"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/local-search.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/code-copy.js"></script>
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
