@@ -267,7 +267,7 @@
 <p>void sm_config_set_wrap(pio_sm_config *c, uint wrap_target, uint wrap);<br>配置状态机的程序边界。</p>
 <p>void sm_config_set_in_shift(pio_sm_config *c, bool shift_right, bool autopush, uint push_threshold);<br>配置IN指令，shift_right为真时OSR为右移模式，autopush为真时，意味着OSR达到阈值后自动执行PUSH，从TXFIFO中取出数据到OSR中。push_threshold表示OSR的位宽。</p>
 <p>void sm_config_set_out_shift(pio_sm_config *c, bool shift_right, bool autopull, uint pull_threshold);<br>配置OUT指令。</p>
-<p>void sm_config_set_fifo_join(pio_sm_config *c, enum pio_fifo_join join);<br>配置FIFO的用法，有三种，0均匀分频，1将FIFO全部用于TXFIFO，2将FIFO全部用于RXFIFO。</p>
+<p>void sm_config_set_fifo_join(pio_sm_config *c, enum pio_fifo_join join);<br>配置FIFO的用法，有三种，0均匀分配，1将FIFO全部用于TXFIFO，2将FIFO全部用于RXFIFO。</p>
 <ul>
 <li>4.状态机IO配置</li>
 </ul>
