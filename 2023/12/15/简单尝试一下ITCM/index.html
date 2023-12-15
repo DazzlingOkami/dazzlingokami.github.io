@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            简单尝试一下ITCM |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/blog.svg">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/css/font-awesome.min.css">
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/face.jpg","favicon":"/images/blog.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"trigger":"auto","unescape":false,"preload":true},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                耀眼的大神
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">简单尝试一下ITCM</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/face.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">耀眼的大神</span>
+                        
+                            <span class="author-label">Lv3</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2023-12-15 11:00:01</span>
+        <span class="mobile">2023-12-15 11:00</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="ITCM简介"><a href="#ITCM简介" class="headerlink" title="ITCM简介"></a>ITCM简介</h2><p>在STM32高性能单片机中存在一种供内核专用的内存TCM-SRAM，称为紧耦合内存。为了区分不同的用途，又存在称为DTCM和ITCM的两种不同内存，这两种内存本质上是一致的，但是其背后默认的MPU策略不同，所以一般将DTCM用于存储关键的堆栈数据，将ITCM用于存储关键代码的指令。</p>
+<p>由于TCM内存拥有独立的总线直连Cortex内核，它不经过AXI总线矩阵，所以理论上它应该要块很多才对。那TCM相比于一般的内存到底快多少呢？这里做一些简单的测试来说明一下。</p>
+<h2 id="ITCM运行测试"><a href="#ITCM运行测试" class="headerlink" title="ITCM运行测试"></a>ITCM运行测试</h2><p>构造一个简单的函数作为测试的对象：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">runtest</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2000</span> * <span class="number">1000</span>; i++)&#123;</span><br><span class="line">    __NOP();</span><br><span class="line">    __NOP();</span><br><span class="line">    __NOP();</span><br><span class="line">    __NOP();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试的芯片选用STM32H7B0芯片，其主频280MHz，理论上主频越高，ITCM的优势越明显。</p>
+<p>这里还需要说明一下D-Cache，指令缓存也能显著提高代码的运行速度，所以这里设计了4中不同的测试场景。通过统计被测函数的执行时钟周期来反应代码的执行速度。</p>
+<p><em>注：测试时未开启编译优化，调用函数在Flash中，运行栈为AXI-SRAM</em></p>
+<ul>
+<li>1.关闭D-Cache，被测函数在Flash中执行<br>运行周期：26065054</li>
+<li>2.关闭D-Cache，被测函数在ITCM中执行<br>运行周期：15088644</li>
+<li>3.开启D-Cache，被测函数在Flash中执行<br>运行周期：16019317</li>
+<li>4.开启D-Cache，被测函数在ITCM中执行<br>运行周期：14017011</li>
+</ul>
+<p>通过以上的数据不难看出ITCM的优势。在ITCM中运行的指令比在Flash中开启了D-Cache的指令运行还要块。测试的第4中情况相比于第1种情况性能更是提升了45%以上。</p>
+<h2 id="如何使用ITCM"><a href="#如何使用ITCM" class="headerlink" title="如何使用ITCM"></a>如何使用ITCM</h2><p>这里简单介绍在gcc开发平台下如何方便快捷的使用ITCM。</p>
+<p>首先需要在链接脚本中为函数分配独立的字段，用于将相关函数链接到ITCM中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* Initialized ramfunc sections goes into RAM, load LMA copy after code *&#x2F;</span><br><span class="line">_siramfunc &#x3D; LOADADDR(.ramfunc);</span><br><span class="line">.ramfunc :</span><br><span class="line">&#123;</span><br><span class="line">  . &#x3D; ALIGN(4);</span><br><span class="line">  _sramfunc &#x3D; .;     &#x2F;* create a global symbol at data start *&#x2F;</span><br><span class="line">  *(.RamFunc)        &#x2F;* .RamFunc sections *&#x2F;</span><br><span class="line">  *(.RamFunc*)       &#x2F;* .RamFunc* sections *&#x2F;</span><br><span class="line"></span><br><span class="line">  . &#x3D; ALIGN(4);</span><br><span class="line">  _eramfunc &#x3D; .;     &#x2F;* define a global symbol at data end *&#x2F;</span><br><span class="line">&#125; &gt;ITCMRAM AT&gt; FLASH</span><br></pre></td></tr></table></figure>
+<p>这里需要注意，RamFunc可能已经存在于data字段中，需要将其中data字段中删除。</p>
+<p>这段链接脚本将函数的存储地址放到Flash中用于持久固化，将函数运行地址放到ITCM中用于执行。</p>
+<p>之后需要代码将Flash中的代码数据搬运到ITCM中，这部分工作最好在汇编代码中完成。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#x2F;* 这部分放到最前面 *&#x2F;</span><br><span class="line">.word _siramfunc</span><br><span class="line">.word _sramfunc</span><br><span class="line">.word _eramfunc</span><br><span class="line"></span><br><span class="line">&#x2F;* 这部分插入到启动汇编代码中 *&#x2F;</span><br><span class="line">&#x2F;* Copy RamFunc segment from flash to RAM *&#x2F;</span><br><span class="line">  ldr r0, &#x3D;_sramfunc</span><br><span class="line">  ldr r1, &#x3D;_eramfunc</span><br><span class="line">  ldr r2, &#x3D;_siramfunc</span><br><span class="line">  b LoopCopyRamFunc</span><br><span class="line"></span><br><span class="line">CopyRamFunc:</span><br><span class="line">  ldr r3, [r2], #4</span><br><span class="line">  str r3, [r0], #4</span><br><span class="line">LoopCopyRamFunc:</span><br><span class="line">  cmp r0, r1</span><br><span class="line">  bcc CopyRamFunc</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如果认为汇编较复杂，也可以使用C代码替代，作用是一样的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">uint8_t</span> _siramfunc;</span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">uint8_t</span> _sramfunc;</span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">uint8_t</span> _eramfunc;</span><br><span class="line"><span class="built_in">memcpy</span>(&amp;_sramfunc, &amp;_siramfunc, (<span class="keyword">uint32_t</span>)(&amp;_eramfunc - &amp;_sramfunc));</span><br></pre></td></tr></table></figure>
+<p>这样当声明函数时就可以将函数存放到ITCM中，并实现持久化的运行：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">runtest</span><span class="params">(<span class="keyword">void</span>)</span> __<span class="title">attribute__</span><span class="params">((section(<span class="string">&quot;.RamFunc&quot;</span>)))</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">runtest</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2000</span> * <span class="number">1000</span>; i++)&#123;</span><br><span class="line">    __NOP();</span><br><span class="line">    __NOP();</span><br><span class="line">    __NOP();</span><br><span class="line">    __NOP();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其它的开发平台也是类似的原理。</p>
+<h2 id="ITCM的一些限制"><a href="#ITCM的一些限制" class="headerlink" title="ITCM的一些限制"></a>ITCM的一些限制</h2><p>ITCM用起来也不是完美的，当涉及较多的函数间调用时，如果指令地址频繁在Flash、ITCM直接来回切换，会产生许多不必要的开销，因为它们两个区域的地址跨度太大，无法直接跳转，编译器会产生一些虚拟函数来实现这个跳转的过渡，无论是Flash到ITCM，还是ITCM到Flash都会有这样的操作。</p>
+<p>ITCM主要是用于执行一些时间敏感的函数，例如中断函数，使得中断能够更快响应。还有就是例如FFT这种纯粹的计算型函数，它不会发生较多的其它函数调用且函数执行时间较长，这也能发挥ITCM的关键优势。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：简单尝试一下ITCM</li>
+        <li>本文作者：耀眼的大神</li>
+        <li>创建时间：2023-12-15 11:00:01</li>
+        <li>
+            本文链接：https://dazzlingokami.github.io/2023/12/15/简单尝试一下ITCM/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PT协程的一个小扩展</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2023&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">耀眼的大神</a>
+        </div>
+        
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/main.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/header-shrink.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/back2top.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/dark-light-toggle.js"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/local-search.js"></script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/code-copy.js"></script>
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
