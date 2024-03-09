@@ -14,13 +14,21 @@
     
 <link rel="stylesheet" href="/css/style.css">
 
-    <link rel="shortcut icon" href="/images/blog.svg">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/css/font-awesome.min.css">
-    <script id="hexo-configurations">
-    let KEEP = window.KEEP || {};
-    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"};
-    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/face.jpg","favicon":"/images/blog.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"trigger":"auto","unescape":false,"preload":true},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
-    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.jpg","favicon":"images/blog.svg"},"menu":{"Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":false,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","version":"4.0.7"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
   </script>
 <meta name="generator" content="Hexo 5.3.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
@@ -145,64 +153,77 @@ mjx-container[display="true"] + br {
 </div>
 
 
-<main class="page-container">
+<main class="page-container border-box">
 
+    <!-- home first screen  -->
     
-        <div class="first-screen-container flex-center fade-in-down-animation">
-    <div class="content flex-center">
-        <div class="description">
-            Keep writing and Keep loving.
-        </div>
         
+<div class="first-screen-container border-box flex-center fade-in-down-animation">
+    <div class="first-screen-content border-box">
+        <div class="top-placeholder border-box"></div>
+
+        <div class="middle-placeholder border-box">
+            
+                <div class="description border-box">
+                    
+                        
+                            
+                                <div class="desc-item border-box"><span class="desc">Keep writing and Keep loving.</span><span class="cursor">｜</span></div>
+                            
+                        
+                    
+                </div>
+            
+
+            
+        </div>
+
+        <div class="bottom-placeholder border-box">
+            
+        </div>
     </div>
 </div>
 
     
 
-    <div class="page-main-content">
-
+    <!-- page content -->
+    <div class="page-main-content border-box is-home">
         <div class="page-main-content-top">
-            <header class="header-wrapper">
-
-    <div class="header-content has-first-screen">
-        <div class="left">
             
-            <a class="logo-title" href="/">
-                耀眼的大神
+<header class="header-wrapper transparent-1">
+
+    <div class="border-box header-content has-first-screen">
+        <div class="left border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
             </a>
         </div>
 
-        <div class="right">
+        <div class="right border-box">
             <div class="pc">
                 <ul class="menu-list">
-                    
-                        <li class="menu-item">
-                            <a class="active"
-                               href="/"
-                            >
-                                首页
-                            </a>
-                        </li>
+                    <li class="menu-item">
+                        <a class="active"
+                           href="/"
+                        >首页</a>
+                    </li>
                     
                         <li class="menu-item">
                             <a class=""
                                href="/archives"
-                            >
-                                归档
-                            </a>
+                            >归档</a>
                         </li>
                     
                         <li class="menu-item">
                             <a class=""
                                href="/about"
-                            >
-                                关于
-                            </a>
+                            >关于</a>
                         </li>
                     
                     
                         <li class="menu-item search search-popup-trigger">
-                            <i class="fas fa-search"></i>
+                            <i class="fas search fa-search"></i>
                         </li>
                     
                 </ul>
@@ -220,20 +241,22 @@ mjx-container[display="true"] + br {
 
     <div class="header-drawer">
         <ul class="drawer-menu-list">
+            <li class="drawer-menu-item flex-center">
+                <a class="active"
+                   href="/"
+                >首页</a>
+            </li>
             
                 <li class="drawer-menu-item flex-center">
-                    <a class="active"
-                       href="/">首页</a>
+                    <a class=""
+                       href="/archives"
+                    >归档</a>
                 </li>
             
                 <li class="drawer-menu-item flex-center">
                     <a class=""
-                       href="/archives">归档</a>
-                </li>
-            
-                <li class="drawer-menu-item flex-center">
-                    <a class=""
-                       href="/about">关于</a>
+                       href="/about"
+                    >关于</a>
                 </li>
             
         </ul>
@@ -246,327 +269,541 @@ mjx-container[display="true"] + br {
 
         </div>
 
-        <div class="page-main-content-middle">
+        <div class="page-main-content-middle border-box">
 
-            <div class="main-content">
-
+            <div class="main-content border-box">
                 
+
                     <div class="home-content-container fade-in-down-animation">
-    <ul class="home-article-list">
+    
+    <ul class="home-post-list border-box">
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2024/03/03/%E9%94%81%E7%9B%B8%E7%8E%AF(PLL)%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
-                        锁相环(PLL)基本原理
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
+                    <h3 class="home-post-title border-box">
+                        <a href="/2024/03/09/%E4%BD%93%E9%AA%8C%E5%9B%BD%E4%BA%A7RISC-V%E5%8D%95%E7%89%87%E6%9C%BA/">
+                            体验国产RISC-V单片机
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
                         
-本文转载自《模拟对话》卷52，文章原作者是Ian Collins，《模拟对话》是亚德诺半导体的一份技术期刊，专注于电子模拟技术的最新进展和应用。原作者和亚德诺半导体对本文保留所有权利。本文不采用 BY-NC-SA 许可协议。PLL被广泛应用于嵌入式...
-                    
-                </div>
+                            
+RISC-V单片机并不是很新鲜的东西，但因为其市场占有率相比于ARM内核的芯片较小，所有此类芯片并不流行。在此之前，我并没有接触过RISC-V的芯片，趁着春节假期，购得一块国产单片机CH32V307，本着学习的态度，看看该芯片相比于ARM内核有何优...
+                        
+                    </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Mar 03 2024 21:20:01 GMT+0800">2024-03-03</span></span>
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Sat Mar 09 2024 16:21:36 GMT+0800">2024-03-09 16:21:36</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2024/03/03/%E9%94%81%E7%9B%B8%E7%8E%AF(PLL)%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2024/03/09/%E4%BD%93%E9%AA%8C%E5%9B%BD%E4%BA%A7RISC-V%E5%8D%95%E7%89%87%E6%9C%BA/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2024/02/18/%E9%98%BB%E6%8A%97%E5%8C%B9%E9%85%8D/">
-                        阻抗匹配
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
+                    <h3 class="home-post-title border-box">
+                        <a href="/2024/03/03/%E9%94%81%E7%9B%B8%E7%8E%AF(PLL)%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+                            锁相环(PLL)基本原理
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
                         
+                            
+本文转载自《模拟对话》卷52，文章原作者是Ian Collins，《模拟对话》是亚德诺半导体的一份技术期刊，专注于电子模拟技术的最新进展和应用。原作者和亚德诺半导体对本文保留所有权利。本文不采用 BY-NC-SA 许可协议。PLL被广泛应用于嵌入式...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Sun Mar 03 2024 21:33:31 GMT+0800">2024-03-03 21:33:31</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2024/03/03/%E9%94%81%E7%9B%B8%E7%8E%AF(PLL)%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2024/02/18/%E9%98%BB%E6%8A%97%E5%8C%B9%E9%85%8D/">
+                            阻抗匹配
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            
 本人非专业领域工作者，内容难免瑕疵，所以仅供参考。
 
 什么是阻抗匹配？阻抗匹配的概念应用在各个工程领域，但在射频电路领域，阻抗匹配有更加重要的意义。阻抗匹配的目的在于将能量完整的从一个端口传输到另一个端口上，当负载的输入阻抗和源的输出阻抗共轭相等时...
-                    
-                </div>
+                        
+                    </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Feb 18 2024 15:13:49 GMT+0800">2024-02-18</span></span>
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Sun Feb 18 2024 21:04:21 GMT+0800">2024-02-18 21:04:21</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2024/02/18/%E9%98%BB%E6%8A%97%E5%8C%B9%E9%85%8D/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2024/02/18/%E9%98%BB%E6%8A%97%E5%8C%B9%E9%85%8D/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2024/01/05/STM32H7%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
-                        STM32H7性能问题优化实践
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
-                        最近开发一个项目，采用STM32H7单片机，遇到了一个我以前没有遇到过的一个性能问题，通过分析解决该问题的过程让我对STM32高性能数据传输有更加深刻的理解。
+                    <h3 class="home-post-title border-box">
+                        <a href="/2024/01/05/STM32H7%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">
+                            STM32H7性能问题优化实践
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            最近开发一个项目，采用STM32H7单片机，遇到了一个我以前没有遇到过的一个性能问题，通过分析解决该问题的过程让我对STM32高性能数据传输有更加深刻的理解。
 
 关键字：总线、DMA、FIFO
 
 
-项目背景某项目开发中需要将Linux通过USB传输到...
-                    
-                </div>
+项目背景某项目开发中需要将Linux的数据通过USB...
+                        
+                    </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jan 05 2024 16:02:42 GMT+0800">2024-01-05</span></span>
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Thu Mar 07 2024 22:15:30 GMT+0800">2024-03-07 22:15:30</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2024/01/05/STM32H7%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2024/01/05/STM32H7%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2023/12/15/%E7%AE%80%E5%8D%95%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8BITCM/">
-                        简单尝试一下ITCM
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
-                        ITCM简介在STM32高性能单片机中存在一种供内核专用的内存TCM-SRAM，称为紧耦合内存。为了区分不同的用途，又存在称为DTCM和ITCM的两种不同内存，这两种内存本质上是一致的，但是其背后默认的MPU策略不同，所以一般将DTCM用于存储关键的...
-                    
-                </div>
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/12/15/%E7%AE%80%E5%8D%95%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8BITCM/">
+                            简单尝试一下ITCM
+                        </a>
+                    </h3>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Dec 15 2023 11:00:01 GMT+0800">2023-12-15</span></span>
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            ITCM简介在STM32高性能单片机中存在一种供内核专用的内存TCM-SRAM，称为紧耦合内存。为了区分不同的用途，又存在称为DTCM和ITCM的两种不同内存，这两种内存本质上是一致的，但是其背后默认的MPU策略不同，所以一般将DTCM用于存储关键的...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Fri Dec 15 2023 11:00:01 GMT+0800">2023-12-15 11:00:01</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2023/12/15/%E7%AE%80%E5%8D%95%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8BITCM/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2023/12/15/%E7%AE%80%E5%8D%95%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8BITCM/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">
-                        PT协程的一个小扩展
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
-                        在之前的文章中介绍了使用链表来更加优雅的使用PT协程。我最近发现了当初实现的一个错误，现在已经修复了。
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">
+                            PT协程的一个小扩展
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            在之前的文章中介绍了使用链表来更加优雅的使用PT协程。我最近发现了当初实现的一个错误，现在已经修复了。
 这里不是为了讨论之前的实现，而是介绍一个更有意思的东西。我在之前的实现基础上，实现了一个更加优雅的函数来利用协程，这应该是一种异步编程的技巧，或者...
-                    
-                </div>
+                        
+                    </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Aug 28 2023 15:00:07 GMT+0800">2023-08-28</span></span>
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Mon Aug 28 2023 14:40:26 GMT+0800">2023-08-28 14:40:26</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2023/05/30/FreeRTOS%E5%86%85%E6%A0%B8%E7%AA%A5%E6%8E%A2/">
-                        FreeRTOS内核窥探
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/05/30/FreeRTOS%E5%86%85%E6%A0%B8%E7%AA%A5%E6%8E%A2/">
+                            FreeRTOS内核窥探
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
                         
+                            
 在多任务环境下调试代码需要一定的代码调试经验，尤其是涉及到异步的任务流程时，单步执行可能无法跟踪到需要的执行流程。如果代码全速运行时虽然可以通过日志来梳理执行流程，但是涉及到FreeRTOS内核中的内容时，一般的日志显得比较鸡肋了。比如说我想检查某...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue May 30 2023 18:03:06 GMT+0800">2023-05-30</span></span>
-        
-        
-    </div>
-
-    <a href="/2023/05/30/FreeRTOS%E5%86%85%E6%A0%B8%E7%AA%A5%E6%8E%A2/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2023/05/07/%E5%88%9D%E5%AD%A6%E5%B0%84%E9%A2%91%E4%BF%A1%E5%8F%B7/">
-                        初学射频信号
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
                         
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Sat Jan 06 2024 13:56:43 GMT+0800">2024-01-06 13:56:43</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2023/05/30/FreeRTOS%E5%86%85%E6%A0%B8%E7%AA%A5%E6%8E%A2/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/05/07/%E5%88%9D%E5%AD%A6%E5%B0%84%E9%A2%91%E4%BF%A1%E5%8F%B7/">
+                            初学射频信号
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            
 从事嵌入式软件开发4年有余，我自认为还是有相当多的知识和技能存在欠缺，所以近年来一直保持良好的学习态度，持续充实自身的技能。从之前的文章内容能够看出，我主要围绕嵌入式软件开发的多个方面记录自己的学习心得。但实际上不仅限于此，在过去的一年中有很多机会...
-                    
-                </div>
+                        
+                    </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun May 07 2023 12:01:04 GMT+0800">2023-05-07</span></span>
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Sun May 07 2023 13:05:19 GMT+0800">2023-05-07 13:05:19</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2023/05/07/%E5%88%9D%E5%AD%A6%E5%B0%84%E9%A2%91%E4%BF%A1%E5%8F%B7/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2023/05/07/%E5%88%9D%E5%AD%A6%E5%B0%84%E9%A2%91%E4%BF%A1%E5%8F%B7/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2023/04/11/%E4%B8%80%E4%B8%AA%E5%9B%B0%E6%89%B0%E6%88%91%E5%BE%88%E4%B9%85%E7%9A%84%E9%97%AE%E9%A2%98/">
-                        一个困扰我很久的问题
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
-                        大约在一年半前，我写了一篇文章介绍如何统计FreeRTOS系统中任务的实时CPU占用率的方法，其中最关键的是使用DWT计数器。我一直认为这个计数器在任意条件下都是能够正确运行的，直到我把它运用到Cortex-M7内核中。
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/04/11/%E4%B8%80%E4%B8%AA%E5%9B%B0%E6%89%B0%E6%88%91%E5%BE%88%E4%B9%85%E7%9A%84%E9%97%AE%E9%A2%98/">
+                            一个困扰我很久的问题
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            大约在一年半前，我写了一篇文章介绍如何统计FreeRTOS系统中任务的实时CPU占用率的方法，其中最关键的是使用DWT计数器。我一直认为这个计数器在任意条件下都是能够正确运行的，直到我把它运用到Cortex-M7内核中。
 正常情况下Cortex-M7...
-                    
-                </div>
+                        
+                    </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Apr 11 2023 20:58:44 GMT+0800">2023-04-11</span></span>
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Wed Aug 30 2023 22:25:48 GMT+0800">2023-08-30 22:25:48</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2023/04/11/%E4%B8%80%E4%B8%AA%E5%9B%B0%E6%89%B0%E6%88%91%E5%BE%88%E4%B9%85%E7%9A%84%E9%97%AE%E9%A2%98/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2023/04/11/%E4%B8%80%E4%B8%AA%E5%9B%B0%E6%89%B0%E6%88%91%E5%BE%88%E4%B9%85%E7%9A%84%E9%97%AE%E9%A2%98/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
-            <li class="home-article-item">
+            <li class="home-post-item">
 
                 
 
-                <h3 class="home-article-title">
-                    <a href="/2023/04/07/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">
-                        更优雅的使用Protothreads协程框架
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
+                <div class="home-post-item-bottom border-box">
                     
-                        PT协程框架PT(Protothreads)是一个轻量级的多任务框架，区别于一般基于栈的RTOS，它实现多任务的基本原理是通过语句间的任意跳转来实现任务切换，所以实现多任务的开销比较小。
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/04/07/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">
+                            更优雅的使用Protothreads协程框架
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            PT协程框架PT(Protothreads)是一个轻量级的多任务框架，区别于一般基于栈的RTOS，它实现多任务的基本原理是通过语句间的任意跳转来实现任务切换，所以实现多任务的开销比较小。
 我们看一段示例代码来了解其用法。
 12345678910111...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Apr 07 2023 16:07:35 GMT+0800">2023-04-07</span></span>
-        
-        
-    </div>
-
-    <a href="/2023/04/07/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/12/09/%E5%8D%95%E7%89%87%E6%9C%BA%E6%80%BB%E7%BA%BF%E9%80%89%E6%8B%A9%E7%84%A6%E8%99%91/">
-                        单片机总线选择焦虑
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
                         
-当你有多个选择，但是每个选择都不完美时，就会出现选择焦虑！
+                    </div>
 
-
-最近在优化单片机上USB协议栈内的代码，我发现了一个我之前没有被注意到的地方，那就是写入到USB端点上的数据是由DMA自动完成的，涉及到DMA的内存区域都需要特别对待，而我之前就是将它...
                     
-                </div>
 
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Dec 09 2022 18:12:32 GMT+0800">2022-12-09</span></span>
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fas fa-history"></i>&nbsp;<span class="home-post-history" data-updated="Wed Aug 30 2023 22:10:28 GMT+0800">2023-08-30 22:10:28</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
         
         
     </div>
 
-    <a href="/2022/12/09/%E5%8D%95%E7%89%87%E6%9C%BA%E6%80%BB%E7%BA%BF%E9%80%89%E6%8B%A9%E7%84%A6%E8%99%91/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    
+        <a class="home-read-more" href="/2023/04/07/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
 </div>
 
+                </div>
             </li>
         
     </ul>
-
-    <div class="home-paginator">
-        <div class="paginator">
     
+    <div class="paginator border-box flex-center">
+        <div class="btn-wrap">
+            <a class="jump-btn"
+               href="/"
+            ><i class="fa-solid fa-chevron-left"></i></a>
+        </div>
 
-    
-        <a class="next btn"
-           href="/page/2/"
-        >下一页</a>
-    
-</div>
 
+        <div class="page-number-box border-box flex-center">
+            <input class="page-number-input border-box base-color-size"
+                   type="number"
+                   value="1"
+                   min="1"
+                   max="3"
+            ><span class="delimiter base-color-size">/</span><span class="base-color-size">3</span>
+        </div>
+
+
+        <div class="btn-wrap allowed">
+            <a class="jump-btn"
+               href="/page/2/"
+            ><i class="fa-solid fa-chevron-right"></i></a>
+        </div>
     </div>
+
+
+
+
 </div>
 
 
@@ -575,40 +812,52 @@ mjx-container[display="true"] + br {
 
         </div>
 
-        <div class="page-main-content-bottom">
-            <footer class="footer">
-    <div class="info-container">
-        <div class="copyright-info info-item">
-            &copy;
+        <div class="page-main-content-bottom border-box">
             
-              <span>2020</span>
-              -
-            
-            2024&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">耀眼的大神</a>
-        </div>
+<footer class="footer border-box">
+    <div class="border-box website-info-box default">
         
-            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-            <div class="website-count info-item">
+            <div class="copyright-info info-item default">
+                &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2024
                 
+                    &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
                 
             </div>
+
+            <div class="theme-info info-item default">
+                由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+            </div>
+
+            
+
+            
         
-        <div class="theme-info info-item">
-            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+
+        <div class="count-item info-item default">
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
         </div>
-        
-        
     </div>
 </footer>
 
         </div>
     </div>
 
+    <!-- post tools -->
     
 
-    <div class="right-bottom-side-tools">
-        <div class="side-tools-container">
-    <ul class="side-tools-list">
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box side-tools-show-handle">
+    <ul class="side-tools-list side-tools-show-handle border-box">
         <li class="tools-item tool-font-adjust-plus flex-center">
             <i class="fas fa-search-plus"></i>
         </li>
@@ -617,21 +866,11 @@ mjx-container[display="true"] + br {
             <i class="fas fa-search-minus"></i>
         </li>
 
-        <li class="tools-item tool-expand-width flex-center">
-            <i class="fas fa-arrows-alt-h"></i>
-        </li>
-
-        <li class="tools-item tool-dark-light-toggle flex-center">
+        <li class="tools-item tool-toggle-theme-mode flex-center">
             <i class="fas fa-moon"></i>
         </li>
 
         <!-- rss -->
-        
-
-        
-            <li class="tools-item tool-scroll-to-top flex-center">
-                <i class="fas fa-arrow-up"></i>
-            </li>
         
 
         <li class="tools-item tool-scroll-to-bottom flex-center">
@@ -639,23 +878,31 @@ mjx-container[display="true"] + br {
         </li>
     </ul>
 
-    <ul class="exposed-tools-list">
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
         <li class="tools-item tool-toggle-show flex-center">
             <i class="fas fa-cog fa-spin"></i>
         </li>
-        
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
     </ul>
 </div>
 
     </div>
 
-    
-
-    <div class="image-viewer-container">
-    <img src="">
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
 </div>
 
 
+    <!-- local search -->
     
         <div class="search-pop-overlay">
     <div class="popup search-popup">
@@ -673,7 +920,7 @@ mjx-container[display="true"] + br {
                        class="search-input"
                 >
             </div>
-            <span class="popup-btn-close">
+            <span class="close-popup-btn">
                 <i class="fas fa-times"></i>
             </span>
         </div>
@@ -687,26 +934,41 @@ mjx-container[display="true"] + br {
 
     
 
+    <!-- tablet toc -->
+    
 </main>
 
 
 
 
-<script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/main.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/header-shrink.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/back2top.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/dark-light-toggle.js"></script>
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/local-search.min.js"></script>
 
 
-    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/local-search.js"></script>
+<!-- lazyload -->
 
 
+<div class="">
+    
 
-    <script src="//cdn.jsdelivr.net/npm/hexo-theme-keep@3.4.5/source/js/code-copy.js"></script>
+    <!-- category-page -->
+    
 
+    <!-- links-page -->
+    
 
-
-
-<div class="post-scripts">
+    <!-- photos-page -->
     
 </div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
 
 
 
