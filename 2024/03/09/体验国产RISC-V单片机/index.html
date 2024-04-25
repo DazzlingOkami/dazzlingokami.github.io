@@ -178,7 +178,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sat Mar 09 2024 16:21:36 GMT+0800">2024-03-09 16:21:36</span>
+                <span class="datetime" data-updated="Sat Mar 09 2024 16:55:18 GMT+0800">2024-03-09 16:55:18</span>
             </span>
         
 
@@ -221,7 +221,7 @@
  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vPortEnterCritical</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    portDISABLE_INTERRUPTS();</span><br><span class="line">    uxCriticalNesting++;</span><br><span class="line">    <span class="keyword">if</span>( uxCriticalNesting == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        configASSERT( ( (PFIC-&gt;GISR) &amp; <span class="number">0x1ff</span> ) == <span class="number">0</span> );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p> 通过GISR寄存器实现中断上下文的识别和检测。</p>
 </li>
-<li><p>低功耗模式<br>无论是FreeRTOS官方代码还是芯片产家的port层代码中都缺少低功耗支持相关的内容，所以这部分需要自己实现，因为芯片是支持低功耗模式的。主要是需要充分理解systick运行机制以及芯片的低功耗进入及唤醒机制并配合操作系统完成低功耗运算的实现。<br>使用WFI指令可以让处理器进入低功耗模式，当发生中断时可自动唤醒芯片，但是在FreeRTOS系统中配合systick实现的低功耗接口vPortSuppressTicksAndSleep，在WFI指令前需要关闭中断，所以导致系统无法正常唤醒。这里需要特殊处理一下，通过SCTLR寄存器将WFI指令切换为event模式，即通过事件唤醒系统。再将SEVONPEND标志置为，这样即使关闭全局中断，当系统的任意中断发生时仍然能够立即唤醒芯片。<br>在具体实现vPortSuppressTicksAndSleep上，需要注意systick的计数方向，FreeRTOS已经将其改为向上计数，所以这里同一般STM32单片机的计数方向是相反的。先根据系统需要休眠的时间估算systick的计数值，重设systick的CMP寄存器，通过WFI让芯片休眠，芯片唤醒后检查是systick唤醒还是其它中断唤醒，如果是其它中断唤醒则需要根据systick的计数值计算刚刚休眠的时长。将systick的CMP恢复到休眠前的状态，通知RTOS内核刚刚休眠的时长，这样即完成了低功耗port的实现，在具体的实现上还需要注意systick在不同时间段的累计补偿和停机补偿。<br>使用低功耗模式会不可避免的使得RTOS时间同实际时间发生一定的偏移，但这个偏移在长时间的累计才会比较明显，一般影响不大。但是如果将RTOS的内核时间作为日历时间使用则会导致一定的误差，这是开启低功耗模式时需要注意的问题。<br>在我的开发板上测试，在运行相同软件应用的情况下，未开启低功耗模式运行时的电源为5V/29mA，开启低功耗模式后的电源为5V/19mA，考虑到开发板上存在一些固定功率开销，低功耗模式带来的优势还是非常明显的。</p>
+<li><p>低功耗模式<br>无论是FreeRTOS官方代码还是芯片产家的port层代码中都缺少低功耗支持相关的内容，所以这部分需要自己实现，因为芯片是支持低功耗模式的。主要是需要充分理解systick运行机制以及芯片的低功耗进入及唤醒机制并配合操作系统完成低功耗运算的实现。<br>使用WFI指令可以让处理器进入低功耗模式，当发生中断时可自动唤醒芯片，但是在FreeRTOS系统中配合systick实现的低功耗接口vPortSuppressTicksAndSleep，在WFI指令前需要关闭中断，所以导致系统无法正常唤醒。这里需要特殊处理一下，通过SCTLR寄存器将WFI指令切换为event模式，即通过事件唤醒系统。再将SEVONPEND标志置位，这样即使关闭全局中断，当系统的任意中断发生时仍然能够立即唤醒芯片。<br>在具体实现vPortSuppressTicksAndSleep上，需要注意systick的计数方向，FreeRTOS已经将其改为向上计数，所以这里同一般STM32单片机的计数方向是相反的。先根据系统需要休眠的时间估算systick的计数值，重设systick的CMP寄存器，通过WFI让芯片休眠，芯片唤醒后检查是systick唤醒还是其它中断唤醒，如果是其它中断唤醒则需要根据systick的计数值计算刚刚休眠的时长。将systick的CMP恢复到休眠前的状态，通知RTOS内核刚刚休眠的时长，这样即完成了低功耗port的实现，在具体的实现上还需要注意systick在不同时间段的累计补偿和停机补偿。<br>使用低功耗模式会不可避免的使得RTOS时间同实际时间发生一定的偏移，但这个偏移在长时间的累计才会比较明显，一般影响不大。但是如果将RTOS的内核时间作为日历时间使用则会导致一定的误差，这是开启低功耗模式时需要注意的问题。<br>在我的开发板上测试，在运行相同软件应用的情况下，未开启低功耗模式运行时的电源为5V/29mA，开启低功耗模式后的电源为5V/19mA，考虑到开发板上存在一些固定功率开销，低功耗模式带来的优势还是非常明显的。</p>
 </li>
 </ol>
 <p><em>注：开启低功耗模式运行后，网卡驱动的发送部分硬件DMA存在一定的异常问题还未解决。</em></p>
@@ -235,7 +235,7 @@
 <h2 id="中断控制器"><a href="#中断控制器" class="headerlink" title="中断控制器"></a>中断控制器</h2><p>这是芯片相关的内容，并不是RISC-V通用的中断控制器。芯片可支持8级中断优先级、4组优先级分组。该芯片的特色是支持硬件压栈，即硬件上有独立的内存空间用于中断发生时通过硬件自动保持caller saved寄存器，这意味其相比于一般的单片机中断，它的响应过程可以减少许多额外的指令开销。硬件压栈最高支持3级嵌套，可以满足中断高实时性的要求。</p>
 <p>此外，芯片还支持4路免表中断，即不通过中断向量表，将中断函数入口地址直接绑定到指定的中断上，这将进一步提高中断的响应速度。</p>
 <p>需要注意的是，区别于ARM单片机中断有独立的栈，该芯片发生中断时并不会自动切换栈空间，这意味着中断栈空间将是线程栈空间的延续。在调试网卡中断时我没有意识到这一点，导致中断发生时将IDLE线程的栈空间溢出。如果不能手动将栈切换到独立空间，那么需要控制中断函数的栈空间消耗。</p>
-<h2 id="其它内容"><a href="#其它内容" class="headerlink" title="其它内容"></a>其它内容</h2><p>芯片官方开发的HAL库在格式上间接STM32早期的标准库，部分API名称都一致，这也是方便入手该芯片的优势。</p>
+<h2 id="其它内容"><a href="#其它内容" class="headerlink" title="其它内容"></a>其它内容</h2><p>芯片官方开发的HAL库在代码风格上接近STM32早期的标准库，甚至部分API名称都一致，这也是方便入手该芯片的优势。</p>
 <p>在以上开发测试过程中编译器一直使用-Os优化，代码运行过程中没有出现由于编译优化导致的问题。</p>
 <p>芯片的最高主频为144MHz，代码模板采用默认的96MHz。96MHz主频下，基于FreeRTOS系统运行Coremark基准测试，跑分可达250分(满频率运行应当为370分)，性能同ARM的CM4内核水平相当。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">2K performance run parameters for coremark.</span><br><span class="line">CoreMark Size    : 666</span><br><span class="line">Total ticks      : 15839</span><br><span class="line">Total time (secs): 15.839000</span><br><span class="line">Iterations&#x2F;Sec   : 252.541196</span><br><span class="line">Iterations       : 4000</span><br><span class="line">Compiler version : GCC8.2.0</span><br><span class="line">Compiler flags   : -Ofast</span><br><span class="line">Memory location  : FreeRTOS-heap4</span><br><span class="line">seedcrc          : 0xe9f5</span><br><span class="line">[0]crclist       : 0xe714</span><br><span class="line">[0]crcmatrix     : 0x1fd7</span><br><span class="line">[0]crcstate      : 0x8e3a</span><br><span class="line">[0]crcfinal      : 0x65c5</span><br><span class="line">Correct operation validated. See README.md for run and reporting rules.</span><br><span class="line">CoreMark 1.0 : 252.541196 &#x2F; GCC8.2.0 -Ofast &#x2F; FreeRTOS-heap4</span><br></pre></td></tr></table></figure>
@@ -311,6 +311,22 @@
 
                 
                     <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2024/04/25/%E5%A6%99%E4%B8%8D%E5%8F%AF%E8%A8%80%E7%9A%84%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E6%9C%BA%E5%88%B6/"
+                                   title="妙不可言的异常捕获机制"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">妙不可言的异常捕获机制</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
                         
                         
                             <div class="next-post">

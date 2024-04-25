@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            妙不可言的异常捕获机制 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.jpg","favicon":"images/blog.svg"},"menu":{"Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":false,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","version":"4.0.7"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container border-box">
+
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a class=""
+                           href="/"
+                        >首页</a>
+                    </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >归档</a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >关于</a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            <li class="drawer-menu-item flex-center">
+                <a class=""
+                   href="/"
+                >首页</a>
+            </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives"
+                    >归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        妙不可言的异常捕获机制
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.jpg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv3</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-04-25 13:58:14</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Thu Apr 25 2024 20:45:51 GMT+0800">2024-04-25 20:45:51</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <h2 id="什么是异常捕获"><a href="#什么是异常捕获" class="headerlink" title="什么是异常捕获"></a>什么是异常捕获</h2><p>异常捕获是程序员在程序中捕获异常的一种方式，异常捕获可以避免程序崩溃，让程序继续运行。当程序的运行环境收到异常信息后，会自动寻址处理该异常的catch块处理该异常，这个过程被称为异常捕获。</p>
+<p>大部分高级的编程语言都提供了异常捕获机制，如Java、C++、Python等。C语言不提供异常捕获机制，尤其是在嵌入式开发中，C语言的异常捕获机制非常弱，而且容易导致程序崩溃。所有一般MCU提供了错误检测机制，如：HardFault等中断，但是这些中断是直接导致程序崩溃的，而不是异常捕获机制。</p>
+<p>本文提供了一种方法，可以捕获C语言中的异常，并且可以自定义异常处理过程，可以到达同一般异常捕获机制相似的效果。</p>
+<h2 id="异常捕获的基本原理"><a href="#异常捕获的基本原理" class="headerlink" title="异常捕获的基本原理"></a>异常捕获的基本原理</h2><p>通过try语句标记捕获异常的代码，通过catch语句标记异常处理代码。所以在执行try语句时，需要保存程序上下文的信息，以便在catch语句中恢复执行。保存上下文的过程根据不同的处理器架构有所不同，但基本思路是保存处理器寄存器、堆栈指针、堆栈内容等。</p>
+<h2 id="如何保存上下文信息"><a href="#如何保存上下文信息" class="headerlink" title="如何保存上下文信息"></a>如何保存上下文信息</h2><p>这里通过特定的处理器来说明上下文信息是如何保存的，以Cortex-M7芯片为例，其它的芯片的实现方式类似。上下文信息包括：寄存器、栈指针、LR、PC、PSR。其中寄存器需要根据AAPCS规范来处理，即主要保存被调用者保存寄存器，包括R4-R11。调用者的寄存器在外层栈帧中已经处理过了，所以不需要保存。栈指针为SP寄存器。程序指针这里将使用LR指针，通过它可以快速返回到异常调用的出口位置。</p>
+<p>Show code:</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.global</span> try_save_context</span><br><span class="line"><span class="symbol">.type</span> try_save_context,%<span class="meta">function</span></span><br><span class="line"><span class="symbol">.thumb_func</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// typedef int try_ctx_t[10];</span></span><br><span class="line"><span class="comment">// int try_save_context(try_ctx_t ctx);</span></span><br><span class="line"><span class="symbol">try_save_context:</span></span><br><span class="line">    <span class="keyword">push</span> &#123;<span class="built_in">r0</span>, <span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r2</span>, <span class="built_in">r0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r0</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r1</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">bl</span> vTaskSetThreadLocalStoragePointer</span><br><span class="line">    <span class="keyword">pop</span> &#123;<span class="built_in">r0</span>, <span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">ip</span>, <span class="built_in">sp</span></span><br><span class="line">    stmia.w <span class="built_in">r0</span>!, &#123;<span class="built_in">r4</span>, <span class="built_in">r5</span>, <span class="built_in">r6</span>, <span class="built_in">r7</span>, <span class="built_in">r8</span>, <span class="built_in">r9</span>, <span class="built_in">sl</span>, <span class="built_in">fp</span>, <span class="built_in">ip</span>, <span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">bx</span> <span class="built_in">lr</span></span><br></pre></td></tr></table></figure>
+<p>这里实现了一个保存上下文函数的接口，用户传入一个try_ctx_t结构体指针，保存上下文。该指针将保存到FreeRTOS的线程本地存储中，方便后续恢复上下文。将处理器的r4、r5、r6、r7、r8、r9、sl、fp、ip、lr保存到try_ctx_t结构体中。最后函数返回0表示上下文保存完成。</p>
+<p>对于非RTOS的用户，这里的代码需要做响应的调整，可以使用一个独立的全局变量来存储ctx，这里就不再详细介绍了。后续的整个实现都是基于FreeRTOS来实现的。</p>
+<h2 id="如何在中断内恢复到用户线程的上下文"><a href="#如何在中断内恢复到用户线程的上下文" class="headerlink" title="如何在中断内恢复到用户线程的上下文"></a>如何在中断内恢复到用户线程的上下文</h2><p>这是整个异常捕获机制中最复杂的部分。当处理器进入中断后处于handle模式，而用户的线程处于user模式。两者没有在同一个上下运行空间内。如何恢复到用户线程的上下文呢？</p>
+<p>基本思路是从FreeRTOS的线程本地存储中获取用户上下文信息，然后将其中主要的寄存器恢复到处理器寄存器中。然后在用户线程中模拟一个中断栈来保证当前的handle中断能够正常退出，使得用户返回到线程模式后能够继续执行，且用户栈和中断栈都满足平衡的要求。</p>
+<p>Show code:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FAULT_THROW()                                                                           \</span></span><br><span class="line">    &#123;                                                                                           \</span><br><span class="line">        <span class="function">__asm <span class="title">volatile</span><span class="params">(                                                                         \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;dsb \n isb                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;push &#123;r0, r1, r2, r3, r12, lr&#125; \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;tst lr, #4                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;beq .end&quot;</span> END_LINE <span class="string">&quot;           \n&quot;</span> <span class="comment">/* Can&#x27;t try in Handle mode */</span>                  \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r0, #0                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r1, #0                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;bl pvTaskGetThreadLocalStoragePointer\n&quot;</span> <span class="comment">/* Get try context */</span>                     \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;cmp r0, #0                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;beq .end&quot;</span> END_LINE <span class="string">&quot;           \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r12, r0                    \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r0, #0                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r1, #0                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r2, #0                     \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;bl vTaskSetThreadLocalStoragePointer\n&quot;</span> <span class="comment">/* Set try context to NULL */</span>              \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r0, r12                    \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;ldr r1, [r0, 32]               \n&quot;</span> <span class="comment">/* get sp in context */</span>                         \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;ldr r2, [r0, 36]               \n&quot;</span> <span class="comment">/* get pc in context */</span>                         \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;sub r1, #32                    \n&quot;</span> <span class="comment">/* adjust sp for user stack frame */</span>            \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;str r2, [r1, 24]               \n&quot;</span> <span class="comment">/* save PC to the user stack frame */</span>           \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r2, #0x1000000             \n&quot;</span> <span class="comment">/* xPSR, bit24 is thumb state, it&#x27;s always 1 */</span> \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;str r2, [r1, 28]               \n&quot;</span> <span class="comment">/* save xPSR to the user stack frame */</span>         \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;mov r2, #0x40000000            \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;str r2, [r1,  0]               \n&quot;</span> <span class="comment">/* R0=0x40000000, it&#x27;s the throw value */</span>       \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;ldmia r0!, &#123;r4, r5,  r6,  r7,    &quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;            r8, r9, r10, r11&#125;  \n&quot;</span> <span class="comment">/* restory context */</span>                           \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;msr psp, r1                    \n&quot;</span> <span class="comment">/* restore the PSP */</span>                           \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;isb                            \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;pop &#123;r0, r1, r2, r3, r12, lr&#125;  \n&quot;</span> <span class="comment">/* MSP stack balance */</span>                         \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;orr lr, lr, #0x10              \n&quot;</span> <span class="comment">/* clear floating-point flag */</span>                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;isb                            \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;bx lr                          \n&quot;</span> <span class="comment">/* exit ISR and jump to user context */</span>         \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;.end&quot;</span> END_LINE <span class="string">&quot;:              \n&quot;</span>                                                 \</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="string">&quot;pop &#123;r0, r1, r2, r3, r12, lr&#125;  \n&quot;</span>)</span></span>;                                               \</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _STR2(x) #x</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _STR(x) _STR2(x)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> END_LINE _STR(__LINE__)</span></span><br></pre></td></tr></table></figure>
+<p>这里实现了一个宏定义，用于捕获异常，并跳转到用户上下文。</p>
+<ol>
+<li>首先判断跳转到该中断前的处理器模式，如果不是用户模式，则直接返回，因为这不能捕获异常。</li>
+<li>然后判断当前线程本地存储指针内容，这是用于保存上下文信息的指针，如果指针为NULL，则表示当前没有执行try_save_context，所以直接返回。</li>
+<li>如果指针不为NULL，则表示当前执行了try_save_context。同时清空线程本地存储指针，表示当前的异常已经被处理了。</li>
+<li>从上下文信息中取出sp指针，以次为基础构造一个中断栈，这是为了当前的中断能够正常返回而必要的。”sub r1, #32”</li>
+<li>在调整的栈中保存PC指针(即原上下文中的LR寄存器)，构造一个合法的PSR寄存器，PSR寄存器中不需要浮点标志位、栈对齐等信息，只需要处理器模式为thumb模式即可。</li>
+<li>从上下文信息中取出r4-r11，依次恢复到各种的寄存器中。</li>
+<li>通过msr指令将新的栈指针写入到psp中。</li>
+<li>通过lr寄存器退出当前的中，特别主要需要将lr寄存器的浮点上下文标志清除。</li>
+</ol>
+<p>当处理器执行bx lr时，处理器根据运行模式从psp中取出r0-r3的值恢复的处理器上，同时取出PC寄存器跳转到用户程序中，这样就完成了从中断上下文恢复到应用程序的上下文。这里涉及到了大量Cortex-M处理器的中断处理机制相关内容，这里就不展开了。</p>
+<h2 id="try语法糖"><a href="#try语法糖" class="headerlink" title="try语法糖"></a>try语法糖</h2><p>前面实现了用户线程的保护和恢复，已经就能够实现异常捕获了，类似这样的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test_func</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">try_ctx_t</span> ctx;</span><br><span class="line">    <span class="keyword">if</span>(try_save_context(ctx) == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;test_func\n&quot;</span>);</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line"></span><br><span class="line">        illegal_function_execution(); <span class="comment">// Trigger exception</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;never run here\n&quot;</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;catch test_func exception\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test_func2</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    _try&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;test_func\n&quot;</span>);</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line"></span><br><span class="line">        illegal_function_execution(); <span class="comment">// Trigger exception</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;never run here\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    _catch&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;catch test_func exception\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将test_func函数包装为test_func2函数，需要实现两个语法糖：_try、_catch。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">try_save_context</span><span class="params">(<span class="keyword">try_ctx_t</span> ctx)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">try_clear_context</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _try                                             \</span></span><br><span class="line">    <span class="function"><span class="keyword">try_ctx_t</span> <span class="title">CONNECT</span><span class="params">(__ctx, __LINE__)</span></span>;                  \</span><br><span class="line">    <span class="keyword">if</span> (try_save_context(CONNECT(__ctx, __LINE__)) == <span class="number">0</span>) \</span><br><span class="line">    &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _catch           \</span></span><br><span class="line">    try_clear_context(); \</span><br><span class="line">    &#125;                    \</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONNECTION(text1, text2) text1##text2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONNECT(text1, text2) CONNECTION(text1, text2)</span></span><br></pre></td></tr></table></figure>
+<p>这里需要注意一个问题，当用户程序未出现异常时，需要主动调用<code>try_clear_context</code>函数，这样才能将当前try的上下文环境清除掉，否则try的边界不清晰，导致异常捕获机制出现混乱。</p>
+<p>这里还需要注意的是该语法糖不支持ex消息传递。我最开始设计的时候是想要取得该消息的，但是后来在设计该语法结构时发现这需要使用finial块，但是finial块的意义并不大，且会导致该语法糖变得复杂，所以该语法糖不支持ex消息传递。此外还需要特别注意的是try语句不能独立出现，它必须和catch语句一起出现。</p>
+<p>在使用该语法糖时，还需要注意的一点时，在try语句块中不能直接出现return语句。return语句会破坏try的边界，导致异常捕获机制的混乱。但是在catch语句中可以使用return。</p>
+<p>从用户空间抛出一个异常也是一个有意思的设计。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.global</span> try_clear_context</span><br><span class="line"><span class="symbol">.type</span> try_clear_context,%<span class="meta">function</span></span><br><span class="line"><span class="symbol">.thumb_func</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void try_clear_context(void)</span></span><br><span class="line"><span class="symbol">try_clear_context:</span></span><br><span class="line">    <span class="keyword">push</span> &#123;<span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r0</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r1</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r2</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">bl</span> vTaskSetThreadLocalStoragePointer</span><br><span class="line">    <span class="keyword">pop</span> &#123;<span class="built_in">pc</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="symbol">.global</span> _throw</span><br><span class="line"><span class="symbol">.type</span> _throw,%<span class="meta">function</span></span><br><span class="line"><span class="symbol">.thumb_func</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void _throw(int ex)</span></span><br><span class="line"><span class="symbol">_throw:</span></span><br><span class="line">    <span class="keyword">push</span> &#123;<span class="built_in">r0</span>, <span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r0</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r1</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">bl</span> pvTaskGetThreadLocalStoragePointer</span><br><span class="line">    <span class="keyword">cmp</span> <span class="built_in">r0</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">beq</span> .end_throw</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r12</span>, <span class="built_in">r0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r0</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r1</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r2</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">bl</span> vTaskSetThreadLocalStoragePointer</span><br><span class="line">    <span class="keyword">pop</span> &#123;<span class="built_in">r0</span>, <span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">r1</span>, <span class="built_in">r12</span></span><br><span class="line">    <span class="keyword">ldmia</span> <span class="built_in">r1</span>!, &#123;<span class="built_in">r4</span>, <span class="built_in">r5</span>, <span class="built_in">r6</span>, <span class="built_in">r7</span>, <span class="built_in">r8</span>, <span class="built_in">r9</span>, <span class="built_in">r10</span>, <span class="built_in">r11</span>, <span class="built_in">r12</span>, <span class="built_in">lr</span>&#125;</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">sp</span>, <span class="built_in">r12</span></span><br><span class="line">    <span class="keyword">cmp</span> <span class="built_in">r0</span>, <span class="number">#0</span></span><br><span class="line">    <span class="keyword">it</span> eq</span><br><span class="line">    <span class="keyword">moveq</span> <span class="built_in">r0</span>, <span class="number">#1</span></span><br><span class="line">    isb</span><br><span class="line">    <span class="keyword">bx</span> <span class="built_in">lr</span></span><br><span class="line"><span class="symbol">.end_throw:</span></span><br><span class="line">    <span class="keyword">pop</span> &#123;<span class="built_in">r0</span>, <span class="built_in">pc</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>在用户空间调用<code>_throw</code>可以主动抛出一个异常，ex为一个非零的异常编号。</p>
+<h2 id="try嵌套问题"><a href="#try嵌套问题" class="headerlink" title="try嵌套问题"></a>try嵌套问题</h2><p>我最开始是想要设计异常捕获嵌套的，因为这不是一个复杂的技术问题，一个链式结构就能够实现。我之所以选择放弃这部分实现的原因是，我担心这会带来一些问题。因为C语言本身不支持垃圾回收，滥用异常捕获机制可能会导致资源泄漏的风险，所以我放弃了异常捕获嵌套的功能。这里实现的异常捕获机制也许更适合一个故障分析的场景，或者用于对一些关键代码进行保护。</p>
+<h2 id="浮点寄存器相关问题"><a href="#浮点寄存器相关问题" class="headerlink" title="浮点寄存器相关问题"></a>浮点寄存器相关问题</h2><p>这里的设计没有考虑保存浮点上下文，所以在使用的时候需要特别注意用法环境。此外对于惰性压栈机制，我这里使用DSB、ISB指令进行处理，确保浮点数的中断压栈正常，但我对这一块的具体细节不是很清楚，所以需要进一步研究。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我最开始想要该功能的原因是我在执行一些第三方的代码时经常出现hard故障，我需要对这些不可信代码的执行做一个保护，于是写了一个简单的异常捕获机制，将异常捕获后返回一个错误码，然后根据错误码来判断是否需要重试。对于多任务环境，故障时直接将MCU挂起可能带来一些额外的风险，以为某些关键任务程序不能中断运行。这个异常捕获程序很好的解决了这方面的问题。</p>
+<h2 id="测试附件"><a href="#测试附件" class="headerlink" title="测试附件"></a>测试附件</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">devide_zero</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> r;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> b;</span><br><span class="line">    SCB-&gt;CCR |= SCB_CCR_DIV_0_TRP_Msk;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">    b = <span class="number">0</span>;</span><br><span class="line">    r = a / b;</span><br><span class="line">    <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main_test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    _try&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;devide zero test\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 对于一般的MCU，执行该函数会导致HardFault异常，使处理器停机。</span></span><br><span class="line">        <span class="comment">// 但这里的异常捕获机制会使得程序能够继续运行。</span></span><br><span class="line">        devide_zero();</span><br><span class="line">    &#125;</span><br><span class="line">    _catch&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;catch devide zero fault\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;mcu not stop\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HardFault_Handler</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    FAULT_THROW();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Run output:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">devide zero test</span><br><span class="line">catch devide zero fault</span><br><span class="line"></span><br><span class="line">Fault Analysis:</span><br><span class="line">Exception id: 3</span><br><span class="line">Systick: 25857</span><br><span class="line">Core register:</span><br><span class="line">R0:  00000001  R1:  00000000  R2:  e000ed00  R3:  00000000</span><br><span class="line">R4:  900ad014  R5:  24018140  R6:  900ad014  R7:  20003db0</span><br><span class="line">R8:  00000001  R9:  900ad014  R10: 00000000  R11: 24015180</span><br><span class="line">R12: fa000000  SP:  20003d48  LR:  9007f63f  PC:  9001905c</span><br><span class="line">PSR: 61000000  ERT: fffffffd  (PSP / User)</span><br><span class="line">Usage Fault:</span><br><span class="line">  Divide by zero</span><br><span class="line">Hard Fault:</span><br><span class="line">  Forced Hard Fault</span><br><span class="line">Stack memory:</span><br><span class="line">20003d48: 00000000 00000001 900ad008 9007a615</span><br><span class="line">20003d58: 900ad008 24018140 900ad014 20003db0</span><br><span class="line">20003d68: 00000001 900ad014 00000000 24015180</span><br><span class="line">20003d78: 20003d58 9007a609 00000001 900ad014</span><br><span class="line">20003d88: 24018140 00000000 00000000 a5a5a5a5</span><br><span class="line">20003d98: a5a5a5a5 9007a969 00000001 a5a5a5a5</span><br><span class="line">20003da8: a5a5a5a5 0da5a5a5 24018140 00000000</span><br><span class="line">20003db8: 00000000 00000000 00000000 00000000</span><br><span class="line">20003dc8: 00000000 00000000 00000000 00000000</span><br><span class="line">20003dd8: 00000000 00000000 00000000 00000000</span><br><span class="line">20003de8: 00000000 00000000 00000000 00000000</span><br><span class="line">20003df8: 00000000 00000000 00000000 00000000</span><br><span class="line">20003e08: 00000000 00000000 a5a5a5a5 a5a5a5a5</span><br><span class="line">20003e18: a5a5a5a5 a5a5a5a5 a5a5a5a5 a5a5a5a5</span><br><span class="line">20003e28: a5a5a5a5 a5a5a5a5 a5a5a5a5 900834f5</span><br><span class="line">20003e38: a5a5a5a5 a5a5a5a5 20003d4c 00006501</span><br><span class="line">Call stack backtrack:</span><br><span class="line">[9001905c] call from &lt;9007f63f&gt;, sp=20003d4c</span><br><span class="line">[9007f63f] call from &lt;9007a615&gt;, sp=20003d54</span><br><span class="line">[9007a615] call from &lt;9007a969&gt;, sp=20003d9c</span><br><span class="line">[9007a969] call from &lt;900834f5&gt;, sp=20003e34</span><br><span class="line">Show fault ASM code:</span><br><span class="line">9001904a: f043 0310   orr     r3, r3, #16</span><br><span class="line">9001904e: 6153        str     r3, [r2, #20]</span><br><span class="line">90019050: 2301        movs    r3, #1</span><br><span class="line">90019052: 9301        str     r3, [sp, #4]</span><br><span class="line">90019054: 2300        movs    r3, #0</span><br><span class="line">90019056: 9300        str     r3, [sp, #0]</span><br><span class="line">90019058: 9801        ldr     r0, [sp, #4]</span><br><span class="line">9001905a: 9b00        ldr     r3, [sp, #0]</span><br><span class="line"> &lt;break point&gt;</span><br><span class="line">9001905c: fbb0 f0f3   udiv    r0, r0, r3</span><br><span class="line">90019060: b002        add     sp, #8</span><br><span class="line">90019062: 4770        bx      lr</span><br><span class="line">90019064: ed00 e000   stc     0, cr14, [r0, #0]!</span><br><span class="line">90019068: b500        push    &#123;lr&#125;</span><br><span class="line">9001906a: b083        sub     sp, #12</span><br><span class="line">9001906c: 9200        str     r2, [sp, #0]</span><br><span class="line">9001906e: 460a        mov     r2, r1</span><br><span class="line">mcu not stop</span><br></pre></td></tr></table></figure>
+<p>经过测试，该功能工作正常，通过在线故障诊断，已经输出了错误时刻的详细信息，包括：寄存器、堆栈、调用栈、故障点附近的汇编代码。可以发现break point已经给出了故障具体的位置，配合寄存器，可以确认这是除零故障。</p>
+<p>如何在单片机内自诊断，生成详细的故障诊断报告也是一个非常有意思的功能，以后有时间再写一篇文章详细介绍。</p>
+
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                妙不可言的异常捕获机制
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/04/25/妙不可言的异常捕获机制/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-04-25 13:58</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans">
+                        <i class="fa-brands fa-creative-commons"></i>
+                        <i class="fa-brands fa-creative-commons-by"></i>
+                        <i class="fa-brands fa-creative-commons-nc"></i>
+                        <i class="fa-brands fa-creative-commons-sa"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/03/09/%E4%BD%93%E9%AA%8C%E5%9B%BD%E4%BA%A7RISC-V%E5%8D%95%E7%89%87%E6%9C%BA/"
+                                   title="体验国产RISC-V单片机"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">体验国产RISC-V单片机</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box default">
+        
+            <div class="copyright-info info-item default">
+                &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2024
+                
+                    &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+                
+            </div>
+
+            <div class="theme-info info-item default">
+                由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+            </div>
+
+            
+
+            
+        
+
+        <div class="count-item info-item default">
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.0.7/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- category-page -->
+    
+
+    <!-- links-page -->
+    
+
+    <!-- photos-page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
