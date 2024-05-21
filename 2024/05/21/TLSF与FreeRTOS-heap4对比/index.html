@@ -9,7 +9,7 @@
     
     <title>
         
-            一个极简的DAPLink |
+            TLSF与FreeRTOS-heap4对比 |
         
         耀眼的大神
     </title>
@@ -162,7 +162,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        一个极简的DAPLink
+                        TLSF与FreeRTOS-heap4对比
                     </div>
                 
 
@@ -190,12 +190,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2024-05-18 10:22:52</span>
+                <span class="datetime">2024-05-21 22:02:55</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sat May 18 2024 10:52:30 GMT+0800">2024-05-18 10:52:30</span>
+                <span class="datetime" data-updated="Tue May 21 2024 22:06:21 GMT+0800">2024-05-21 22:06:21</span>
             </span>
         
 
@@ -220,12 +220,103 @@
                 <div class="post-content keep-markdown-body">
                     
 
-                    <p>平时我的主要兴趣方向都是嵌入式软件开发方面的内容，但偶尔也做一些硬件相关的内容。我的硬件设计水平一般，仅仅是能够用嘉立创的EDA软件设计一些简单的PCB，焊接能力更是拿不出手😅。</p>
-<p>之前我偶然间看到一个别人设计的DAPLink，使用51单片机完成的。让我感兴趣的是，如果更换同类型的更小封装芯片，或许可以设计出一个非常小的DAPLink，所以就有了我的一个设计。</p>
-<p>我使用CH552E单片机加一个LDO以及其它几个电阻电容就完成了它的主要电路。一个极简的DAPLink，具有一个SWD接口的UART接口，只有大约USBtype-C母座的大小。如果你喜欢，它甚至可以作为你的板载调试器。</p>
-<p><img   src="sample.jpeg"  alt="焊接完成的样品"></p>
-<p>我已经让它工作了很长一段时间，看起来非常好用。在某个量产项目中，我把它当作固件批量下载工具，目前还没有遇到明显的问题。</p>
-<p>最后，它的原理图、PCB、源代码、编译好的固件在这里：<br>原理图PCB：<a class="link"   target="_blank" rel="noopener" href="https://oshwhub.com/dazzlingokami/padlink" >立创开源-DAPLink<i class="fas fa-external-link-alt"></i></a><br>固件、源码：<a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/CH552-DAPLink" >https://github.com/DazzlingOkami/CH552-DAPLink<i class="fas fa-external-link-alt"></i></a></p>
+                    <h3 id="TLSF内存分配器的一些测试和比较"><a href="#TLSF内存分配器的一些测试和比较" class="headerlink" title="TLSF内存分配器的一些测试和比较"></a>TLSF内存分配器的一些测试和比较</h3><p>FreeRTOS太出名了，就不介绍了。<a class="link"   target="_blank" rel="noopener" href="http://www.gii.upv.es/tlsf/index.html" >TLSF<i class="fas fa-external-link-alt"></i></a>是一个实时动态内存分配器，可用于嵌入式系统。具有高效的内存使用效率和可预测的响应时间，它具体的工作原理可以参考作者主页上的一些文档。</p>
+<p>我运行了一些简单的测试来比较二者的一些差异：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>TLSF</th>
+<th>heap4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8000次内存分配耗时</td>
+<td>33ms</td>
+<td>13ms</td>
+</tr>
+<tr>
+<td>3000次碎片化分配耗时</td>
+<td>12ms</td>
+<td>106ms</td>
+</tr>
+<tr>
+<td>单个内存额外开销</td>
+<td>8字节</td>
+<td>8字节</td>
+</tr>
+<tr>
+<td>内存固定开销</td>
+<td>3224字节</td>
+<td>16字节</td>
+</tr>
+<tr>
+<td>内存碎片合并</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>多块内存管理</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>realloc接口</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>对齐分配</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>堆内存溢出检测</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>double free检测</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>开源协议</td>
+<td>LGPL</td>
+<td>MIT</td>
+</tr>
+</tbody></table>
+<p><em>注：性能数据仅仅反映在我的测试平台和测试用例上的结果</em></p>
+<p>简单总结：</p>
+<ul>
+<li><p>相比于heap4，tlsf可管理多块内存，支持realloc接口，功能上更完善。但是其内存固定开销较大，可能不适合管理较小的内存。在分配速度上，在分配连续内存时，heap4的分配速度优于TLSF。但是在遇到较多内存碎片后，tlsf的优势就比较明显了，其可预测的分配时间更适合高实时性的场景。</p>
+</li>
+<li><p>heap4采用空闲链表管理空闲内存，当内存碎片较多后，内存分配性能将急剧下降。tlsf采用bitmap和空闲链表两级管理的方式，可实现O(1)的分配时间复杂度。</p>
+</li>
+<li><p>heap4通过portBYTE_ALIGNMENT设置全局字节对齐方式。tlsf通过BLOCK_ALIGN设置全局字节对齐方式。均不支持分配时指定对齐方式。</p>
+</li>
+<li><p>malloc(0)的行为差异。tlfs会按照一个最小快进行分配(8字节)。heap4返回空指针并在内部触发内存申请失败的hook。</p>
+</li>
+<li><p>二者都具备一些辅助内存调试的接口。作为经过多个版本迭代的发行版软件，它们都具有较高的可靠性。选择TLSF还是heap4，主要看你的需求。它们都具备良好的性能，并且都支持多线程。</p>
+</li>
+</ul>
+<p>我看到另外一个分支版本<a class="link"   target="_blank" rel="noopener" href="https://github.com/mattconte/tlsf/tree/master" >tlsf<i class="fas fa-external-link-alt"></i></a>，它支持对齐分配、更低的单块内存开销(4字节)，但是它没有实现线程安全的机制。</p>
+<p>内存分配器通常最为系统基础组件存在，因此选择一个好的内存分配器，可以带来更好的系统稳定性。我在之前总结了关于内存分配器对堆内存故障的一些内容，我就不单独发表了，一并贴在后面。</p>
+<h3 id="堆内存使用中常见的4种问题"><a href="#堆内存使用中常见的4种问题" class="headerlink" title="堆内存使用中常见的4种问题"></a>堆内存使用中常见的4种问题</h3><ul>
+<li><p>1.内存泄漏 (memory leak)<br>内存使用的基本流程是申请-&gt;使用-&gt;释放。如果内存不释放就会导致对该段内存的管理失去了控制，如果频繁发生这种问题，就会导致可用内存越来越小。通常来说在程序正常运行过程出现严重的内存泄漏时，通过观察可用内存的变化量可以判定是否出现了内存泄漏问题。如何进一步定位这个内存泄漏点呢？这个可以通过内存申请释放日志分析，如果内存泄漏频率较高能够非常容易就定位到问题所在。对于大块内存的泄漏一般也比较容易发现。如果出现较小内存的泄漏且频率不高的话需要长时间的测试才能发现问题。</p>
+</li>
+<li><p>2.重复释放(double free)<br>内存重复释放比较好理解，就是内存经历了申请-&gt;释放-&gt;再释放的过程。显然第二次释放这段内存会出现无法预料到的情况。该问题导致的具体现象也不确定。通常只能通过经验分析是否发生了该问题，出现该问题可能导致两个以上的线程出现异常行为。虽然不容易确认是否发生了double free，但是如果确认发生了double free，通常能够通过内存的申请释放日志找到问题点。但是如果某些情况可能会使问题变得比较棘手，即线程A申请内存指针p1，随机释放p1指针，线程B申请到同样的内存指针p1，线程A再次释放指针p1，即线程A释放了两次内存。如果使用log分析，能够看到这个地址的申请和释放都是成对的，很难定位问题点。对于前面这种情况，显然线程B会使用到一块不安全的内存，进一步导致UAF等问题。当出现这样的问题，设计一种malloc\free成对机制就能较快的定位问题，常见的作法是添加动态标记，这样其它线程就不能释放一个不属于它的指针了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">uint32_t</span> <span class="title">malloc_flag_generate</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">uint16_t</span> id = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> (id++ &lt;&lt; <span class="number">16</span>) | (rand() &amp; <span class="number">0xffff</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc_f</span><span class="params">(<span class="keyword">size_t</span> size, <span class="keyword">uint32_t</span> *flag)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!flag) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">uint32_t</span> *ptr = <span class="built_in">malloc</span>(size + <span class="keyword">sizeof</span>(<span class="keyword">uint32_t</span>));</span><br><span class="line">    *ptr = *flag = malloc_flag_generate();</span><br><span class="line">    <span class="keyword">return</span> ptr++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free_f</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">uint32_t</span> *flag)</span></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> *_ptr = ptr;</span><br><span class="line">    _ptr--;</span><br><span class="line">    assert(*flag == *_ptr);</span><br><span class="line">    <span class="built_in">free</span>(_ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>3.内存越界(memory overflow)<br>内存越界不同于前面两种内存释放操作不合理导致的问题，它主要是由于内存申请的长度小于实际想要使用的长度，或者是实际使用的内存长度超过了分配的内存长度。内存越界可能导致篡改其它应用数据。但在某些内存管理器下可能出现破坏堆内存链表的情况，进一步导致的问题就是使得分配器分配出异常的内存空间地址。对于第二种问题情况，具体出现的问题现象也不确定，只能通过经验判断。<br>检查内存溢出是内存分配器的一个基础安全能力，业内通用的做法是在内存区域的边界添加redzone，在释放内存时检查redzone进行分析，判断是否发生溢出。如何构造redzone也是一个复杂的问题，包括redzone填充的数据以及数据长度，随机的redzone内容和长度是一种安全的算法，但在具体的实施上通常比较麻烦，且在面对精心构造的shellcode时也会出现绕过的情况，应对该问题时一些内存调试手段有助于分析该问题，例如内存断点、陷阱等。</p>
+</li>
+<li><p>4.内存非法访问(UAF)<br>指针p指向一段合法申请的内存空间，当释放p指向的内存空间后，p指针未置NULL，所以理论上来说通过p指针任然能够访问该段内存下的数据。显然后续通过p指针访问数据都属于非法的访问。该问题配合堆内存管理器的一些特性能够导致系统出现严重的安全性问题。该问题通常不易发现，它如果没有造成明显的问题，很难定位问题点。<br>内存分配器加入一些检测机制能够规避某些场景下的use after free问题，释放内存时，对内存中填充关键字。在分配内存时再检测关键字有没有被污染，以此来判断UAF问题。但是这种检测机制作用有限，它不能检测到上面场景下发生的问题。</p>
+</li>
+</ul>
 
                 </div>
                 
@@ -234,11 +325,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                一个极简的DAPLink
+                TLSF与FreeRTOS-heap4对比
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2024/05/18/一个极简的DAPLink/
+                2024/05/21/TLSF与FreeRTOS-heap4对比/
             </div>
         </div>
 
@@ -254,7 +345,7 @@
                 <div class="type">
                     发布于
                 </div>
-                <div class="content">2024-05-18 10:22</div>
+                <div class="content">2024-05-21 22:02</div>
             </div>
 
 
@@ -298,31 +389,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2024/05/21/TLSF%E4%B8%8EFreeRTOS-heap4%E5%AF%B9%E6%AF%94/"
-                                   title="TLSF与FreeRTOS-heap4对比"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">TLSF与FreeRTOS-heap4对比</span>
-                                        <span class="post-nav-item">上一篇</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2024/04/25/%E5%A6%99%E4%B8%8D%E5%8F%AF%E8%A8%80%E7%9A%84%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E6%9C%BA%E5%88%B6/"
-                                   title="妙不可言的异常捕获机制"
+                                   href="/2024/05/18/%E4%B8%80%E4%B8%AA%E6%9E%81%E7%AE%80%E7%9A%84DAPLink/"
+                                   title="一个极简的DAPLink"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">妙不可言的异常捕获机制</span>
+                                        <span class="post-nav-title-item text-ellipsis">一个极简的DAPLink</span>
                                         <span class="post-nav-item">下一篇</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
