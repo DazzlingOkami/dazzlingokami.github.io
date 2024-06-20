@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            第一次向FreeRTOS内核提交代码 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.1.2"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        第一次向FreeRTOS内核提交代码
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv3</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-06-20 19:52:32</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Thu Jun 20 2024 19:53:08 GMT+0800">2024-06-20 19:53:08</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>前段时间我在测试<a class="link"   target="_blank" rel="noopener" href="https://www.wolfssl.com/" >wolfSSL<i class="fas fa-external-link-alt"></i></a>中RSA相关代码的时候，发现在进行加密、解密、key生成过程中存在一些性能问题。在分析问题的过程中，发现算法对堆内存的申请非常频繁。生成一对2048长度的公钥和私钥，会进行10万次以上的内存申请。我为了跟踪函数在执行过程中的内存具体使用情况，决定设计一套堆内存跟踪机制来评估函数的内存使用情况。</p>
+<p>在设计内存跟踪机制的过程中，我发现了一个FreeRTOS内核中的Bug，最终该Bug由我亲自修复，相关修复代码已经合并入内核代码主线。</p>
+<h2 id="设计一个内存跟踪机制"><a href="#设计一个内存跟踪机制" class="headerlink" title="设计一个内存跟踪机制"></a>设计一个内存跟踪机制</h2><p>原本想设计一个不依赖堆实现的的内存跟踪机制，但我发现各种堆内存的实现可能都存在一些差别，尤其是不太好分析内存释放时相关内存块的大小(C库的实现就是这样)。妥协后我决定基于目前的情况，配合FreeRTOS的heap实现来设计相关的内存跟踪机制。</p>
+<p>FreeRTOS预留了traceMALLOC(pv, size)和traceFREE(pv, size)两个跟踪宏，用于指示内存申请和释放。它会指示内存指针和内存的大小。</p>
+<p>基于这两个宏，我就能记录内存的分配次数、释放次数、内存的实时用量、内存的最大用量、内存泄露等。再通过一个简单的异或操作，可用非常方便的检测内存的申请和是否是否成对。</p>
+<p>整个跟踪机制的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// heapt.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _HEAPT_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _HEAPT_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> trace_enable;</span><br><span class="line">    <span class="keyword">uint32_t</span> malloc_count;</span><br><span class="line">    <span class="keyword">uint32_t</span> free_count;</span><br><span class="line">    <span class="keyword">uint32_t</span> malloc_used_count;</span><br><span class="line">    <span class="keyword">uint32_t</span> malloc_max_count;</span><br><span class="line">    <span class="keyword">uint32_t</span> memory_used;</span><br><span class="line">    <span class="keyword">uint32_t</span> memory_max_used;</span><br><span class="line">    <span class="keyword">uint32_t</span> ptr_xor;</span><br><span class="line">    <span class="keyword">uint32_t</span> malloc_faild;</span><br><span class="line">&#125; <span class="keyword">heapt_info_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_init</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_deinit</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">heapt_info_t</span> *<span class="title">heapt_get_info</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FreeRTOS hook</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_trace_malloc</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">uint32_t</span> size)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_trace_free</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">uint32_t</span> size)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;heapt.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">heapt_info_t</span> heapt_info;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_init</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;heapt_info, <span class="number">0</span>, <span class="keyword">sizeof</span>(heapt_info));</span><br><span class="line">    heapt_info.trace_enable = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_deinit</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;heapt_info, <span class="number">0</span>, <span class="keyword">sizeof</span>(heapt_info));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">heapt_info_t</span> *<span class="title">heapt_get_info</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;heapt_info;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_trace_malloc</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">uint32_t</span> size)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(heapt_info.trace_enable == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(ptr == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        heapt_info.malloc_faild++;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    heapt_info.malloc_count++;</span><br><span class="line">    heapt_info.malloc_used_count++;</span><br><span class="line">    heapt_info.memory_used += size;</span><br><span class="line">    <span class="keyword">if</span>(heapt_info.malloc_used_count &gt; heapt_info.malloc_max_count)&#123;</span><br><span class="line">        heapt_info.malloc_max_count = heapt_info.malloc_used_count;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(heapt_info.memory_used &gt; heapt_info.memory_max_used)&#123;</span><br><span class="line">        heapt_info.memory_max_used = heapt_info.memory_used;</span><br><span class="line">    &#125;</span><br><span class="line">    heapt_info.ptr_xor ^= (<span class="keyword">uint32_t</span>)ptr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">heapt_trace_free</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">uint32_t</span> size)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(heapt_info.trace_enable == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    heapt_info.free_count++;</span><br><span class="line">    heapt_info.malloc_used_count--;</span><br><span class="line">    heapt_info.memory_used -= size;</span><br><span class="line">    heapt_info.ptr_xor ^= (<span class="keyword">uint32_t</span>)ptr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">heapt</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * <span class="keyword">const</span> argv[])</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">2</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s PROG [ARGS]\r\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    heapt_init();</span><br><span class="line"></span><br><span class="line">    ret = run_cmd(argc - <span class="number">1</span>, &amp;argv[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">heapt_info_t</span> *info = heapt_get_info();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;max heap use: %lu\r\n&quot;</span>, info-&gt;memory_max_used);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;max alloc nm: %lu\r\n&quot;</span>, info-&gt;malloc_max_count);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;malloc count: %lu\r\n&quot;</span>, info-&gt;malloc_count);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot; free  count: %-8lu&quot;</span>  , info-&gt;free_count);</span><br><span class="line">    <span class="keyword">if</span>(info-&gt;malloc_count != info-&gt;free_count)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot; [Warning]\r\n&quot;</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;\r\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(info-&gt;memory_used != <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;used at exit: %-8lu [Warning]\r\n&quot;</span>, info-&gt;memory_used);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(info-&gt;ptr_xor)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;mem ptr xor : %08lx [Warning]\r\n&quot;</span>, info-&gt;ptr_xor);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(info-&gt;malloc_faild)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;malloc faild: %-8lu [Warning]\r\n&quot;</span>, info-&gt;malloc_faild);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    heapt_deinit();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基于该内存跟踪，我测试了一些常用的代码，发现它都工作良好，直到我测试RSA相关代码时。RSA一个解密操作就动辄100k+次的内存申请量，导致系统出现了一些意外的情况。</p>
+<p>系统日志显示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">max heap use: 17264</span><br><span class="line">max alloc nm: 16</span><br><span class="line">malloc count: 279544</span><br><span class="line"> free  count: 279544</span><br><span class="line">used at exit: 4294967288 [Warning]</span><br></pre></td></tr></table></figure>
+<p>日志显示内存分配和释放的内存字节数不相等，导致程序退出时内存记录的量不为0。起初我以为是内存有用法问题，但wolfSSL作为一款商业级的软件，应该不存在这样低级的错误。且mem ptr xor也没有报告内存泄露，内存申请和释放次数也是相等的。至此我不得不怀疑FreeRTOS提供的traceMALLOC(pv, size)和traceFREE(pv, size)存在问题。</p>
+<h2 id="发现FreeRTOS内核代码存在问题"><a href="#发现FreeRTOS内核代码存在问题" class="headerlink" title="发现FreeRTOS内核代码存在问题"></a>发现FreeRTOS内核代码存在问题</h2><p>FreeRTOS的heap4实现是基于空闲块链表实现的，将所有的可用内存块以链表的形式连接起来，当分配的内存小于内存块时，会将内存块进行分割，将其中一部分返回到用户，另一部分重新插入到空闲链表中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pvPortMalloc()</span></span><br><span class="line"><span class="comment">// ....</span></span><br><span class="line"><span class="keyword">if</span>( ( pxBlock-&gt;xBlockSize - xWantedSize ) &gt; heapMINIMUM_BLOCK_SIZE )</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/* This block is to be split into two.  Create a new</span></span><br><span class="line"><span class="comment">        * block following the number of bytes requested. The void</span></span><br><span class="line"><span class="comment">        * cast is used to prevent byte alignment warnings from the</span></span><br><span class="line"><span class="comment">        * compiler. */</span></span><br><span class="line">    pxNewBlockLink = ( <span class="keyword">void</span> * ) ( ( ( <span class="keyword">uint8_t</span> * ) pxBlock ) + xWantedSize );</span><br><span class="line">    configASSERT( ( ( ( <span class="keyword">size_t</span> ) pxNewBlockLink ) &amp; portBYTE_ALIGNMENT_MASK ) == <span class="number">0</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Calculate the sizes of two blocks split from the</span></span><br><span class="line"><span class="comment">        * single block. */</span></span><br><span class="line">    pxNewBlockLink-&gt;xBlockSize = pxBlock-&gt;xBlockSize - xWantedSize;</span><br><span class="line">    pxBlock-&gt;xBlockSize = xWantedSize;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Insert the new block into the list of free blocks. */</span></span><br><span class="line">    pxNewBlockLink-&gt;pxNextFreeBlock = pxPreviousBlock-&gt;pxNextFreeBlock;</span><br><span class="line">    pxPreviousBlock-&gt;pxNextFreeBlock = heapPROTECT_BLOCK_POINTER( pxNewBlockLink );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    mtCOVERAGE_TEST_MARKER();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">xFreeBytesRemaining -= pxBlock-&gt;xBlockSize;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( xFreeBytesRemaining &lt; xMinimumEverFreeBytesRemaining )</span><br><span class="line">&#123;</span><br><span class="line">    xMinimumEverFreeBytesRemaining = xFreeBytesRemaining;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    mtCOVERAGE_TEST_MARKER();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ....</span></span><br><span class="line"></span><br><span class="line">traceMALLOC( pvReturn, xWantedSize );</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p>传入到traceMALLOC(pv, size)的size参数是用户传入的内存大小，这里返回到用户的内存卡大小可能比用户预期想要的要大。因为内存块可拆分的条件是内存块拆分后剩余的大小必须大于16字节，如果不满足条件则该内存不拆分且不会进一步去寻找其它的内存块，这样返回到用户的内存块大小实际上要比用户预期的要大一些。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vPortFree()</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">vTaskSuspendAll();</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/* Add this block to the list of free blocks. */</span></span><br><span class="line">    xFreeBytesRemaining += pxLink-&gt;xBlockSize;</span><br><span class="line">    traceFREE( pv, pxLink-&gt;xBlockSize );</span><br><span class="line">    prvInsertBlockIntoFreeList( ( ( BlockLink_t * ) pxLink ) );</span><br><span class="line">    xNumberOfSuccessfulFrees++;</span><br><span class="line">&#125;</span><br><span class="line">( <span class="keyword">void</span> ) xTaskResumeAll();</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+<p>而传入到traceFREE(pv, size)的size正好是内存块的大小。这就导致了malloc和free是记录到的内存用量不一致。</p>
+<p>这真是一个有意思的发现。traceMALLOC机制由早在2013年的V7.5.3版本引入，在过去的这段时间内大家似乎并没有经常使用它，导致这个问题潜伏了10年之久。好在这仅仅是一个作为调试功能存在的bug，而且它不会影响FreeRTOS的主要功能。</p>
+<p>6月5日，我在<a class="link"   target="_blank" rel="noopener" href="https://github.com/FreeRTOS/FreeRTOS-Kernel" >FreeRTOS-Kernel<i class="fas fa-external-link-alt"></i></a>上提交了相关<a class="link"   target="_blank" rel="noopener" href="https://github.com/FreeRTOS/FreeRTOS-Kernel/issues/1078" >Issue<i class="fas fa-external-link-alt"></i></a>，内核开发小组很快确认该问题并建议我提交一个Pull Request来修复它。<br><em>注：存在该问题的最后版本应该为V11.1.0</em></p>
+<h2 id="修复内核代码"><a href="#修复内核代码" class="headerlink" title="修复内核代码"></a>修复内核代码</h2><p>这个问题看起来非常简单，只需要将实际分配的内存块大小传入到 trace_MALLOC()函数中即可。但实际操作起来却让我非常为难。</p>
+<ul>
+<li>当内存申请失败时，该size是0还是用户想要的内存大小xWantedSize？</li>
+<li>直接修改xWantedSize还是新建变量进行处理？</li>
+<li>heap1和heap3是否需要同步修改？</li>
+</ul>
+<p>我向内核提交的第一版代码是在内存块不拆分时修改xWantedSize，这样就能够使得trace_MALLOC获得正确的大小。但是官方在第一次审核我的代码时建议我建立一个新的变量用于表示内存块的大小而非使用xWantedSize，于是我修改了代码，这样看起来代码的可读性更高。由于不同处理器架构的heap实现有多个，我没法逐个去测试验证。PR代码只测试了heap4，但是其它的修改是一致的，且代码会经过GIT服务器上的自动化流程测试。确保代码在代码风格、可集成性、功能上都满足规范要求。</p>
+<p>从我提交<a class="link"   target="_blank" rel="noopener" href="https://github.com/FreeRTOS/FreeRTOS-Kernel/pull/1089" >PR - Fix traceMALLOC() allocated bytes<i class="fas fa-external-link-alt"></i></a>到将代码合并入主干仅花了两天时间，过程很顺利。由于我的github账号是中文昵称，这导致合并到主线的代码作者名称显示为中文昵称，而不是我的英文名。这在Git-Graph中看起来怪怪的，似乎我没有看到其它开发者使用中文昵称提交的代码。😅</p>
+<p>在我发现问题和解决问题的过程中，内核开发者都比较友好，也对我做的工作给予了肯定。这也是第一次尝试在大型开源项目中贡献代码，一段非常有意思的经历。</p>
+
+                </div>
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                第一次向FreeRTOS内核提交代码
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/06/20/第一次向FreeRTOS内核提交代码/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-06-20 19:52</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/05/21/TLSF%E4%B8%8EFreeRTOS-heap4%E5%AF%B9%E6%AF%94/"
+                                   title="TLSF与FreeRTOS-heap4对比"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">TLSF与FreeRTOS-heap4对比</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2024
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    <div class="count-info info-item">
+        
+
+        
+            <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+        
+
+        
+    </div>
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.2/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
