@@ -162,6 +162,107 @@
                 <div class="home-post-item-bottom border-box">
                     
                     <h3 class="home-post-title border-box">
+                        <a href="/2023/12/15/%E7%AE%80%E5%8D%95%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8BITCM/">
+                            简单尝试一下ITCM
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            ITCM简介在STM32高性能单片机中存在一种供内核专用的内存TCM-SRAM，称为紧耦合内存。为了区分不同的用途，又存在称为DTCM和ITCM的两种不同内存，这两种内存本质上是一致的，但是其背后默认的MPU策略不同，所以一般将DTCM用于存储关键的...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Fri Dec 15 2023 11:00:01 GMT+0800"
+                >2023-12-15 11:00:01</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2023/12/15/%E7%AE%80%E5%8D%95%E5%B0%9D%E8%AF%95%E4%B8%80%E4%B8%8BITCM/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">
+                            PT协程的一个小扩展
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            在之前的文章中介绍了使用链表来更加优雅的使用PT协程。我最近发现了当初实现的一个错误，现在已经修复了。
+这里不是为了讨论之前的实现，而是介绍一个更有意思的东西。我在之前的实现基础上，实现了一个更加优雅的函数来利用协程，这应该是一种异步编程的技巧，或者...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Mon Aug 28 2023 15:00:07 GMT+0800"
+                >2023-08-28 15:00:07</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
                         <a href="/2023/05/30/FreeRTOS%E5%86%85%E6%A0%B8%E7%AA%A5%E6%8E%A2/">
                             FreeRTOS内核窥探
                         </a>
@@ -565,106 +666,6 @@
                 </div>
             </li>
         
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2022/08/11/FreeRTOS%E4%B8%8A%E5%AE%9E%E7%8E%B0swap%E6%9C%BA%E5%88%B6/">
-                            FreeRTOS上实现swap机制
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            为什么需要引入SWAP机制在小容量SRAM的单片机上使用RTOS是一种很尴尬的事情，因为每个任务都需要分配独立的线程栈，栈空间少则512字节，复杂任务的栈空间则达到了几千字节的大小，这对于仅有8k字节SRAM的单片机来说显得压力太大了，两三个任务就导...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Thu Aug 11 2022 20:50:53 GMT+0800"
-                >2022-08-11 20:50:53</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2022/08/11/FreeRTOS%E4%B8%8A%E5%AE%9E%E7%8E%B0swap%E6%9C%BA%E5%88%B6/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2022/07/25/%E5%86%85%E5%AD%98%E9%99%B7%E9%98%B1%EF%BC%8C%E4%B8%80%E7%A7%8D%E5%86%85%E5%AD%98%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
-                            内存陷阱，一种内存调试方法
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            需求场景在一个多任务系统中，当一个全局可访问的数据出现了异常，如何排查问题呢？由于在多任务环境中，各个任务并行运行，一般的单步跟踪调试很难定位问题。逐个屏蔽代码又可能会导致问题无法复现。使用内存断点是比较好的方法，但是大多数集成开发环境对该功能的支持...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Mon Jul 25 2022 18:02:09 GMT+0800"
-                >2022-07-25 18:02:09</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2022/07/25/%E5%86%85%E5%AD%98%E9%99%B7%E9%98%B1%EF%BC%8C%E4%B8%80%E7%A7%8D%E5%86%85%E5%AD%98%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
     </ul>
     
     <div class="paginator border-box flex-center">
@@ -680,8 +681,8 @@
                    type="number"
                    value="2"
                    min="1"
-                   max="3"
-            ><span class="delimiter base-color-size">/</span><span class="base-color-size">3</span>
+                   max="4"
+            ><span class="delimiter base-color-size">/</span><span class="base-color-size">4</span>
         </div>
 
 

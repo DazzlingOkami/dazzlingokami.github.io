@@ -9,7 +9,7 @@
     
     <title>
         
-            一个极简的DAPLink |
+            我们需要非常谨慎的使用Cache |
         
         耀眼的大神
     </title>
@@ -162,7 +162,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        一个极简的DAPLink
+                        我们需要非常谨慎的使用Cache
                     </div>
                 
 
@@ -190,12 +190,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2024-05-18 10:22:52</span>
+                <span class="datetime">2024-07-11 21:36:38</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Thu Jun 20 2024 20:02:11 GMT+0800">2024-06-20 20:02:11</span>
+                <span class="datetime" data-updated="Thu Jul 11 2024 22:11:51 GMT+0800">2024-07-11 22:11:51</span>
             </span>
         
 
@@ -220,12 +220,36 @@
                 <div class="post-content keep-markdown-body">
                     
 
-                    <p>平时我的主要兴趣方向都是嵌入式软件开发方面的内容，但偶尔也做一些硬件相关的内容。我的硬件设计水平一般，仅仅是能够用嘉立创的EDA软件设计一些简单的PCB，焊接能力更是拿不出手😅。</p>
-<p>之前我偶然间看到一个别人设计的DAPLink，使用51单片机完成的。让我感兴趣的是，如果更换同类型的更小封装芯片，或许可以设计出一个非常小的DAPLink，所以就有了我的一个设计。</p>
-<p>我使用CH552E单片机加一个LDO以及其它几个电阻电容就完成了它的主要电路。一个极简的DAPLink，具有一个SWD接口和一个UART接口，只有大约USBtype-C母座的大小。如果你喜欢，它甚至可以作为你的板载调试器。</p>
-<p><img   src="sample.jpeg"  alt="焊接完成的样品"></p>
-<p>我已经让它工作了很长一段时间，看起来非常好用。在某个量产项目中，我把它当作固件批量下载工具，目前还没有遇到明显的问题。</p>
-<p>最后，它的原理图、PCB、源代码、编译好的固件在这里：<br>原理图PCB：<a class="link"   target="_blank" rel="noopener" href="https://oshwhub.com/dazzlingokami/padlink" >立创开源-DAPLink<i class="fas fa-external-link-alt"></i></a><br>固件、源码：<a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/CH552-DAPLink" >https://github.com/DazzlingOkami/CH552-DAPLink<i class="fas fa-external-link-alt"></i></a></p>
+                    <p>最近在学习的过程中遇到一个软件上的问题，该问题非常折磨人。</p>
+<p>在一个嵌入式软件系统中使用WiFi网络并通过FTP服务读取设备内存储在SD上的文件，就是这样一个看起来非常简单的逻辑，最近在测试过程中出现了一点问题。</p>
+<p>发现小概率情况下文件传输会导致系统崩溃，崩溃的问题点也是非常奇怪的，会爆发出很多稀奇古怪的问题(包括但不限于malloc返回null、内存申请卡死、网络协议栈数据异常等等)，且该故障似乎很难在调试模式下复现。</p>
+<p>该故障仅在上述条件下会触发，其它情况下没有复现：</p>
+<ul>
+<li>通过FTP读取内存中的文件(ramfs)不会导致系统崩溃</li>
+<li>通过USB连接网络，仍然通FTP传输SD卡上的文件，系统不会崩溃</li>
+<li>在系统内通过文件拷贝方法在SD和nand直接传输文件，系统不会崩溃</li>
+<li>关闭系统D-Cache，使用wifi通过FTP读取SD卡的文件，系统不会崩溃</li>
+</ul>
+<p>分析以上情况，好像很难确定问题点。但该故障大概率是与Cache相关的，因为这可以解释为什么在调试模式下问题不那么容易复现。</p>
+<p>整个系统相当复杂，底层磁盘驱动、文件系统、文件系统抽象层、网络协议栈、FTP服务、WIFI驱动、操作系统等等。我花费了相当多的额时间去梳理WIFI驱动代码，这是我最不熟悉的一部分，但是WIIF驱动看来没有明显的问题。</p>
+<p>其中多个与硬件相关的组件均会使用到DMA和Dcache的操作，好像没有办法把问题聚焦到一个点上。</p>
+<p>系统出现故障时的一种常见现象是内存分配器出现故障，包括无法分配内存(但显示存在剩余内存)、无法释放内存等。</p>
+<p>我设计了一种检查机制，即在内存分配和释放的时候检查一下内存分配器的链表释放正常。该方法确实有用，它能够迅速的捕获系统最近出现故障的时刻，这使得复现和分析问题非常有帮助。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vTaskSuspendAll();</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">int</span> tot_len = <span class="number">0</span>;</span><br><span class="line">    BlockLink_t * pxBlock;</span><br><span class="line">    pxBlock = heapPROTECT_BLOCK_POINTER( xStart.pxNextFreeBlock );</span><br><span class="line">    <span class="keyword">while</span>( pxBlock != pxEnd )&#123;</span><br><span class="line">        tot_len += pxBlock-&gt;xBlockSize;</span><br><span class="line">        pxBlock = heapPROTECT_BLOCK_POINTER( pxBlock-&gt;pxNextFreeBlock );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    configASSERT( tot_len == xFreeBytesRemaining );</span><br><span class="line">&#125;</span><br><span class="line">( <span class="keyword">void</span> ) xTaskResumeAll();</span><br></pre></td></tr></table></figure>
+<p>当发现系统内剩余内存和链表中描述的剩余内存不一致后立即中断系统运行。</p>
+<p>配合内存分配日志和Cache操作日志，确定是SD卡驱动的一次INVALID DCACHE操作后内存分配器就出现故障了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sdmmc_read</span><span class="params">(<span class="keyword">void</span> *buf, <span class="keyword">int</span> len)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 1:</span></span><br><span class="line">    CLEAN_DCACHE(buf, len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2:</span></span><br><span class="line">    SD_ReadBlocks_DMA(buf, len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3:</span></span><br><span class="line">    INVALID_DCACHE(buf, len);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解释一下这段代码的含义。第3行代码，当使用DMA读取数据后，需要将缓存中的数据清除掉，这是为了后续CPU读取数据时可以读取到物理内存中的数据，而非Cache中的数据。第1行代码，这段代码有点不太好解释，当buf和Cache边界未对齐时，后续的第三步可能会使得buf边界外到Cache边界中的数据被清除掉，这就使得系统内的数据完整性无法得到保证，所以设计了第1步的代码来将附近的数据全部同步到内存中。</p>
+<p>以上的设计在我以前的文章中提到过，可以去翻看一下。</p>
+<p>这样的设计在单线程环境下是没有问题的，但是在多线程下就会有点问题，因为第2行代码是一个耗时操作，这就使得已经被同步到内存中的数据可能又被另一个线程取出放入Cache，而后续的第3行代码还不知道这样的情况，直接将缓存清除掉了，导致系统内部分数据丢失，进而导致出现系统崩溃的情况。</p>
+<p>一个安全的做法是为DMA读取操作单独分配一块与Cache边界对齐的一块缓存，用它作为数据传输的桥梁，由DMA读取完成后再由CPU将数据搬运到其它内存空间下。但是这样有一些缺陷，即无法连续读取多块数据，这会导致SDMMC出现严重的性能瓶颈，一般SDMMC连续读取多块扇区有更明显的速度优势。</p>
+<p>所以需要设计另外一种方法来安全的清理Cache，且必须考虑线程安全问题。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CACHE_SIZE (32)</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InvalidDCache</span><span class="params">(<span class="keyword">void</span> *addr, <span class="keyword">int</span> len)</span></span>&#123;</span><br><span class="line">    __disable_irq();</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">char</span> cache_head_buf[CACHE_SIZE - <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">char</span> cache_end_buf[CACHE_SIZE - <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">uint32_t</span> cache_head_addr;</span><br><span class="line">    <span class="keyword">uint32_t</span> cache_head_len;</span><br><span class="line">    <span class="keyword">uint32_t</span> cache_end_addr;</span><br><span class="line">    <span class="keyword">uint32_t</span> cache_end_len;</span><br><span class="line"></span><br><span class="line">    cache_head_addr = ((<span class="keyword">uint32_t</span>)(addr) &amp; ~(CACHE_SIZE - <span class="number">1</span>));</span><br><span class="line">    cache_head_len = ((<span class="keyword">uint32_t</span>)(addr) &amp; (CACHE_SIZE - <span class="number">1</span>));</span><br><span class="line">    cache_end_addr = ((<span class="keyword">uint32_t</span>)(addr) + len);</span><br><span class="line">    cache_end_len = CACHE_SIZE - (cache_end_addr &amp; (CACHE_SIZE - <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">if</span>(cache_end_len == CACHE_SIZE)&#123;</span><br><span class="line">        cache_end_len = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(cache_head_len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(cache_head_buf, cache_head_addr, cache_head_len);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(cache_end_len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(cache_end_buf, cache_end_addr, cache_end_len);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SCB_InvalidateDCache_by_Addr(addr, len);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(cache_head_len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(cache_head_addr, cache_head_buf, cache_head_len);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(cache_end_len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(cache_end_addr, cache_end_buf, cache_end_len);</span><br><span class="line">    &#125;</span><br><span class="line">    __enable_irq();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码可以解决缓存Invalidate带来的风险，它将边界上的内存主动保存了一遍。</p>
+<p>但还有一个问题似乎不可忽略，那就是缓存自动写入的情况，当切换线程上下文后执行了其它的内存密集操作，当缓存不足时，可能导致原先的缓存被自动写入到内存中，尤其是边界上的，这仍然可能出现数据失效的问题。</p>
+<p>最终，我选择牺牲性能来保证可靠性，通过一个中间缓存来读取数据，确保DMA和Cache的操作都是安全可靠的。当然在实现过程中可以通过检查输入的内存指针是否与Cache边界对齐，如果是对齐的情况，那么就可以绕过中间缓存直接读取数据。</p>
+<p>Cache的问题总是那么有意思。最好的情况还是应该在软件设计时就能够保证数据边界对齐，或者牺牲一定的性能来保证数据的可靠性和系统安全性。</p>
+<p>PS：为什么wifi传输数据异常而USB网卡传输数据正常呢？因为USB网卡驱动内部没有频繁的内存申请操作，而wifi设备驱动中有频繁的内存申请操作。出现Cache问题的那块内存正好是从堆内获取的，且故障边界正好命中内存管理器的空闲链表数据项。所以频繁的内存申请操作会导致该问题更容易复现。</p>
 
                 </div>
                 
@@ -234,11 +258,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                一个极简的DAPLink
+                我们需要非常谨慎的使用Cache
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2024/05/18/一个极简的DAPLink/
+                2024/07/11/我们需要非常谨慎的使用Cache/
             </div>
         </div>
 
@@ -254,7 +278,7 @@
                 <div class="type">
                     发布于
                 </div>
-                <div class="content">2024-05-18 10:22</div>
+                <div class="content">2024-07-11 21:36</div>
             </div>
 
 
@@ -298,31 +322,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2024/05/21/TLSF%E4%B8%8EFreeRTOS-heap4%E5%AF%B9%E6%AF%94/"
-                                   title="TLSF与FreeRTOS-heap4对比"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">TLSF与FreeRTOS-heap4对比</span>
-                                        <span class="post-nav-item">上一篇</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2024/04/25/%E5%A6%99%E4%B8%8D%E5%8F%AF%E8%A8%80%E7%9A%84%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E6%9C%BA%E5%88%B6/"
-                                   title="妙不可言的异常捕获机制"
+                                   href="/2024/07/11/%E5%9C%A8%E5%88%9B%E5%BB%BAFreeRTOS%E4%BB%BB%E5%8A%A1%E6%97%B6%E5%AE%B9%E6%98%93%E5%BF%BD%E7%95%A5%E7%9A%84%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98/"
+                                   title="在创建FreeRTOS任务时容易忽略的一个问题"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">妙不可言的异常捕获机制</span>
+                                        <span class="post-nav-title-item text-ellipsis">在创建FreeRTOS任务时容易忽略的一个问题</span>
                                         <span class="post-nav-item">下一篇</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
