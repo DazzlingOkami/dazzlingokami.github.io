@@ -210,7 +210,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Thu Oct 17 2024 10:13:42 GMT+0800">2024-10-17 10:13:42</span>
+                <span class="datetime" data-updated="Thu Oct 17 2024 10:18:36 GMT+0800">2024-10-17 10:18:36</span>
             </span>
         
 
@@ -252,7 +252,7 @@
 <p>从图中可以看到CLK时序还算比较规整。由于在底层设计中PIO需要和处理器做同步交互，使得在SWD时序中CMD-ACK-DATA之间存在不可避免的时序空闲时间。</p>
 <p>下面看看STM32F411使用指令模拟SWD时序的波形：</p>
 <p><img   src="/2024/10/15/Black%20Magic%20Debug%E4%B8%8ECMSIS-DAP%E5%90%88%E4%BD%93/bmp-native.png"  alt="bmp_native"></p>
-<p>可以看出CLK的占空比不稳定，这种现象称为时钟抖动(Jitter)，它主要信号的采样过程，过大的抖动可能导致传输误码。</p>
+<p>可以看出CLK的占空比不稳定，这种现象称为时钟抖动(Jitter)，它主要影响信号的采样过程，过大的抖动可能导致传输误码。</p>
 <p>该版本代码还有一些其它优化，重构了cdc-uart的代码，串口改为DMA驱动，配合应用层的FIFO，实现了串口驱动到USB协议栈之间数据的零拷贝。</p>
 <p>此外，为了实现debugprobe代码和BMP的代码同时运行，debugprobe代码在保证功能性的前提下做了一些细节部分的调整，具体内容可以参考代码提交记录。</p>
 <p>我还启用了FreeRTOS的多核特性，以充分利用rp2040的2个核心。这部分代码还未提交，我还需要进一步测试。</p>
