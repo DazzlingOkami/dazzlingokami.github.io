@@ -210,7 +210,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Fri Sep 20 2024 13:32:47 GMT+0800">2024-09-20 13:32:47</span>
+                <span class="datetime" data-updated="Sun Sep 22 2024 21:42:36 GMT+0800">2024-09-22 21:42:36</span>
             </span>
         
 
@@ -301,7 +301,7 @@
 <p>再看一个许多网友都没有正确理解的例子：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span>  cat(a,b)     a ## b</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span>  xcat(x, y)   cat(x, y)</span></span><br><span class="line">xcat ( xcat ( <span class="number">1</span> , <span class="number">2</span> ) , <span class="number">3</span> ) -&gt; </span><br><span class="line">xcat ( cat ( <span class="number">1</span> , <span class="number">2</span> ) , <span class="number">3</span> ) -&gt;</span><br><span class="line">xcat ( <span class="number">12</span> , <span class="number">3</span> ) -&gt;</span><br><span class="line">cat ( <span class="number">12</span> , <span class="number">3</span> ) -&gt;</span><br><span class="line"><span class="number">123</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 有部分文章在使用这个例子介绍宏嵌套求值顺序时写错了。大家不要被错误的信息误导。</span></span><br><span class="line"><span class="comment">// 如果你对此表示怀疑，那么你可以使用ppstep工具去查看宏展开过程中的细节。</span></span><br></pre></td></tr></table></figure>
 
-<p>在编写宏函数时需要掌握一个技巧，在涉及到宏嵌套和需要在代码中直接访问的宏函数来所，其参数不能直接含有#、#@、##，需要通过另一个宏函数间接访问。在编写宏函数时注意这一点可以避免很多意料之外的求值顺序问题。</p>
+<p>在编写宏函数时需要掌握一个技巧，在涉及到宏嵌套和需要在代码中直接访问的宏函数来说，其参数不能直接含有#、#@、##，需要通过另一个宏函数间接访问。在编写宏函数时注意这一点可以避免很多意料之外的求值顺序问题。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _STR2(x) #x</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _STR(x) _STR2(x)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">#define A 123</span></span><br><span class="line"><span class="comment">_STR2(A) -&gt; A    // Error, 不符合预期</span></span><br><span class="line"><span class="comment">_STR(A) -&gt; &quot;123&quot; // OK</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
 <p>以上这样的宏定义求值都太简单了。真正的大招在后面~</p>
@@ -453,6 +453,22 @@
 
                 
                     <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2024/10/15/Black%20Magic%20Debug%E4%B8%8ECMSIS-DAP%E5%90%88%E4%BD%93/"
+                                   title="Black Magic Debug与CMSIS-DAP合体"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Black Magic Debug与CMSIS-DAP合体</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
                         
                         
                             <div class="next-post">
