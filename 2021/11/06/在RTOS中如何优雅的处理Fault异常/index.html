@@ -238,7 +238,7 @@
                     
                          <h3 id="ARM处理器下的Fault异常"><a href="#ARM处理器下的Fault异常" class="headerlink" title="ARM处理器下的Fault异常"></a>ARM处理器下的Fault异常</h3><p>ARM处理器当发生异常事件后就会暂停当前程序的运行，处理器进入异常模式，响应一个来自处理器内核或者外设的中断请求。</p>
 <p>这里想要处理的Fault异常就是ARM处理器多个异常中的一类，以Cortex-M7内核的ARM处理器为例，主要的Fault异常有HardFault、BusFault、UsageFault、MemManage。当发生这些异常就表示程序出现了比较严重的错误，进而导致“死机”。</p>
-<h3 id="嵌入式实时操作系统下发生Fault异常后会如何处理"><a href="#嵌入式实时操作系统下发生Fault异常后会如何处理" class="headerlink" title="嵌入式实时操作系统下发生Fault异常后会如何处理"></a>嵌入式实时操作系统下发生Fault异常后会如何处理</h3><p>常见的各种嵌入式实时操作系统(FreeRTOS、UCOSII/III等)都没有特别的对Fault进行处理，基本上都是按照默认处理方式来解决，也就是让处理器进入死循环。</p>
+<h3 id="嵌入式实时操作系统下发生Fault异常后会如何处理"><a href="#嵌入式实时操作系统下发生Fault异常后会如何处理" class="headerlink" title="嵌入式实时操作系统下发生Fault异常后会如何处理"></a>嵌入式实时操作系统下发生Fault异常后会如何处理</h3><p>常见的各种嵌入式实时操作系统(FreeRTOS、UCOSII&#x2F;III等)都没有特别的对Fault进行处理，基本上都是按照默认处理方式来解决，也就是让处理器进入死循环。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">xxxFault_Handler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这种处理方式是无可厚非的，因为程序本身发生了致命的故障，暂停当前程序的运行或许能够避免程序发生更严重的错误。大多数单线程嵌入式软件(NoOS)都是这样处理的，一个地方的错误会导致整个系统崩溃。</p>

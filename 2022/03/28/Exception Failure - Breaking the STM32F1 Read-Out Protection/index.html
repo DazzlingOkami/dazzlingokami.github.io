@@ -251,7 +251,7 @@
 <p>In order to examine the flash read-out protection feature, we use an STM32 Nucleo-64 development board with an STM32F103RB microcontroller. The read-out protection of the microcontroller is enabled which means that the flash memory is not accessible via the debug interface. The microcontroller is attached via the SWD debug interface to an external SEGGER J-Link debug probe, as depicted in Figure 1.</p>
 <center>
 
-<p><img   src="setup.jpg"  alt="setup"><br> Figure 1: STM32 Nucleo-64 development board with attached SEGGER J-Link debug probe.</p>
+<p><img   src="/2022/03/28/Exception%20Failure%20-%20Breaking%20the%20STM32F1%20Read-Out%20Protection/setup.jpg"  alt="setup"><br> Figure 1: STM32 Nucleo-64 development board with attached SEGGER J-Link debug probe.</p>
 </center>
 
 <p>We begin our examination by establishing a debug connection to the target microcontroller. For that, we start OpenOCD with the following command:</p>
@@ -369,14 +369,14 @@ Table 1: Vector table for microcontrollers implementing the ARMv7-M architecture
 <p>In order to use the vector table relocation, we split the flash memory into equally sized blocks of 32 words, as depicted in Figure 2. The block size is related to the vector table size and, as required by the ARMv7-M specification, must be a power of 2. For example, the STM32F103 has 59 exceptions and therefore the actual vector table size is 64. However, this means that we do not have enough exceptions to access all its table entries. For that reason, we use the largest possible vector table that fits in 59 which is 32.</p>
 <center>
 
-<p><img   src="memory_vector_table.svg"  alt="setup"><br>Figure 2: Relocation of the vector table within the flash memory. Inaccessible table entries are highlighted.</p>
+<p><img   src="/2022/03/28/Exception%20Failure%20-%20Breaking%20the%20STM32F1%20Read-Out%20Protection/memory_vector_table.svg"  alt="setup"><br>Figure 2: Relocation of the vector table within the flash memory. Inaccessible table entries are highlighted.</p>
 </center>
 
 <p>The seven highlighted memory words in Figure 2 cannot be extracted. The first two words are the initialization value for the MSP and the reset vector. The other words correspond to the reserved entries of the vector table. The MSP initialization value and the reset vector are special and can only be extracted when the vector table is located at the beginning the of the flash memory, its default location. The reason is that a device reset is necessary to extract these value, however, this also resets the VTOR and relocates the vector table to the beginning of the flash memory region.</p>
 <p>These limitations can be reduced by using exceptions that exceed the vector table size. In this case, exceptions with a number greater than 31. According to section 4.4.4 of the STM32F1 programming manual, the vector table location must be aligned to the actual vector table size, 64 in case of the STM32F103. But what happens when our vector table is unaligned and we generate exceptions with numbers greater than the vector table size? It turns out that these exceptions are mapped to the beginning of the vector table. Figure 3 illustrates this wrap-around behaviour for an unaligned vector table with 32 entries. On the left-hand side, the regular vector table with its inaccessible entries highlighted is depicted. On the right-hand side, the figure shows how the wrap-around behaviour makes the inaccessible parts of the vector table accessible. The highlighted vector table entries are now accessible by exceptions that exceed the vector table size.</p>
 <center>
 
-<p><img   src="memory_vector_table_wrap_around.svg"  alt="setup"><br>Figure 3: Wrap-around behaviour of an unaligned vector table. Inaccessible entries (red) become accessible (blue) when an exception exceeds the table size.</p>
+<p><img   src="/2022/03/28/Exception%20Failure%20-%20Breaking%20the%20STM32F1%20Read-Out%20Protection/memory_vector_table_wrap_around.svg"  alt="setup"><br>Figure 3: Wrap-around behaviour of an unaligned vector table. Inaccessible entries (red) become accessible (blue) when an exception exceeds the table size.</p>
 </center>
 
 <p>Note that in Figure 3, the focus is on the inaccessible parts of the vector table. The other entries can also be extracted via the wrap-around behaviour, however, this is not necessary since they can be extracted regularly. With the help of the wrap-around, we are now able to extract vector table entries that were reserved or inaccessible before. Even the first two entries which were only extractable when the vector table is located at the beginning of the flash memory region. The only limitation that remains is that we can use this approach only for unaligned vector tables. Nevertheless, we reduced the number of inaccessible memory words by a factor of two. Note that this approach is one way to make use of the additional external interrupts. We use this way because it is very convenient to implement.</p>
