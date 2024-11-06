@@ -9,6 +9,8 @@
     
     <title>
         
+            移植MicroPython时的一些思考 |
+        
         耀眼的大神
     </title>
     
@@ -47,10 +49,10 @@
     
 
     <!-- page content -->
-    <div class="page-main-content border-box is-home">
+    <div class="page-main-content border-box">
         <div class="page-main-content-top">
             
-<header class="header-wrapper transparent-1">
+<header class="header-wrapper">
 
     <div class="border-box header-content">
         <div class="left flex-start border-box">
@@ -166,41 +168,50 @@
             <div class="main-content border-box">
                 
 
-                    <div class="home-content-container fade-in-down-animation">
-    
-    <ul class="home-post-list border-box">
-        
-            <li class="home-post-item">
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
 
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        移植MicroPython时的一些思考
+                    </div>
                 
 
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2022/05/30/nRF52x%E8%BF%90%E8%A1%8C%E8%93%9D%E7%89%99%E5%8D%8F%E8%AE%AE%E6%A0%88+FreeRTOS%E7%9A%84%E5%8E%9F%E7%90%86/">
-                            nRF52x运行蓝牙协议栈+FreeRTOS的原理
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
+                
+                    <div class="post-header border-box">
                         
-                            
-之前有个研发的产品为了满足蓝牙连接的需求，选择了nRF52840这个芯片，它的蓝牙协议栈是一种类似使用动态库的方式进行调用，官方仅仅给出了协议栈的二进制包(SoftDevice)，并给出了动态调用的方法，其调用的关键就是使用ARM单片机的SVC调用...
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
                         
-                    </div>
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
 
-                    
-
-<div class="post-meta-info-container border-box home">
+<div class="post-meta-info-container border-box post">
     <div class="post-meta-info border-box">
         
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Mon May 30 2022 22:20:50 GMT+0800"
-                >2022-05-30 22:20:50</span>
-            </span>
-        
 
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-11-06 20:12:04</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Wed Nov 06 2024 20:16:17 GMT+0800">2024-11-06 20:16:17</span>
+            </span>
         
 
         
@@ -214,327 +225,137 @@
     </div>
 
     
-        <a class="home-read-more" href="/2022/05/30/nRF52x%E8%BF%90%E8%A1%8C%E8%93%9D%E7%89%99%E5%8D%8F%E8%AE%AE%E6%A0%88+FreeRTOS%E7%9A%84%E5%8E%9F%E7%90%86/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
 </div>
 
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
+                            </div>
+                        </div>
+                    </div>
                 
 
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2022/03/28/Exception%20Failure%20-%20Breaking%20the%20STM32F1%20Read-Out%20Protection/">
-                            Exception Failure - Breaking the STM32F1 Read-Out Protection
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            Marc Schink &amp; Johannes Obermaier Tuesday, 17 March 2020
-
-The firmware of microcontrollers usually contains valuable data ...
-                        
-                    </div>
-
+                <div class="post-content keep-markdown-body ">
                     
 
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Mon Mar 28 2022 21:04:30 GMT+0800"
-                >2022-03-28 21:04:30</span>
-            </span>
-        
+                    
+                         <p>今年4月份尝试手动将MicroPython移植到自己的平台上，在移植的过程中发现MicroPython的内部模块有大量的底层依赖，这使得移植工作视乎有点庞大。当时基本上仅完成了BASIC_FEATURES等级的移植，相当于完成了最小系统，在REPL可以良好运行，但是缺少了大量的基础库，使得它几乎没有太大的实用性。</p>
+<p>最近我又想起了这个以前遗留的工作，我决定将它完善一些，尽量达到EXTRA_FEATURES的移植等级，这意味着需要大量的移植工作，主要是多线程环境、文件系统、网络协议栈、芯片级外设等内容的移植。</p>
+<p>大部分移植工作都可以参考官方的ports例子做参考，但在文件系统、网络、多线程上却只能自己努力了，因为这部分内容是我的系统上特有的。这里说明一点，我将Micropython移植到我的系统中是作为一个单独的模块运行，可随时停止和重启，且它作为独立的线程运行不会对其它线程产生任何影响。</p>
+<p>首先网络部分的内容，由于我的本机已经运行了网络协议栈，所以在python中不单独运行协议栈了，通过NIC提供一套socket的控制接口到MicroPython内部就行了，这部分MicroPython考虑的比较周到，可以通过宏定义<code>MICROPY_PORT_NETWORK_INTERFACES</code>来导入自己的socket控制器。设计完自己的socket控制器需要通过<code>mod_network_register_nic()</code>注册到MicroPython内部socket模块。</p>
+<p>文件系统要稍微麻烦一些，无法直接接入自己的文件系统，最理想的办法是重构MBFS模块，MBFS文件系统本身作为一个待导入的文件系统模块，对它的修改不会对MicroPython的代码产生太多侵略性的修改。文件系统的接口仍然由系统平台提供，python直接向系统申请文件资源。</p>
+<p>这里说一个大坑，困扰我许久，在自定义构造文件对象是需要附带finaliser标记，否则GC回收对象时无法关闭系统中的文件。由于这个MicroPython作为一个子模块运行，它退出后系统还要继续运行，这使得它占用的文件未关闭且部分系统级的内存都没有得到释放，这会导致相当严重的问题。</p>
+<p>移植文件系统时需要注意到上下文管理器协议的存在，当执行<code>__exit__()</code>方法后文件已经关闭，但是后续在文件对象销毁时会再次执行<code>__del__()</code>方法来关闭文件，在<code>__exit__()</code>方法中关闭也许不是必要的，但是参考源码中实现的FAT、LFS等文件系统来看，它们的<code>__del__()</code>方法都是执行文件关闭的动作。所以这意味这在设计这部分内容时需要特别注意文件关闭多次执行的问题，需要正确处理文件的打开状态以确保文件不会被执行重复关闭的动作。</p>
+<p>对多线程模块的支持仍然花费了相当多的调试精力，主要是在GC机制上费了些功夫。MicroPython的GC仅使用标记清除算法，没有引用计数，所以在标记阶段需要特别注意。</p>
+<p>GC机制通过搜索处理器栈上的实例对象来进行标记有效内存区域。对于当前线程来说，除了栈区域，还有CPU中的寄存器也需要进行搜索。当搜索到gc内存对象后就进行标记处理。对于多线程来说，每次标记阶段都需要检查所有线程的栈空间，其它线程的寄存器数据已经压入栈了，所以只需要考虑栈空间即可。获取线程的栈指针地址需要依赖于多线程的底层实现，我这里的多线程是由FreeRTOS提供的，所以通过线程句柄可以访问到其它线程的实时栈指针。在GC标记时需要充分遍历所有线程的栈空间，确保所有的root节点都被正确标记，否则会导致严重的运行时问题。每次执行GC时所有未被标记的内存区域都将被回收，所以不要将一个有用的GC内存放到栈以外的区域，如果有必要保存一些全局gc内存变量，最好是将它放到mp_state_ctx内部进行自动管理，或者是在编写gc_collect()时特殊处理。</p>
+<p>MicroPython的GC在回收内存时，如果内存被标记了finaliser，则GC会自动调用对象的析构函数来处理对象。如果没有finaliser，即使对象含有析构函数，在内存回收时析构函数也不会执行。在MicroPython中<code>__del__()</code>方法没有特殊地位，它不会在对象删除时自动执行，这是和CPython的一个明显的区别点。在实现内部模块时需要注意一点，主动执行<code>gc_free()</code>也不会执行finaliser的析构函数，这可能导致一些资源泄露的问题，在实现内部模块时需要特别注意。所以对于内存的管理来说，申请的内存最好不要显式的释放，可以放心的交给GC去处理。</p>
+<p>外设的移植完成了Pin模块的部分内容，可以实现GPIO的正常读写，中断的支持还未完成。</p>
+<p>到目前为止，除外设功能外已经完成了EXTRA_FEATURES的所有功能，编写了一些程序来运行，基本上符合预期，执行效率上明显慢于C代码。受限与运行时上有限的heap内存空间，多创建一些对象后就会导致内存溢出的问题。通过python间接调用系统层面的文件io和hash模块来实现一个文件md5计算器。计算一个2兆字节的文件大约耗时350ms，而直接在系统层面通过C计算同样的文件md5值，耗时约75ms。还测试了一个大数阶乘计算程序，计算10000的阶乘耗时约2.4s，计算30000的阶乘耗时约22秒，MicroPython内置了大整数计算也是它的优势。</p>
 
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2022/03/28/Exception%20Failure%20-%20Breaking%20the%20STM32F1%20Read-Out%20Protection/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
+                    
                 </div>
-            </li>
-        
-            <li class="home-post-item">
 
                 
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2021/11/06/%E5%9C%A8RTOS%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%A4%84%E7%90%86Fault%E5%BC%82%E5%B8%B8/">
-                            在RTOS中如何优雅的处理Fault异常
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
                         
-                            ARM处理器下的Fault异常ARM处理器当发生异常事件后就会暂停当前程序的运行，处理器进入异常模式，响应一个来自处理器内核或者外设的中断请求。
-这里想要处理的Fault异常就是ARM处理器多个异常中的一类，以Cortex-M7内核的ARM处理器为例...
-                        
-                    </div>
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                移植MicroPython时的一些思考
+            </div>
 
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Sat Nov 06 2021 19:59:00 GMT+0800"
-                >2021-11-06 19:59:00</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2021/11/06/%E5%9C%A8RTOS%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%A4%84%E7%90%86Fault%E5%BC%82%E5%B8%B8/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2021/11/06/SVC%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">
-                            SVC系统调用的编程使用方法
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            SVC称为系统服务调用(SuperVisorCall)，异常类型为11，通过svc指令可用触发异常，SVC在触发异常后必须立即得到相应(触发异常后在执行异常前不能执行其它代码)，除非有更高优先级的异常在执行。
-对于可靠系统而言，可以使用SVC异常实现...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Sat Nov 06 2021 00:50:42 GMT+0800"
-                >2021-11-06 00:50:42</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2021/11/06/SVC%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2021/04/15/%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2Hash%E7%AE%97%E6%B3%95/">
-                            常见的字符串Hash算法
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            常见hash算法的碰撞概率统计
-
-
-
-10万
-50万
-100万
-500万
-1000万
-一亿
-1000万次的平均执行时间
-一亿次的平均执行时间
-一亿次的平均长度
-
-
-
-BKDRHash
-0.00002
-0.000112
-0.000251
-0.00118...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Thu Apr 15 2021 14:56:00 GMT+0800"
-                >2021-04-15 14:56:00</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2021/04/15/%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2Hash%E7%AE%97%E6%B3%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2021/01/21/Recommended%20C%20style%20and%20coding%20rules/">
-                            Recommended C style and coding rules
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            This document describes C code style used by Tilen MAJERLE in his projects and libraries.
-Table of Contents
-The single most i...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Thu Jan 21 2021 16:26:00 GMT+0800"
-                >2021-01-21 16:26:00</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2021/01/21/Recommended%20C%20style%20and%20coding%20rules/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-    </ul>
-    
-    <div class="paginator border-box flex-center">
-        <div class="border-box first-page paginator-btn allowed">
-            <a class="border-box"><i class="fa-solid fa-angle-double-left"></i></a>
+            <div class="copyright-post-link border-box text-ellipsis">
+                2024/11/06/移植MicroPython时的一些思考/
+            </div>
         </div>
 
-        <div class="border-box paginator-btn allowed">
-            <a class="border-box"
-               href="/page/3/"
-            ><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2024-11-06 20:12</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
         </div>
 
-
-        <div class="page-number-box border-box flex-center">
-            <input class="page-number-input border-box base-style"
-                   type="number"
-                   value="4"
-                   min="1"
-                   max="4"
-            /><span class="delimiter base-style">/</span><span class="base-style">4</span>
-        </div>
-
-
-        <div class="border-box paginator-btn">
-            <a class="border-box"
-               href="/"
-            ><i class="fa-solid fa-chevron-right"></i></a>
-        </div>
-
-        <div class="border-box last-page paginator-btn not-allow">
-            <a class="border-box"><i class="fa-solid fa-angle-double-right"></i></a>
-        </div>
+        <i class="copyright-bg fa-solid fa-copyright"></i>
     </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2024/10/15/Black%20Magic%20Debug%E4%B8%8ECMSIS-DAP%E5%90%88%E4%BD%93/"
+                                   title="Black Magic Debug与CMSIS-DAP合体"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Black Magic Debug与CMSIS-DAP合体</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
 
 
 
 
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
 </div>
 
 
@@ -581,10 +402,31 @@ The single most i...
 
     <!-- post tools -->
     
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
 
     <!-- side tools -->
     <div class="side-tools">
-        <div class="side-tools-container border-box side-tools-show-handle">
+        <div class="side-tools-container border-box ">
     <ul class="side-tools-list side-tools-show-handle border-box">
         <li class="tools-item tool-font-adjust-plus flex-center">
             <i class="fas fa-search-plus"></i>
@@ -674,7 +516,6 @@ The single most i...
 
 
 
-
 <!-- common js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
 
@@ -689,10 +530,22 @@ The single most i...
 <div class="">
     <!-- home page -->
     
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/page/home-page.min.js"></script>
-    
 
     <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
     
 
     <!-- categories page -->
