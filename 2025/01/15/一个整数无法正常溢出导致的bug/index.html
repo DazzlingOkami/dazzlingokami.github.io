@@ -9,7 +9,7 @@
     
     <title>
         
-            在创建FreeRTOS任务时容易忽略的一个问题 |
+            一个整数无法正常溢出导致的bug |
         
         耀眼的大神
     </title>
@@ -177,7 +177,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        在创建FreeRTOS任务时容易忽略的一个问题
+                        一个整数无法正常溢出导致的bug
                     </div>
                 
 
@@ -205,12 +205,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2024-07-11 22:04:53</span>
+                <span class="datetime">2025-01-15 22:23:52</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Thu Jul 11 2024 22:04:53 GMT+0800">2024-07-11 22:04:53</span>
+                <span class="datetime" data-updated="Wed Jan 15 2025 22:24:04 GMT+0800">2025-01-15 22:24:04</span>
             </span>
         
 
@@ -236,15 +236,30 @@
                     
 
                     
-                         <p>面向对象的编程思想经常出现在嵌入式软件开发过程中，通常将一组相关的业务逻辑及其相关联的数据封装为一个实例对象以方便数据和方法的集中管理，尤其是在该实例对象还涉及一个关联的任务时，为了将相关的数据传入线程，将所有的数据封装起来是一种非常合理的操作。下面是一段这样的代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    TaskHandle_t task;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *str;</span><br><span class="line">    <span class="type">int</span> cnt;</span><br><span class="line">&#125; <span class="type">hello_obj_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">hello_task</span><span class="params">(<span class="type">void</span> *pvParameters)</span>&#123;</span><br><span class="line">    <span class="type">hello_obj_t</span> *obj = (<span class="type">hello_obj_t</span> *)pvParameters;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; obj-&gt;cnt; i++)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, obj-&gt;str);</span><br><span class="line">        vTaskDelay(<span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    TaskHandle_t task = obj-&gt;task;</span><br><span class="line">    <span class="built_in">free</span>(obj);</span><br><span class="line">    vTaskDelete(task);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main_test</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *str, <span class="type">int</span> cnt)</span>&#123;</span><br><span class="line">    <span class="type">hello_obj_t</span> *obj;</span><br><span class="line">    obj = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">hello_obj_t</span>));</span><br><span class="line">    obj-&gt;str = str;</span><br><span class="line">    obj-&gt;cnt = cnt;</span><br><span class="line">    <span class="type">static</span> StackType_t <span class="built_in">stack</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="type">static</span> StaticTask_t task;</span><br><span class="line">    obj-&gt;task = xTaskCreateStatic(hello_task, <span class="string">&quot;hello&quot;</span>, <span class="number">1024</span>, obj, <span class="number">10</span>, <span class="built_in">stack</span>, &amp;task);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+                         <p>lvg是一款非常流行的图形库，最近在使用它的过程中发现一个有意思的问题，这里做简单记录。<br>话说事情是这样的，我为按钮设计了一个动画，大概是按钮一直沿y轴周期性的往复移动。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">lv_anim_t</span> by;</span><br><span class="line">lv_anim_init(&amp;by);</span><br><span class="line">lv_anim_set_exec_cb(&amp;by, (<span class="type">lv_anim_exec_xcb_t</span>) lv_obj_set_y);</span><br><span class="line">lv_anim_set_var(&amp;by, btn);</span><br><span class="line">lv_anim_set_time(&amp;by, <span class="number">1797</span>);</span><br><span class="line">lv_anim_set_values(&amp;by, <span class="number">2</span>, <span class="number">106</span>);</span><br><span class="line">lv_anim_set_playback_time(&amp;by, <span class="number">1797</span>);</span><br><span class="line">lv_anim_set_repeat_count(&amp;by, LV_ANIM_REPEAT_INFINITE);</span><br><span class="line">lv_anim_start(&amp;by);</span><br></pre></td></tr></table></figure>
 
-<p>这段代码展示一种常见的编程模式，即将任务线程相关的数据封装在一个结构体中，然后在任务创建时传入到任务函数中。当任务将相关业务数据处理完成后删除相关资源。</p>
-<p>上面这段代码看起来没什么太大的问题，对象分配的资源都在线程删除前得到释放。但上面这段代码仍然存在一个致命的缺陷，即可能出现hello_task线程无法被正常删除的情况。</p>
-<p>FreeRTOS在创建任务时，如果被创建的任务优先级高于当前上下文的优先级，会在任务创建函数返回前就调度到新创建的任务中执行，这使得使得任务创建函数没有及时的返回，导致obj-&gt;task无法取得正确的值。线程hello_task执行太快且没有释放CPU执行权时，会导致在任务删除时obj-&gt;task没有取到正确的值，从而导致任务无法被正确删除。</p>
-<p>可能大多数业务代码都不会执行的太快，但在一些极端情况还是需要考虑这个问题，例如上述代码中传入cnt为0时的情况。</p>
-<p>解决这个问题有两个思路，一是使用xTaskCreate()替代xTaskCreateStatic()，xTaskCreate函数通过传参的方式取得任务句柄，不会出现上述问题，它可以保证在任务执行前就将句柄赋予正确的值。二是在使用xTaskCreateStatic接口前关闭任务调度器，在任务创建完成后在打开任务调度，确保任务创建函数正常返回后再启动任务调度器。</p>
-<p>或许可以使用vTaskDelete(NULL)来删除当前线程，这样就能规避该问题。但通过上面这个示例可以看出这是一个时序不严谨的代码可能导致比较严重的问题，在实现其它类似这样的多线程代码时也应当注意类似的问题。</p>
+<p>代码非常简单，就是为btn绑定一个无限重复次数的动画。代码刚开始可以好好运行，但是动画执行了几分钟后这个按钮的动画突然暂停了。按钮保持在了一个固定的位置，我不明白发生了什么。我可以确认系统内各个任务都在正常的执行，图形页面上的一些效果都在正常显示，就只有这个按钮的动画仿佛被删除了一样。</p>
+<p>系统重启了几次，这个bug视乎可以一直复现，我决定连着调试器看看，到底发生了什么，我在关键的一些的地方设置了断点，等待故障发生。奇怪的是故障发生后没有命中任何断点，我立即暂停了程序运行，我决定进入到动画处理的定时器回调函数中看看，相关的动画句柄数据到达是什么样的。</p>
+<p>在anim_timer()函数内设置一个断点，成功命中，说明动画处理相关的定时器没有被删除，但是动画执行的回调却不执行。检查lv_anim_t结构体内的数据，发现a-&gt;act_time为一个很大的负数值，这就看起来很离谱，这意味着距离下一次动画被激活还有很长的时间要等待，动画效果因此被暂停。为什么act_time是负数了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint32_t</span> elaps = lv_tick_elaps(a-&gt;last_timer_run);</span><br><span class="line">a-&gt;act_time += elaps;</span><br></pre></td></tr></table></figure>
+
+<p>在我将能够排除的地方都排除后，我将问题点定位到了上面这里。elaps的计数值肯定是一个正数，但如果elaps非常大的话可能导致后面的累加计算溢出导致计算出的值为负数。</p>
+<p>lv_tick_elaps()的作用是计算当前时刻距离last_timer_run时刻的时间差，它的实现如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint32_t</span> <span class="title function_">lv_tick_elaps</span><span class="params">(<span class="type">uint32_t</span> prev_tick)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint32_t</span> act_time = lv_tick_get();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*If there is no overflow in sys_time simple subtract*/</span></span><br><span class="line">    <span class="keyword">if</span>(act_time &gt;= prev_tick) &#123;</span><br><span class="line">        prev_tick = act_time - prev_tick;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        prev_tick = UINT32_MAX - prev_tick + <span class="number">1</span>;</span><br><span class="line">        prev_tick += act_time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> prev_tick;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到这里，我突然明白了问题点，lv_tick_elaps函数内做了整数溢出处理，但是它默认从lv_tick_get()返回的时间计数周期为UINT32_MAX。如果时间周期不是UINT32_MAX，这就导致溢出计算错误。</p>
+<p>再看看lv_tick_get()函数的实现，它最终会调用由void lv_tick_set_cb(lv_tick_get_cb_t cb)设置的回调函数，我这里是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">get_gui_tick</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> xTaskGetTickCount() * <span class="number">1000u</span> / configTICK_RATE_HZ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// lv_tick_set_cb(get_gui_tick);</span></span><br></pre></td></tr></table></figure>
+
+<p>我这里的configTICK_RATE_HZ&#x3D;20000，这就导致get_gui_tick函数返回的周期比UINT32_MAX小了20倍。所以导致程序运行时act_time计算错误。</p>
+<p>lvgl似乎没有对用户导入的时间查询回调函数做一定的规范，导致了该问题的发生。</p>
+<p>修改FreeRTOS内核配置，将configTICK_RATE_HZ设置为1000，这样可以解决问题吗？哈哈，如果这样想你很快就会调入另外一个陷阱。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xTaskGetTickCount() * <span class="number">1000u</span> / configTICK_RATE_HZ</span><br></pre></td></tr></table></figure>
+
+<p>先乘法再除法会导致xTaskGetTickCount()时间的周期缩小1000倍，所以不要忽视这些细节。</p>
+<p>我这里为了不修改FreeRTOS内核配置，所以我决定使用一个硬件定时器来彻底解决该问题，确保导入到图形库内的时间查询函数返回值的周期为UINT32_MAX。</p>
+<p>这是第一次遇到由于整数溢出边界不严谨导致的故障。如果你有类似的困扰可以将configTICK_RATE_HZ设置为1000并调用lv_tick_set_cb(xTaskGetTickCount)来解决该问题。</p>
 
                     
                 </div>
@@ -255,11 +270,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                在创建FreeRTOS任务时容易忽略的一个问题
+                一个整数无法正常溢出导致的bug
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2024/07/11/在创建FreeRTOS任务时容易忽略的一个问题/
+                2025/01/15/一个整数无法正常溢出导致的bug/
             </div>
         </div>
 
@@ -275,7 +290,7 @@
                 <div class="type">
                     发布于
                 </div>
-                <div class="content">2024-07-11 22:04</div>
+                <div class="content">2025-01-15 22:23</div>
             </div>
 
 
@@ -319,31 +334,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2024/07/11/%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E9%9D%9E%E5%B8%B8%E8%B0%A8%E6%85%8E%E7%9A%84%E4%BD%BF%E7%94%A8Cache/"
-                                   title="我们需要非常谨慎的使用Cache"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">我们需要非常谨慎的使用Cache</span>
-                                        <span class="post-nav-item">上一篇</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2024/06/20/%E4%B8%80%E4%B8%AA%E6%9E%81%E7%AE%80%E7%9A%84DAPLink/"
-                                   title="一个极简的DAPLink"
+                                   href="/2024/12/11/%E7%AE%80%E5%8D%95%E8%81%8A%E8%81%8ALevelX/"
+                                   title="简单聊聊LevelX"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">一个极简的DAPLink</span>
+                                        <span class="post-nav-title-item text-ellipsis">简单聊聊LevelX</span>
                                         <span class="post-nav-item">下一篇</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
