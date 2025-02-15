@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            重新做了一版ARM仿真器 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        重新做了一版ARM仿真器
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-02-14 16:00:03</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Sat Feb 15 2025 21:44:54 GMT+0800">2025-02-15 21:44:54</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>我最近又重新设计制作的了一款ARM仿真器，相比于之前做的版本，增加了一块屏幕，并使用编码器拨轮进行交互，还内置了一块电池，可以实现脱机程序烧录。</p>
+<p>下面是主要配置：</p>
+<ul>
+<li><p>160x128 像素分辨率的1.8寸屏幕</p>
+</li>
+<li><p>RP2350 MCU</p>
+</li>
+<li><p>内置16MB存储空间+8MB扩展运行内存+32GB TF卡支持</p>
+</li>
+<li><p>900mAh&#x2F;3.7V 锂电池</p>
+</li>
+<li><p>一路UART接口</p>
+</li>
+<li><p>一路SWD接口，支持20MHz速率</p>
+</li>
+<li><p>可对外提供3.3v&#x2F;1A供电</p>
+</li>
+</ul>
+<p>支持的主要功能有：</p>
+<ul>
+<li><p>CMSIS-DAP调试器功能</p>
+</li>
+<li><p>GDB调试器功能</p>
+</li>
+<li><p>脱机下载功能，支持上百款MCU</p>
+</li>
+<li><p>脱机串口功能，可在屏幕上实时显示串口接收到的数据</p>
+</li>
+<li><p>设备内文件管理功能</p>
+</li>
+<li><p>模拟U盘功能</p>
+</li>
+</ul>
+<h2 id="开发过程"><a href="#开发过程" class="headerlink" title="开发过程"></a>开发过程</h2><h3 id="1-硬件部分"><a href="#1-硬件部分" class="headerlink" title="1.硬件部分"></a>1.硬件部分</h3><p>其实上一版开发完成后，我就准备着手这个新版本的开发了，主要是上一个版本的功能亮点不足，最终我决定再进行一次大的升级。主要是围绕设备能够脱机使用，添加了脱机下载和脱机串口功能。</p>
+<p>首先是硬件开发方面，将MCU由RP2040更换为RP2350，其主频、SRAM、IO数量都做了升级。选择该芯片的原因是RP2350芯片的价格已经比较实惠了且性能有了比较大的提升，最关键的是由于增加了不少外设(屏幕、存储等)使得IO分配比较紧张。</p>
+<p>该MCU还支持外扩PSRAM，所以加了一颗AP6404L的芯片，扩展SRAM主要是为了提高脱机下载时的速度，有了充足的SRAM就可以将固件全部加载到内存中进行再下载。</p>
+<p>在存储方面，没有直接使用存放固件的flash来存储数据，而是单独添加了一块norflash芯片，还添加了TF卡的卡座，norflash和tf卡共用一条SPI进行数据传输。屏幕为一块ST7735主控的LCD屏幕，还是使用SPI进行数据传输，为了保证屏幕刷新和存储数据的读写，屏幕和存储芯片各自使用一个独立的SPI。</p>
+<p>拨轮是SIQ-02FVS3，为AB编码器接口，原本计划使用PIO驱动，但是开发软件时才发现IO分配不合理导致只能使用中断驱动。</p>
+<p>电源方面的电路变化不大，主要是增加了充电芯片和开关机管理电路，充电芯片为TP4057，对于这个简单的设备来说，暂时不需要快充等功能。开关机管理使用一些MOS管进行搭建，如下图：</p>
+<center>
+
+<p><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/power_switch.png"  alt="开关电路"><br><em>开关电路</em></p>
+</center>
+
+<p>开关机按键复用编码器拨轮的按键，器件选择上主要是要考虑电流参数。</p>
+<p>在这一版中，外部的SWD接口和UART接口上都添加了ESD保护芯片。这样外部的包括USB在内的三个插拔接口都有了防静电保护。</p>
+<p>来看看PCB：<br><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/PCB.png"  alt="PCB"></p>
+<p>拨轮的安装比较特殊，在PCB上挖了一个洞，使得波轮能够沉到底部，在背部焊接。如果正常安装焊接，它将是整个PCB上最高的元件。现在这种安装方式可以减小整个PCB的厚度。<br><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/encoder.png"  alt="PCB"></p>
+<p>PCB上电池座子的+-符号标识反了，但是不影响正常使用。所有的元件都是用风枪焊上去的，焊接效果还比较满意，这次温度把控的比较好，塑料件没有任何变形。</p>
+<p><em>Tips:MCU旁边有颗电容尺寸不对，原本应该用0402的封装，但是该容值的电容手边没有，所以用0603的封装</em></p>
+<h3 id="2-软件部分"><a href="#2-软件部分" class="headerlink" title="2.软件部分"></a>2.软件部分</h3><p>硬件弄好后就是软件开发工作，在软件开发方面，首先是需要将主要的外设驱动开发完成，包括屏幕、NorFlash、TF卡，编码器等。</p>
+<p>ST7735驱动都有现成比较好用的，主要是要考虑异步渲染和刷新的性能问题，其它就是调试一下屏幕边界和颜色翻转就完成了，淘宝上5块钱买的屏幕，效果只能说一般般。</p>
+<p>TF卡的驱动要麻烦一些，RP2350没有SDIO接口，用PIO模拟目前也不会。只能使用SPI进行通讯了，时钟速度20MHz，NorFlash和它共用SPI，NorFlash速度本可以再高一些，但是只能兼顾TF的速度了，速度再高一些TF卡似乎存在一些问题。TF卡使用FatFS驱动，文件读写可以在400kB&#x2F;s左右，NorFlash使用LittleFs读取速度要快一些。</p>
+<p>ST7735的SPI采用DMA传输数据，考虑到使用DMA会到了额外的中断上下文切换和线程切换，对于小于15字节的传输任然采用阻塞传输会比较好。通过后续测试发现部分页面上的全屏动效运行起来的CPU占用也就不到50%。</p>
+<p>对于W25Q128和TF卡共用的SPI来说，使用DMA要稍微复杂一些。这里我也是摸索了好久才找到正确的写法，RP2350的SPI必须要有TX的数据才能完成正常的一次数据传输，所以最开始我只写了DMA接收，发现DMA并没有启动传输，那是因为SPI没有发出数据，自然也就无法接收数据，所以数据收发必须成对，即使用DMA也必须要这样。对于数据接收来说，我是这样写的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">spi_shard_read</span><span class="params">(<span class="type">uint8_t</span> *buf, <span class="type">int</span> len)</span>&#123;</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span>(len &lt;= <span class="number">15</span>)&#123;</span><br><span class="line">        ret = spi_read_blocking(SPI_INS, <span class="number">0xff</span>, buf, len);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="type">uint8_t</span> tx_dummy = <span class="number">0xff</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* DMA read dummy data Not increment */</span></span><br><span class="line">        dam_channel_read_increment(dma_tx_chan, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Read the data from the SPI FIFO by DMA */</span></span><br><span class="line">        dma_channel_transfer_to_buffer_now(dma_rx_chan, buf, len);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Write the dummy data to the SPI FIFO by DMA, Used to generate clock signals */</span></span><br><span class="line">        dma_channel_transfer_from_buffer_now(dma_tx_chan, &amp;tx_dummy, len);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Wait Rx DMA to complete */</span></span><br><span class="line">        <span class="keyword">if</span>(xSemaphoreTake(spi_dma_rx_sync, pdMS_TO_TICKS(<span class="number">200</span>)) == pdFALSE)&#123;</span><br><span class="line">            ret = <span class="number">0</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            ret = len;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Recover Tx channel auto increment */</span></span><br><span class="line">        dam_channel_read_increment(dma_tx_chan, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Clear the Tx sync semaphore */</span></span><br><span class="line">        xSemaphoreTake(spi_dma_tx_sync, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建了两个DMA请求，但是Tx发送的数据临时关闭了地址自增，因为发送的数据本就是dummy，所以不需要地址自增。DMA请求发出后，DMA就会自动从SPI的FIFO中将数据读取出来，等待DMA中断发出的同步信号就表示数据传输完成。</p>
+<p>对于SPI的DMA发送来说，也有一些情况需要处理：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">spi_shard_write</span><span class="params">(<span class="type">const</span> <span class="type">uint8_t</span> *buf, <span class="type">int</span> len)</span>&#123;</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span>(len &lt;= <span class="number">15</span>)&#123;</span><br><span class="line">        ret = spi_write_blocking(SPI_INS, buf, len);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">/* Write the date to the SPI FIFO by DMA */</span></span><br><span class="line">        dma_channel_transfer_from_buffer_now(dma_tx_chan, buf, len);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Wait for the DMA to complete */</span></span><br><span class="line">        <span class="keyword">if</span>(xSemaphoreTake(spi_dma_tx_sync, pdMS_TO_TICKS(<span class="number">200</span>)) == pdFALSE)&#123;</span><br><span class="line">            ret = <span class="number">0</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            ret = len;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Wait for the SPI to complete */</span></span><br><span class="line">        <span class="keyword">while</span>(spi_is_busy(SPI_INS))&#123;</span><br><span class="line">            <span class="keyword">if</span>(spi_is_readable(SPI_INS))&#123;</span><br><span class="line">                (<span class="type">void</span>)spi_get_hw(SPI_INS)-&gt;dr;</span><br><span class="line">            &#125;</span><br><span class="line">            taskYIELD();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Clear the RX FIFO and clear the overrun flag */</span></span><br><span class="line">        <span class="keyword">while</span>(spi_is_readable(SPI_INS))</span><br><span class="line">            (<span class="type">void</span>)spi_get_hw(SPI_INS)-&gt;dr;</span><br><span class="line">        spi_get_hw(SPI_INS)-&gt;icr = SPI_SSPICR_RORIC_BITS;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里只创建DMA数据发送请求即可，SPI接收回来到RxFIFO中的数据可能会溢出，但是可以忽略它们。需要注意的是，DMA传输完成不代表SPI已经传输完成，因为SPI内部是带有FIFO的，这里简单的用spi_is_busy来判断SPI是否传输完成，传输完成后再将RxFIFO中的数据清空以避免对后续的数据读取产生干扰。这里更严格的写法是使用的SPI的RxFIFO为空中断去处理SPI等待的问题，不过考虑到FIFO本身并不大且SPI的时钟速率较高，这里阻塞的时间可以忽略。</p>
+<p>看门狗如何检测两个MCU核心都在正常工作呢？刚开始就出现系统的一个核心已经死机了，但是喂狗的操作在另一个核心上，导致系统无法及时复位。后面我想到了一个比较好的办法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">watchdog_task</span><span class="params">(<span class="type">void</span> *ptr)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (watchdog_caused_reboot())&#123;</span><br><span class="line">        reset_usb_boot(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    watchdog_enable(<span class="number">1000</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (configNUMBER_OF_CORES &gt; 1)</span></span><br><span class="line">        <span class="comment">/* Update watchdog on all cores */</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; configNUMBER_OF_CORES; i++)&#123;</span><br><span class="line">            vTaskCoreAffinitySet(<span class="literal">NULL</span>, <span class="number">1</span> &lt;&lt; i);</span><br><span class="line">            watchdog_update();</span><br><span class="line">            vTaskDelay(pdMS_TO_TICKS(<span class="number">500</span>));</span><br><span class="line">        &#125;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">        watchdog_update();</span><br><span class="line">        vTaskDelay(pdMS_TO_TICKS(<span class="number">500</span>));</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过FreeRTOS创建一个最低优先级的任务(比IDLE线程优先级高)来运行看门狗。看门狗的超时时长设置为1秒，该任务准备每500ms进行一次喂狗操作，即使高优先级的任务有时间片抢占的情况，还有500ms的冗余空间。这里比较取巧的是我每次喂狗完成后就将任务切换到下一个核心上运行，这样就确保能够对所有的核心都起到监控的作用。</p>
+<p>SWD那部分的布线或者电路可能还需要优化，芯片和软件支持的最高速率是37.5MHz，而实际上在30MHz时钟下工作会出现无法识别外部芯片的问题，目前最高只能工作在20MHz，我怀疑是走线不规范或者阻抗相关的问题，如果要做下一版再去着重解决。</p>
+<p>SWD的底层采用PIO来驱动，时序上肯定没有问题，但是目前遇到一个与PIO交互的性能问题，与PIO交互是通过一个硬件FIFO实现的，每次遇到FIFO为空或满时都需要进行阻塞式的等待，这会使得低优先级的任务被长时间阻塞。如果采用中断信号通知FIFO状态，我担心频繁的中断信号也会带来性能问题，这个地方或许还要好好想想怎么优化，或许需要大改底层的SWD实现方法。</p>
+<p>在软件功能设计上，CMSIS-DAP和GDB调试功能在上一个版本就已经开发完成了，本次主要的开发工作都是围绕GUI相关功能进行的。GUI部分采用LVGL9图形框架，搭配GUI-Guider进行开发，目前GUI-Guider还不支持LVGL9，所以UI的开发工作还是比较多。</p>
+<p>在GUI上除了设计UI耗费时间外，文件管理功能和脱机下载功能耗费了比较多的开发时间，NorFlash和TF工作在两套不同的文件系统下，要实现文件的统一管理，必须设计更上层的抽象接口层。TF卡还需要允许通过USB挂载到电脑上，其中的功能细节也比较多。为了获得最佳的下载速度，我将固件从文件中读取并解析完成后全部存储在RAM中，然后再进行下载，这对于HEX类固件来说可以显著提高下载速度。</p>
+<p>目前主要支持hex格式的固件下载，bin格式的固件只能下载到芯片内Flash首地址上，还不支持自定义，主要是设备没有键盘和触摸屏，不方便输入。对于elf格式的固件还在准备开发中。</p>
+<p>分享一个开发工程中遇到的一个竞态问题，一个很有意思的问题。该问题出现在USB串口功能中，我创建了一个独立的线程用于将硬件UART上收发到的数据传输到USB协议栈中。问题现象是USB协议栈收到电脑发来的数据后从硬件串口发出后异常，小概率出现数据中多了一段乱码的数据。导致该问题的原因是在UART的DMA中断处理函数中出现了重入，导致对FIFO的操作出现了抢占，导致FIFO内的数据长度异常。为什么中断函数会重入？因为RP2350是一个双核MCU，它允许中断同时在两个核心上运行，根据PICO-SDK的手册来看irq_set_exclusive_handler()和irq_set_enabled()函数都是只对MCU当前的核心生效，为什么中断会同时运行在两个核心上？经过仔细的分析，首先解释第一点，为什么该中断函数通过irq_set_exclusive_handler会同时将中断绑定两个核心上，根据芯片手册，两个核心拥有独立的中断向量表。但是这里我忽略了一点，第二个核心是由FreeRTOS启动，它默认直接复用了核心1的中断向量表，导致两个核心将共享中断向量表。</p>
+<p>FreeRTOS对于RP2350的port文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">BaseType_t <span class="title function_">xPortStartScheduler</span><span class="params">( <span class="type">void</span> )</span></span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    multicore_reset_core1();</span><br><span class="line">    multicore_launch_core1( prvDisableInterruptsAndPortStartSchedulerOnCore );</span><br><span class="line">    xPortStartSchedulerOnCore();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Should not get here! */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动第二给核心的函数是multicore_launch_core1(),在它内部的实现上会复用当前中断向量表地址。如果要给第二个核心赋予独立的中断详表，应该使用multicore_launch_core1_raw接口。到了这里就明白了为什么第二个核心会存在中断函数。再解释第二点，为什么该中断被使能了。</p>
+<p>在创建UART任务时是这样写的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xTaskCreate(cdc_thread, <span class="string">&quot;UART&quot;</span>, configMINIMAL_STACK_SIZE, <span class="literal">NULL</span>, UART_TASK_PRIO, &amp;uart_taskhandle);</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (configNUMBER_OF_CORES &gt; 1)</span></span><br><span class="line">vTaskCoreAffinitySet(uart_taskhandle, <span class="number">1</span> &lt;&lt; <span class="number">0</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到已经通过vTaskCoreAffinitySet函数将该任务绑定到了核心0上，但是我忽略了一点，由于当前任务的优先级比创建的UART任务优先级低，导致UART任务创建完成后就立即执行，而任务函数内进行中DMA中的开关操作，导致核心1上的DMA中断也打开了。这是在极短时间内出现的。这是一种非常典型的竟态问题，修复的手段也非常简单，就是在串口任务的入口处，将任务本身绑定到和核心0上。再说一下为什么在任务内进行了中断的开关操作，因为FIFO数据接口的操作需要锁定，理论上来说刚开机初始化时没有数据收发才对，但由于串口刚开始莫名奇妙收到一个字符，就是这一连串的问题导致了这个bug。分析这个问题至少花了大半天时间，可以看看这个<a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/debugprobe/commit/b175dbc9ad1e485d05a44415c197c272882e007b" >commit<i class="fas fa-external-link-alt"></i></a>。</p>
+<p>RP2350+FreeRTOS的低功耗模式也有进行测试，开启configUSE_TICKLESS_IDLE是必要的，这样运行systick的核心0可以正常进入休眠状态。如果第二个核心也运行了，那还需要开启configUSE_PASSIVE_IDLE_HOOK，让第二个核心通过WFI指令进入睡眠状态。只有两个核心都进入休眠，RP2350才能进入低功耗模式。开启低功耗模式后，系统功耗有一定降低，但是我我的设备功耗本身不高，可以轻松待机10小时以上，所以低功耗模式是没有开启的。</p>
+<h3 id="3-外壳部分"><a href="#3-外壳部分" class="headerlink" title="3.外壳部分"></a>3.外壳部分</h3><p>我使用UG为整个设备设计了一个外壳，好像很长一段时间没用UG建模，感觉不是很熟练了😅。</p>
+<table>
+<thead>
+<tr>
+<th><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/Forface3dModelTop.png" ></th>
+<th><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/Forface3dModelBottom.png" ></th>
+</tr>
+</thead>
+</table>
+<p>本次设计的PCB和外壳都是在嘉立创制作的，3D打印的外壳还比较便宜，原计划使用CNC做一个金属的外壳，不过看了价格，还是放弃了。3D打印只要5块钱，CNC应该不低于300元，价格劝退，外壳上的结构特征基本上都是为了方便CNC加工而设计的。</p>
+<h2 id="功能展示"><a href="#功能展示" class="headerlink" title="功能展示"></a>功能展示</h2><p>原本打算拍个视频来展示一下这个设备的功能，后面感觉拍不好就算了。我在设备内做了一个截图功能，就截取一些操作界面进行展示吧。</p>
+<center>
+<table>
+    <tr>
+        <td><center><img     src="1.bmp"  ><br>1.主界面</center></td>
+        <td><center><img     src="2.bmp"  ><br>2.一个列表式的文件管理器</center></td>
+        <td><center><img     src="3.bmp"  ><br>3.串口接收界面</center></td>
+        <td><center><img     src="4.bmp"  ><br>4.设置界面</center></td>
+    </tr>
+    <tr>
+        <td><center><img     src="5.bmp"  ><br>5.固件下载过程</center></td>
+        <td><center><img     src="6.bmp"  ><br>6.下载完成界面 1MHz时钟</center></td>
+        <td><center><img     src="7.bmp"  ><br>7.下载完成界面 20MHz时钟</center></td>
+        <td><center><img     src="8.bmp"  ><br>8.添加了一个小游戏😄</center></td>
+    </tr>
+</table>
+</center>
+
+<p>下载一个92k字节的固件，除去擦除时间，下载时间只有388ms，速度非常块。</p>
+<p>再来看看设备运行起来后MCU的状态：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">CPU freq:150MHz</span><br><span class="line">Stat Period: 3000000us</span><br><span class="line">ID   Name         CPU State Priority  Stack       MSP   Static SFREE  SC       DelayTime</span><br><span class="line"> 1 DAP           0.00%  S      3    0x2002b7d0 0x2002bb58  D   224    0</span><br><span class="line"> 2 TUD           1.11%  B      2    0x2002c6a0 0x2002ca30  D   182    3001      1</span><br><span class="line"> 3 UART          0.30%  B      3    0x2002cb30 0x2002cea8  D   210    600       2</span><br><span class="line"> 4 BMP           0.09%  X      3    0x2002cfc0 0x2002dc98  D   767    30</span><br><span class="line"> 5 IDLE0        98.58%  R      0    0x2002e050 0x2002e3d8  D   212    2993</span><br><span class="line"> 6 IDLE1        98.55%  X      0    0x2002e4e0 0x2002e888  D   228    2992</span><br><span class="line"> 7 Tmr Svc       0.00%  B     31    0x2002ea70 0x2002f9e0  D   986    0         -1</span><br><span class="line"> 8 GUI           0.77%  B      1    0x200301a8 0x200310b8  D   326    156       5</span><br><span class="line">Task scheduler CPU percent -- 0.57%</span><br><span class="line">MEM: 23304/153600 (15%)</span><br></pre></td></tr></table></figure>
+
+<p>正常空闲状态下，CPU的占用都比较低，USB在传输数据时会占用一部分CPU。第一次使用FreeRTOS的双核特性，两个核心的调度还是比较合理的，即使GUI线程的CPU达到90%以上后，两个空闲线程的CPU占比都能够做到均匀分配。设备功耗不到0.2W，独立工作也能有较长的续航时间。</p>
+<p>最后来看看组装好的效果：</p>
+<p><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/device.png"  alt="组装图"></p>
+<p>最后还需要在上面盖一块亚克力的面板，这样就能将四个螺丝隐藏掉，整体外观效果就会好很多了。<br><img   src="/2025/02/14/%E9%87%8D%E6%96%B0%E5%81%9A%E4%BA%86%E4%B8%80%E7%89%88ARM%E4%BB%BF%E7%9C%9F%E5%99%A8/device2.png"  alt="组装图"></p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                重新做了一版ARM仿真器
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/02/14/重新做了一版ARM仿真器/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2025-02-14 16:00</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/01/15/%E4%B8%80%E4%B8%AA%E6%95%B4%E6%95%B0%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E6%BA%A2%E5%87%BA%E5%AF%BC%E8%87%B4%E7%9A%84bug/"
+                                   title="一个整数无法正常溢出导致的bug"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">一个整数无法正常溢出导致的bug</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
