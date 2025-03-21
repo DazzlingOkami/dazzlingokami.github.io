@@ -210,7 +210,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sat Mar 08 2025 14:00:15 GMT+0800">2025-03-08 14:00:15</span>
+                <span class="datetime" data-updated="Fri Mar 21 2025 10:36:43 GMT+0800">2025-03-21 10:36:43</span>
             </span>
         
 
@@ -237,7 +237,7 @@
 
                     
                          <blockquote>
-<p>本文原始文档来自于<a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf" >RP2040官方文档<i class="fas fa-external-link-alt"></i></a>，该译文内容源自互联网 <a class="link"   target="_blank" rel="noopener" href="https://github.com/charlee/rp2040-pio-zhcn" >https://github.com/charlee/rp2040-pio-zhcn<i class="fas fa-external-link-alt"></i></a></p>
+<p>本文原始文档来自于<a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf" >RP2040官方文档<i class="fas fa-external-link-alt"></i></a>，该译文内容源自互联网 <a class="link"   target="_blank" rel="noopener" href="https://github.com/charlee/rp2040-pio-zhcn" >https://github.com/charlee/rp2040-pio-zhcn<i class="fas fa-external-link-alt"></i></a><br>本文的编写重新参考了最新的RP2350官方文档，更新并补充了许多新的内容，包括新版本PIO的特性和新加入的一些指令等。</p>
 </blockquote>
 <h2 id="PIO概要"><a href="#PIO概要" class="headerlink" title="PIO概要"></a>PIO概要</h2><p>RP2040有两个完全相同的PIO模块，RP2350有3个PIO模块。每个PIO块都独立连接到总线、GPIO和中断控制器。一个 PIO 块的结构图如下图所示。</p>
 <table>
@@ -260,22 +260,23 @@
 <li>UART</li>
 <li>DPI 或 VGA（通过电阻式DAC）</li>
 </ul>
-<p>PIO的编程方式与处理器类似。两个PIO块，每个有四个状态机，这些都可以独立执行顺序代码，来操作 GPIO 并传输数据。但不同于通用处理器，PIO 状态机是专门为输入输出设计的，因此具有确定性、精确的时间，并与固定功能的硬件紧密结合。<br>每个状态机都拥有以下机构：</p>
+<p>PIO的编程方式与处理器类似。每个PIO有四个状态机，每个状态机可以独立执行顺序代码，操作 GPIO 并传输数据。但不同于通用处理器，PIO 状态机是专门为输入输出设计的，因此具有确定性、精确的时间，并与固定功能的硬件紧密结合。</p>
+<p>每个状态机都拥有以下内容：</p>
 <ul>
 <li>两个 32 位移位寄存器 - 可以向任意方向位移任意比特</li>
 <li>两个 32 位可擦写寄存器（scratch registor）</li>
 <li>每个方向上（TX&#x2F;RX）都有 4x32 位总线 FIFO，可以重新配置为单向 8x32 FIFO</li>
-<li>支持小数的时钟分割器（16 位整数，8 位小数）</li>
+<li>支持小数的时钟分频器（16 位整数，8 位小数）</li>
 <li>灵活的 GPIO 映射</li>
-<li>DMA 接口，每个时钟周期最多可维持来自系统 DMA 的 1 个字</li>
+<li>DMA 接口，每个时钟周期最多可传输来自系统 DMA 的 1 个字</li>
 <li>IRQ 标志设置&#x2F;清除&#x2F;状态查询</li>
 </ul>
-<p>每个状态机及其相应的支撑硬件占用的芯片面积大约相当于标准的串行接口，如 SPI 或 I2C 控制器等。但是，PIO 状态机可以动态配置或重新配置，实现多种不同的接口。</p>
-<p>状态机能用软件形式编程，而不是像 CPLD 那样采用完全可配置的逻辑芯片，就能在同样的成本和功耗下提供更多的硬件接口。它还带来了人们更为熟悉的编程模型，和更简单的工具流程，<br>因此人们可以利用 PIO 的灵活性直接进行编程，而不需要使用 PIO 库中事先定义好的接口。</p>
-<p>PIO 不仅非常灵活，性能还非常高，这都要归功于每个状态机中的固定功能的硬件。在输出 DPI 时，PIO 能够在 48MHz 系统时钟的支持下，在活跃的扫描线期间提供 360Mb&#x2F;s 的吞吐量。<br>在这个例子中，一个状态机负责处理帧和扫描线的时间，并生成像素时钟，另一个负责处理像素数据，并解包行程编码的扫描线。</p>
-<p>状态机的输入和输出可以映射到最多 32 个 GPIO 上（在 RP2040 中限制为 30 个 GPIO），所有状态机都能独立、同时访问任何 GPIO。例如，标准的 UART 代码允许 TX、RX、CTS 和 RTS 使用任意四个 GPIO，<br>而 I2C 也允许将 SDA 和 SCL 映射到任意 GPIO 上。具体的自由度取决于 PIO 程序使用 PIO 针脚映射资源的方式，但至少，一个接口可以在一定数量的 GPIO 范围内自由移动。</p>
-<h2 id="3-2-PIO程序"><a href="#3-2-PIO程序" class="headerlink" title="3.2. PIO程序"></a>3.2. PIO程序</h2><p>四个状态机执行共享指令内存的程序。系统软件将内存加载至该区域，配置状态机和 IO 映射，然后将状态机设置为运行状态。PIO 程序可以来自多个地方：<br>可以由用户直接汇编，可以来自 PIO 库，或者由用户的软件生成。</p>
-<p>之后，状态机就会自动运行，系统软件通过 DMA、中断和控制寄存器与之交互，就像操作 RP2040 上的其他外设一样。<br>对于更复杂的接口，PIO 提供了一个短小灵活的指令集，可以让系统软件更深入地操作状态机的控制流。</p>
+<p>每个状态机及其相关的硬件所占用的芯片面积大约相当于标准的串行接口，如 SPI 或 I2C 控制器等。但是，PIO 状态机可以动态配置或重新配置，实现多种不同的接口。</p>
+<p>状态机能用软件的形式编程，相比于像 CPLD 那样采用完全可配置的逻辑芯片，PIO能在同样的成本和功耗下提供更多的硬件接口。它还带来了人们更为熟悉的编程模型，和更简单的工具流程，因此人们可以利用 PIO 的灵活性直接进行编程，而不需要使用 PIO 库中事先定义好的接口。</p>
+<p>PIO 不仅非常灵活，性能还非常高，这都要归功于每个状态机中的固定功能的硬件。在输出 DPI 时，PIO 能够在 48MHz 系统时钟的支持下，在活跃的扫描线期间提供 360Mb&#x2F;s 的吞吐量。在这个例子中，一个状态机负责处理帧和扫描线的时间，并生成像素时钟，另一个负责处理像素数据，并解包行程编码的扫描线。</p>
+<p>状态机的输入和输出可以映射到最多 32 个 GPIO 上（在 RP2040 中限制为 30 个 GPIO），所有状态机都能独立、同时访问任何 GPIO。例如，标准的 UART 代码允许 TX、RX、CTS 和 RTS 使用任意四个 GPIO，而 I2C 也允许将 SDA 和 SCL 映射到任意 GPIO 上。具体的自由度取决于 PIO 程序使用 PIO 针脚映射资源的方式，一个接口可以在一定数量的 GPIO 范围内自由移动。</p>
+<h2 id="3-2-PIO程序"><a href="#3-2-PIO程序" class="headerlink" title="3.2. PIO程序"></a>3.2. PIO程序</h2><p>四个状态机执行共享指令内存的程序。系统软件将内存加载至该区域，配置状态机和 IO 映射，然后将状态机设置为运行状态。PIO 程序可以来自多个地方：可以由用户直接汇编，可以来自 PIO 库，或者由用户的软件生成。</p>
+<p>之后，状态机就会自动运行，系统软件通过 DMA、中断和控制寄存器与之交互，就像操作 RP2040 上的其他外设一样。对于更复杂的接口，PIO 提供了一个短小灵活的指令集，可以让系统软件更深入地操作状态机的控制流。</p>
 <table>
 <thead>
 <tr>
@@ -283,33 +284,33 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">图39. 状态机概览。数据通过一对 FIFO 输入输出。状态机可以执行一段程序，让这些 FIFO、一系列内部寄存器和管脚<br>之间传输数据。时钟分频器可以降低状态机的执行速度。</td>
+<td align="center">图39. 状态机概览。数据通过一对 FIFO 输入输出。状态机可以执行一段程序，让这些 FIFO、<br>一系列内部寄存器和管脚之间传输数据。时钟分频器可以降低状态机的执行速度。</td>
 </tr>
 </tbody></table>
 <h3 id="3-2-1-PIO程序"><a href="#3-2-1-PIO程序" class="headerlink" title="3.2.1. PIO程序"></a>3.2.1. PIO程序</h3><p>PIO 状态机执行短小的二进制程序。</p>
-<p>PIO 库提供了像 UART、SPI 或 I2C 等通用接口的程序，因此许多情况下不需要自己编写 PIO 程序。但是，直接对 PIO 编程可以带来更大的灵活性，<br>支持许多连设计者都没有考虑供的接口。</p>
+<p>PIO 库提供了像 UART、SPI 或 I2C 等通用接口的程序，因此许多情况下不需要自己编写 PIO 程序。但是，直接对 PIO 编程可以带来更大的灵活性，支持许多连设计者都没有考虑供的接口。</p>
 <p>PIO 一共有九条指令：<code>JMP</code>、<code>WAIT</code>、<code>IN</code>、<code>OUT</code>、<code>PUSH</code>、<code>PULL</code>、<code>MOV</code>、<code>IRQ</code> 和 <code>SET</code>。关于每条指令的详细信息请参见<a href="#34-%E6%8C%87%E4%BB%A4%E9%9B%86">3.4节</a>。</p>
 <p>尽管 PIO 只有九条指令，手工编写二进制 PIO 程序也非常困难。PIO 汇编是用文本形式描述的 PIO 程序，每条命令对应于二进制程序中的一条指令。<br>下面是一个 PIO 汇编程序的例子：</p>
 <caption>Pico 示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/squarewave.pio 第7-12行 </caption>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> 7 .program squarewave</span><br><span class="line"> 8     set pindirs, 1 ; Set pin to output</span><br><span class="line"> 9 again:</span><br><span class="line">10     set pins, 1 [1] ; Drive pin high and then delay for one cycle</span><br><span class="line">11     set pins, 0 ; Drive pin low</span><br><span class="line">12     jmp again ; Set PC to label `again`</span><br></pre></td></tr></table></figure>
 
-<p>SDK 自带了 PIO 汇编器，名为 <code>pioasm</code>。该程序接受一个 PIO 汇编程序的文本文件，其中可以包含多个程序，并输出汇编后的程序。<br>这些汇编后的程序以 C 头文件的形式输出，头文件中包含了常量数组。更多信息请参考<a href="#33-pio-%E6%B1%87%E7%BC%96%E5%99%A8pioasm">3.3节</a>。</p>
-<h3 id="3-2-2-控制流"><a href="#3-2-2-控制流" class="headerlink" title="3.2.2. 控制流"></a>3.2.2. 控制流</h3><p>在每个时钟周期，每个状态机获取、解码并执行一条指令。每个指令精确地占用一个时钟周期，除非它显式地暂停执行（如 <code>WAIT</code> 指令）。<br>每条指令还可以带有最多 31 个周期的延时，推迟下一条指令的执行，用于编写精确时钟周期的程序。</p>
-<p>程序计数器 <code>PC</code> 指向当前周期正在执行的指令的内存地址。一般而言，<code>PC</code> 每个周期加一，到达指令内存边界时自动返回开头。<br>跳转指令是一个例外，它显式提供了 <code>PC</code> 的下一个值。</p>
-<p>上一节的示例汇编程序（开头为 <code>.program squarewave</code>）演示了这两个概念。它在一个 GPIO 引脚上产生占空比为 50% 的方波，每个周期占用四个时钟周期。<br>通过其他手段（如 side-set）可以将周期缩短至两个时钟周期。</p>
+<p>SDK 自带了 PIO 汇编器，名为 <code>pioasm</code>。该程序接受一个 PIO 汇编程序的文本文件，其中可以包含多个程序，并输出汇编后的程序。这些汇编后的程序以 C 头文件的形式输出，头文件中包含了常量数组。更多信息请参考<a href="#33-pio-%E6%B1%87%E7%BC%96%E5%99%A8pioasm">3.3节</a>。</p>
+<h3 id="3-2-2-控制流"><a href="#3-2-2-控制流" class="headerlink" title="3.2.2. 控制流"></a>3.2.2. 控制流</h3><p>在每个时钟周期，每个状态机获取、解码并执行一条指令。每个指令精确地占用一个时钟周期，除非它显式地暂停执行（如 <code>WAIT</code> 指令）。每条指令还可以带有最多 31 个周期的延时，推迟下一条指令的执行，用于编写精确时钟周期的程序。</p>
+<p>程序计数器 <code>PC</code> 指向当前周期正在执行的指令的内存地址。一般而言，<code>PC</code> 每个周期加一，到达指令内存边界时自动返回开头。跳转指令是一个例外，它显式提供了 <code>PC</code> 的下一个值。</p>
+<p>上一节的示例汇编程序（开头为 <code>.program squarewave</code>）演示了这两个概念。它在一个 GPIO 引脚上产生占空比为 50% 的方波，每个周期占用四个时钟周期。通过其他手段（如 side-set）可以将周期缩短至两个时钟周期。</p>
 <p><strong>注意</strong>：Side-set 可以让状态机在执行一条指令时，顺便设置少量 GPIO 的状态。详细描述请参见<a href="#351-side-set">3.5.1节</a>。</p>
 <p>系统对指令内存拥有只写的权限，用于加载程序：</p>
 <caption>Pico示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/squarewave.c 第34-38行</caption>
 
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">34</span>     <span class="comment">// Load the assembled program directly into the PIO&#x27;s instruction memory.</span></span><br><span class="line"><span class="number">35</span>     <span class="comment">// Each PIO instance has a 32-slot instruction memory, which all 4 state</span></span><br><span class="line"><span class="number">36</span>     <span class="comment">// machines can see. The system has write-only access.</span></span><br><span class="line"><span class="number">37</span>     <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; count_of(squarewave_program_instructions); ++i)</span><br><span class="line"><span class="number">38</span>         pio-&gt;instr_mem[i] = squarewave_program_instructions[i];</span><br></pre></td></tr></table></figure>
 
-<p>时钟分割器可以将状态机的执行速度降低一个常数因子，该因子用一个 16.8 的定点分数表示。在上述示例中，如果采用的时钟分割因子为 2.5，<br>那么方波的周期就是 4 x 2.5 &#x3D; 10 个时钟周期。这在需要设置 UART 等串行接口的精确波特率时非常有用。</p>
+<p>时钟分频器可以按照固定的比例降低状态机的执行速度，该比例用一个 16.8 的定点分数表示。在上述示例中，如果采用的时钟分割因子为 2.5，那么方波的周期就是 4 x 2.5 &#x3D; 10 个时钟周期。这在需要设置 UART 等串行接口的精确波特率时非常有用。</p>
 <caption>Pico示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/squarewave.c 第42-47行</caption>
 
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">42</span>     <span class="comment">// Configure state machine 0 to run at sysclk/2.5. The state machines can</span></span><br><span class="line"><span class="number">43</span>     <span class="comment">// run as fast as one instruction per clock cycle, but we can scale their</span></span><br><span class="line"><span class="number">44</span>     <span class="comment">// speed down uniformly to meet some precise frequency target, e.g. for a</span></span><br><span class="line"><span class="number">45</span>     <span class="comment">// UART baud rate. This register has 16 integer divisor bits and 8</span></span><br><span class="line"><span class="number">46</span>     <span class="comment">// fractional divisor bits.</span></span><br><span class="line"><span class="number">47</span>     pio-&gt;sm[<span class="number">0</span>].clkdiv = (<span class="type">uint32_t</span>) (<span class="number">2.5f</span> * (<span class="number">1</span> &lt;&lt; <span class="number">16</span>));</span><br></pre></td></tr></table></figure>
 
-<p>上述代码片段所在的整个程序可以在 GPIO 0 （或任何管脚）上产生一个 12.5MHz 的方波。我们还可以使用 <code>WAIT PIN</code> 指令根据管脚状态等待一定时间，<br>或使用 <code>JMP PIN</code> 指令根据管脚状态跳转，实现根据管脚状态改变控制流。</p>
+<p>上述代码片段所在的整个程序可以在 GPIO 0 （或任何管脚）上产生一个 12.5MHz 的方波。我们还可以使用 <code>WAIT PIN</code> 指令根据管脚状态等待一定时间，或使用 <code>JMP PIN</code> 指令根据管脚状态跳转，实现根据管脚状态改变控制流。</p>
 <caption>Pico示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/squarewave.c 第51-59行 </caption>
 
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">51</span>     <span class="comment">// There are five pin mapping groups (out, in, set, side-set, jmp pin)</span></span><br><span class="line"><span class="number">52</span>     <span class="comment">// which are used by different instructions or in different circumstances.</span></span><br><span class="line"><span class="number">53</span>     <span class="comment">// Here we&#x27;re just using SET instructions. Configure state machine 0 SETs</span></span><br><span class="line"><span class="number">54</span>     <span class="comment">// to affect GPIO 0 only; then configure GPIO0 to be controlled by PIO0,</span></span><br><span class="line"><span class="number">55</span>     <span class="comment">// as opposed to e.g. the processors.</span></span><br><span class="line"><span class="number">56</span>     pio-&gt;sm[<span class="number">0</span>].pinctrl =</span><br><span class="line"><span class="number">57</span>         (<span class="number">1</span> &lt;&lt; PIO_SM0_PINCTRL_SET_COUNT_LSB) |</span><br><span class="line"><span class="number">58</span>         (<span class="number">0</span> &lt;&lt; PIO_SM0_PINCTRL_SET_BASE_LSB);</span><br><span class="line"><span class="number">59</span>     gpio_set_function(<span class="number">0</span>, GPIO_FUNC_PIO0);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -325,7 +326,7 @@
 <li>使用 <code>MOV EXEC</code> 指令，可以从寄存器执行指令。</li>
 <li>使用 <code>OUT EXEC</code> 指令，可以从输出移位寄存器中执行指令。</li>
 </ul>
-<p>后面几种方式非常灵活：指令可以嵌入到传递给 FIFO 的数据流中。I2C 的示例就在正常的数据中嵌入了 <code>STOP</code> 和 <code>RESTART</code> 等的条件。对于 <code>MOV</code> 和 <code>OUT EXEC</code> 来说，<br><code>MOV</code> &#x2F; <code>OUT</code> 本身需要一个时钟周期，然后再执行指定的指令。</p>
+<p>后面几种方式非常灵活：指令可以嵌入到传递给 FIFO 的数据流中。I2C 的示例就在正常的数据中嵌入了 <code>STOP</code> 和 <code>RESTART</code> 等的条件。对于 <code>MOV</code> 和 <code>OUT EXEC</code> 来说，<code>MOV</code> &#x2F; <code>OUT</code> 本身需要一个时钟周期，然后再执行指定的指令。</p>
 <h3 id="3-2-3-寄存器"><a href="#3-2-3-寄存器" class="headerlink" title="3.2.3. 寄存器"></a>3.2.3. 寄存器</h3><p>每个状态机都拥有几个内部寄存器。这些寄存器用于保存输入或输出数据，以及循环变量等临时数据。</p>
 <h4 id="3-2-3-1-输出移位寄存器（OSR）"><a href="#3-2-3-1-输出移位寄存器（OSR）" class="headerlink" title="3.2.3.1. 输出移位寄存器（OSR）"></a>3.2.3.1. 输出移位寄存器（OSR）</h4><table>
 <thead>
@@ -337,7 +338,7 @@
 <td align="center">图40. 输出移位寄存器（OSR）。数据每次可以并行输出 1 ~ 32 比特，未使用的数据由一个双方向移位器负责回收。<br>当 OSR 寄存器为空时，它会从 TX FIFO 中加载数据。</td>
 </tr>
 </tbody></table>
-<p>输出移位寄存器（OSR）负责存储并在 TX FIFO 和管脚（或其他目的地，如可擦写寄存器）之间移位输出数据。</p>
+<p>输出移位寄存器（OSR）负责存储在 TX FIFO 和管脚（或其他目的地，如可擦写寄存器）之间移位输出数据。</p>
 <ul>
 <li><code>PULL</code> 指令：从 TX FIFO 中移除一个 32 位字并置于 OSR 中。</li>
 <li><code>OUT</code> 指令将 OSR 中的数据移位至其他目的地，一次可移位 1 ~ 32 比特。</li>
@@ -376,13 +377,13 @@
 <li>如果设置了自动推出（autopush），那么当达到某个移位阈值时，状态机会在执行 <code>IN</code> 指令时自动将 ISR 的内容推出。</li>
 <li>移位方向可以由处理器通过配置寄存器进行设置。</li>
 </ul>
-<h4 id="3-2-3-3-移位计数器"><a href="#3-2-3-3-移位计数器" class="headerlink" title="3.2.3.3. 移位计数器"></a>3.2.3.3. 移位计数器</h4><p>状态机会记录总共有多少比特通过 <code>OUT</code> 指令移出了 OSR 寄存器，以及通过 <code>IN</code> 指令移入了 ISR。这个信息由一对硬件计数器负责跟踪，即输出移位计数器和输入移位计数器，<br>每个计数器可以保存数字 0 到 32（包含 0 和 32）。在每次移位操作后，相应的计数器会增加移位数量，最多增加 32（等于移位寄存器的宽度）。<br>可以对状态机进行配置，在某个计数器达到一定阈值后自动执行下列某个动作：</p>
+<h4 id="3-2-3-3-移位计数器"><a href="#3-2-3-3-移位计数器" class="headerlink" title="3.2.3.3. 移位计数器"></a>3.2.3.3. 移位计数器</h4><p>状态机会记录总共有多少比特通过 <code>OUT</code> 指令移出了 OSR 寄存器，以及通过 <code>IN</code> 指令移入了 ISR。这个信息由一对硬件计数器负责跟踪，即输出移位计数器和输入移位计数器，每个计数器可以保存数字 0 到 32（包含 0 和 32）。在每次移位操作后，相应的计数器会增加移位数量，最多增加 32（等于移位寄存器的宽度）。可以对状态机进行配置，在某个计数器达到一定阈值后自动执行下列某个动作：</p>
 <ul>
 <li>当特定数量的比特被移出后，自动加载 OSR。参见<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a></li>
 <li>当特定数量的比特被移入后，自动清空 ISR。参见<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a></li>
 <li><code>PUSH</code> 或 <code>PULL</code> 指令根据输入或输出移位计数器的条件自动执行</li>
 </ul>
-<p>在 PIO 复位时，或在 <code>CTRL_SM_RESTART</code> 时，输入一位计数器被清为 0（表示没有任何比特被移入），输出移位寄存器被初始化为 32（表示全空，没有任何等待移出的比特）。<br>影响移位计数器的其他指令包括：</p>
+<p>在 PIO 复位时，或在 <code>CTRL_SM_RESTART</code> 时，输入一位计数器被清为 0（表示没有任何比特被移入），输出移位寄存器被初始化为 32（表示全空，没有任何等待移出的比特）。影响移位计数器的其他指令包括：</p>
 <ul>
 <li>成功的 <code>PULL</code> 会将输出移位计数器清为 0</li>
 <li>成功的 <code>PUSH</code> 会将输入移位计数器清为 0</li>
@@ -402,8 +403,8 @@
 <p>这里 <code>X</code> 是循环计数器，<code>Y</code> 是临时变量，根据来自 OSR 的一个比特进行分支。该程序可以用来驱动 WS2812 LED 接口，不过该程序还可以写得更紧凑（最少只需要三条指令）。</p>
 <p>通过 <code>MOV</code> 指令，可擦写寄存器可以用来保存或恢复移位寄存器，可以用于重复移出同样的序列等情况。</p>
 <p><strong>注意</strong>：更紧凑的 WS2812 示例（共四条指令）参见<a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf" >3.6.2节<i class="fas fa-external-link-alt"></i></a>。</p>
-<h4 id="3-2-3-5-FIFO"><a href="#3-2-3-5-FIFO" class="headerlink" title="3.2.3.5. FIFO"></a>3.2.3.5. FIFO</h4><p>每个状态机都拥有一对 4 字深的 FIFO，一个用于将数据从系统传输到状态机（TX），另一个用于将数据从状态机传输至系统（RX）。TX FIFO 由总线管理者（如处理器或 DMA 控制器）负责写入，<br>而 RX FIFO 由状态机写入。FIFO 解耦合了 PIO 状态机和系统总线之间的时序，让状态机在没有处理器介入的情况下工作更长时间。</p>
-<p>FIFO 还会生成数据请求信号（DREQ），系统的 DMA 控制器可以借助此信号，根据 RX FIFO 中的数据情况，或 TX FIFO 中的空闲空间情况，采取适当的读写节奏。<br>因此，处理器可以设置更长的事务，比如允许在没有处理器介入的情况下传输几 K 字节的数据。</p>
+<h4 id="3-2-3-5-FIFO"><a href="#3-2-3-5-FIFO" class="headerlink" title="3.2.3.5. FIFO"></a>3.2.3.5. FIFO</h4><p>每个状态机都拥有一对 4 字深的 FIFO，一个用于将数据从系统传输到状态机（TX），另一个用于将数据从状态机传输至系统（RX）。TX FIFO 由总线管理者（如处理器或 DMA 控制器）负责写入，而 RX FIFO 由状态机写入。FIFO 解耦合了 PIO 状态机和系统总线之间的时序，让状态机在没有处理器介入的情况下工作更长时间。</p>
+<p>FIFO 还会生成数据请求信号（DREQ），系统的 DMA 控制器可以借助此信号，根据 RX FIFO 中的数据情况，或 TX FIFO 中的空闲空间情况，采取适当的读写节奏。因此，处理器可以设置更长的事务，比如允许在没有处理器介入的情况下传输几 K 字节的数据。</p>
 <p>通常，一个状态机只需要单方向传递数据。此时，<code>SHIFTCTRL_FJOIN</code> 选项可以将两个 FIFO合并成一个 8 字深的单向 FIFO。这个特性可以用于高带宽的接口，如 DPI。</p>
 <h3 id="3-2-4-等待状态"><a href="#3-2-4-等待状态" class="headerlink" title="3.2.4. 等待状态"></a>3.2.4. 等待状态</h3><p>状态机可能由于多种原因暂停执行：</p>
 <ul>
@@ -420,10 +421,10 @@
 <li>通过一条 <code>OUT</code> 或 <code>SET</code> 指令改变某些 GPIO 的电平或方向，或通过一条 <code>IN</code> 指令读取某些 GPIO</li>
 <li>通过一个 side-set 操作改变某些 GPIO 的电平或方向</li>
 </ul>
-<p>每个操作都可以指定连续的一段 GPIO 管脚，管脚数量和起始管脚由每个状态机的 <code>PINCTRL</code> 寄存器控制。共可以设定四个范围，分别用于 <code>OUT</code>、<code>SET</code>、<br><code>IN</code> 和 side-set 操作。每个范围可以覆盖给定 PIO 块内的任意数量的 GPIO （在 RP2040 上为 30 个用户定义 GPIO），而且这些范围之间可以重叠。</p>
-<p>对于每次 GPIO 输出（电平和方向分别考虑），PIO 会考虑该时钟周期内发生的所有 8 个写入操作，并从编号最大的状态机开始应用写入操作。<br>如果同一个状态机在同一个 GPIO 上同时执行 <code>SET</code>&#x2F;<code>OUT</code> 和 side-set 操作，则采用 side-set。如果没有任何状态机写入某个 GPIO 输出，<br>则其值保持前一个周期的值不变。</p>
+<p>每个操作都可以指定连续的一段 GPIO 管脚，管脚数量和起始管脚由每个状态机的 <code>PINCTRL</code> 寄存器控制。共可以设定四个范围，分别用于 <code>OUT</code>、<code>SET</code>、<code>IN</code> 和 side-set 操作。每个范围可以覆盖给定 PIO 块内的任意数量的 GPIO （在 RP2040 上为 30 个用户定义 GPIO），而且这些范围之间可以重叠。</p>
+<p>对于每次 GPIO 输出（电平和方向分别考虑），PIO 会考虑该时钟周期内发生的所有 8 个写入操作，并从编号最大的状态机开始应用写入操作。如果同一个状态机在同一个 GPIO 上同时执行 <code>SET</code>&#x2F;<code>OUT</code> 和 side-set 操作，则采用 side-set。如果没有任何状态机写入某个 GPIO 输出，则其值保持前一个周期的值不变。</p>
 <p>一般而言，每个状态机的输出被映射到不同的 GPIO 组上，从而实现某种并行接口。</p>
-<h3 id="3-2-6-IRQ-标志"><a href="#3-2-6-IRQ-标志" class="headerlink" title="3.2.6 IRQ 标志"></a>3.2.6 IRQ 标志</h3><p>IRQ 标志是可以由状态机或系统进行设置或清除的状态位。共有 8 个标志，全部对所有状态机可见，而且还可以通过 <code>IRQ0_INTE</code> 和 <code>IRQ1_INTE</code> 控制寄存器，<br>将 IRQ 标志的低 4 比特遮盖成某个 PIO 的中断请求线，</p>
+<h3 id="3-2-6-IRQ-标志"><a href="#3-2-6-IRQ-标志" class="headerlink" title="3.2.6 IRQ 标志"></a>3.2.6 IRQ 标志</h3><p>IRQ 标志是可以由状态机或系统进行设置或清除的状态位。共有 8 个标志，全部对所有状态机可见，而且还可以通过 <code>IRQ0_INTE</code> 和 <code>IRQ1_INTE</code> 控制寄存器，将 IRQ 标志的低 4 比特遮盖成某个 PIO 的中断请求线，</p>
 <p>IRQ 标志的用途主要有两个：</p>
 <ul>
 <li>在状态机程序中，判断系统级别的中断，然后据此等待某个中断的应答</li>
@@ -437,26 +438,46 @@
 <li>将多个状态机指向不同的程序</li>
 <li>用多个状态机运行同一个接口的不同部分，例如 UART 的 TX 端和 RX 端，或 DPI 显示的时钟&#x2F;水平同步和像素数据</li>
 </ul>
-<p>状态机之间无法进行数据通信，但可以通过 IRQ 标志互相同步。共有 8 个 IRQ 标志（低 4 比特可以遮盖，用于系统 IRQ），<br>每个状态机可以通过 <code>IRQ</code> 指令设置或清除任意标志，也可以通过 <code>WAIT IRQ</code> 指令等待某个标志被设置或清除。<br>这样可以实现状态机之间的时钟周期级别的同步。</p>
-<h2 id="3-3-PIO-汇编器（pioasm）"><a href="#3-3-PIO-汇编器（pioasm）" class="headerlink" title="3.3. PIO 汇编器（pioasm）"></a>3.3. PIO 汇编器（pioasm）</h2><p>PIO 汇编器能够解析一段 PIO 源文件，并输出汇编后的代码，该代码可以包含到某个 RP2040 应用程序中，<br>可以是使用 SDK 构建的 C 或 C++ 程序，也可以是 RP2040 MicroPython 上运行的 Python 程序。</p>
-<p>本节简要介绍 <code>pioasm</code> 中可以使用的指示（directives）和指令（instructions）。有关怎样使用 <code>pioasm</code>、<br>怎样将其集成到 SDK 构建系统中、怎样扩展其特性以及它能生成何种输出格式等的深入讨论，请参考 <a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.org/pico/raspberry-pi-pico-c-sdk.pdf" >Raspberry Pi Pico C&#x2F;C++ SDK<i class="fas fa-external-link-alt"></i></a> 一书。</p>
-<h3 id="3-3-1-指示"><a href="#3-3-1-指示" class="headerlink" title="3.3.1. 指示"></a>3.3.1. 指示</h3><p>PIO 程序中的汇编语言可以使用以下指示：</p>
-<p><code>.define ( PUBLIC ) &lt;symbol&gt; &lt;value&gt;</code></p>
-<p>定义一个名为 <code>&lt;symbol&gt;</code> 的整数符号，其值为 <code>&lt;value&gt;</code> （参见<a href="#332-%E5%80%BC">3.3.2节</a>）。<br>如果 <code>.define</code> 出现在输入文件中的第一个程序之前，那么定义就是全局的，对所有程序生效；否则，<br>定义就是局部的，仅对其所在的程序生效。如果指定了 <code>PUBLIC</code>，那么符号将输出到输出的汇编中，可以由用户代码使用。<br>对于 SDK 而言，程序符号的定义形式为 <code>#define &lt;program_name&gt;_&lt;symbol&gt; value</code>，而全局符号的定义形式为<br><code>#define &lt;symbol&gt; value</code>。</p>
-<p><code>.program &lt;name&gt;</code></p>
-<p>开始一个名为 <code>&lt;name&gt;</code> 的新程序。注意名称会在代码中使用，所以应当由字母、数字或下划线组成，并且不以数字开始。<br>程序直到出现下一个 <code>.program</code> 指示或源文件末尾时结束。PIO 指令只能在程序内使用。</p>
-<p><code>.origin &lt;offset&gt;</code></p>
-<p>可选的指示，指示 PIO 指令内存的偏移量，程序<em>必须</em>加载到此偏移量处。绝大多数情况下，该指示用于指定程序必须加载到偏移量 0，<br>这样这些程序才能使用基于数据的 JMP 指令，并且只用几个比特来存储跳转的（绝对）地址。在程序外部，该指示无效。</p>
-<p><code>.side_set &lt;count&gt; (opt) (pindirs)</code></p>
-<p>如果出现该指示，则 <code>&lt;count&gt;</code> 指示使用的 side-set 比特数。还可以通过 <code>opt</code> 以指定 <code>side &lt;value&gt;</code> 对于指令是可选的<br>（注意这样做会使 side-set 在原本需要占用的 <code>&lt;count&gt;</code> 个比特之外，再额外占用一个比特。这些被占用的比特均来自指令的延时比特）。<br>最后，<code>pindirs</code> 可以用来指示 side-set 值应当应用于 PINDIR，而不是 PIN 上。该指示只能出现在程序的第一条指令之前。</p>
-<p><code>.wrap_target</code></p>
-<p>该指示置于某条指令之前，用于指示在程序折返时应当从哪一条指令继续执行。该指示只能在程序内部使用，且每个程序只能使用一次。<br>如果不指定，折返目的地为程序的开头。</p>
-<p><code>.wrap</code></p>
-<p>该指示置于某条指令之后，指示在正常的控制流中（即 <code>jmp</code> 条件为假，或没有 <code>jmp</code> 的情况）执行完该指令后，程序应当折返（至 <code>.warp_target</code> 指示的指令）。<br>该指示只能在程序内部使用，且每个程序只能使用一次。如果不指定，则折返点为程序的最后一条指令之后。</p>
-<p><code>.lang_opt &lt;lang&gt; &lt;name&gt; &lt;option&gt;</code></p>
-<p>为程序指定与特定语言生成器有关的选项（参见<a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.org/pico/raspberry-pi-pico-c-sdk.pdf" >SDK文档<i class="fas fa-external-link-alt"></i></a>中的”Language generators”一节）。<br>该指示只能在程序内使用。</p>
-<p><code>.word &lt;value&gt;</code></p>
-<p>将一个 16 位值作为一条指令存储在程序中。该指示只能在程序内部使用。</p>
+<p>状态机之间无法进行数据通信，但可以通过 IRQ 标志互相同步。共有 8 个 IRQ 标志（低 4 比特可以遮盖，用于系统 IRQ），每个状态机可以通过 <code>IRQ</code> 指令设置或清除任意标志，也可以通过 <code>WAIT IRQ</code> 指令等待某个标志被设置或清除。这样可以实现状态机之间的时钟周期级别的同步。</p>
+<h2 id="3-3-PIO-汇编器（pioasm）"><a href="#3-3-PIO-汇编器（pioasm）" class="headerlink" title="3.3. PIO 汇编器（pioasm）"></a>3.3. PIO 汇编器（pioasm）</h2><p>PIO 汇编器能够解析一段 PIO 源文件，并输出汇编后的代码，该代码可以包含到某个 RP2040 应用程序中，可以是使用 SDK 构建的 C 或 C++ 程序，也可以是 RP2040 MicroPython 上运行的 Python 程序。</p>
+<p>本节简要介绍 <code>pioasm</code> 中可以使用的标识符（directives）和指令（instructions）。有关怎样使用 <code>pioasm</code>、怎样将其集成到 SDK 构建系统中、怎样扩展其特性以及它能生成何种输出格式等的深入讨论，请参考 <a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.org/pico/raspberry-pi-pico-c-sdk.pdf" >Raspberry Pi Pico C&#x2F;C++ SDK<i class="fas fa-external-link-alt"></i></a> 一书。</p>
+<h3 id="3-3-1-标识符"><a href="#3-3-1-标识符" class="headerlink" title="3.3.1. 标识符"></a>3.3.1. 标识符</h3><p>PIO 程序中的汇编语言可以使用以下标识符：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.define ( PUBLIC ) &lt;symbol&gt; &lt;value&gt;</span><br></pre></td></tr></table></figure>
+<p>定义一个名为 &lt;symbol&gt; 的整数符号，其值为 &lt;value&gt; （参见<a href="#332-%E5%80%BC">3.3.2节</a>）。如果 .define 出现在输入文件中的第一个程序之前，那么定义就是全局的，对所有程序生效；否则，定义就是局部的，仅对其所在的程序生效。如果指定了 PUBLIC，那么符号将输出到汇编中，可以由用户代码使用。对于 SDK 而言，程序符号的定义形式为 <code>#define &lt;program_name&gt;_&lt;symbol&gt; value</code>，而全局符号的定义形式为<code>#define &lt;symbol&gt; value</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.program &lt;name&gt;</span><br></pre></td></tr></table></figure>
+<p>开始一个名为 &lt;name&gt; 的新程序。注意名称会在代码中使用，所以应当由字母、数字或下划线组成，并且不以数字开始。程序直到出现下一个 .program 标识或源文件末尾时结束。PIO 指令只能在程序内使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.clock_div &lt;divider&gt;</span><br></pre></td></tr></table></figure>
+<p>如果存在该指令，则divider是程序的状态机时钟分频器。需要注意的是，分频值可以是浮点数，但目前无法使用算数表达式来定义。该指令影响程序的默认状态机配置，此指令仅在第一条程序指令之前有效。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.pio_version &lt;version&gt;</span><br></pre></td></tr></table></figure>
+<p>如果存在该指令，则要求硬件的PIO版本至少需要达到指定的值。rp2040的PIO版本为0，RP2350的PIO版本为1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.fifo &lt;fifo_config&gt;</span><br></pre></td></tr></table></figure>
+<p>如果存在该指令，则它用来指定程序的FIFO配置。支持以下FIFO配置：</p>
+<ul>
+<li>txrx: TX和RX的FIFO各自分配4字，这也是默认配置</li>
+<li>tx: TX FIFO独占8字</li>
+<li>rx: RX FIFO独占8字</li>
+<li>txput: 4字FIFO用于TX，4字FIFO用于 mov rxfifo[index], isr (该配置不支持PIO version 0)</li>
+<li>txget: 4字FIFO用于RX，4字FIFO用于 mov osr, rxfifo[index] (该配置不支持PIO version 0)</li>
+<li>putget: 4字FIFO用于 mov rxfifo[index], isr  4字FIFO用于 mov osr, rxfifo[index] (该配置不支持PIO version 0)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.in &lt;count&gt; (left|right) (auto) (&lt;threshold&gt;)</span><br></pre></td></tr></table></figure>
+<p>如果存在该指令，count 指示要使用的bit数，left和right指示ISR寄存器位移的方向，auto指示使能自动push，如果存在threshold，则其指示执行自动push的阈值。该指令影响程序的默认状态机配置，此指令仅在第一条程序指令之前有效。(对于PIO version 0来说，count固定为32)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.out &lt;count&gt; (left|right) (auto) (&lt;threshold&gt;)</span><br></pre></td></tr></table></figure>
+<p>如果存在该指令，count 指示要使用的bit数，left和right指示OSR寄存器位移的方向，auto指示使能自动pull，如果存在threshold，则其指示执行自动pull的阈值。该指令影响程序的默认状态机配置，此指令仅在第一条程序指令之前有效。(对于PIO version 0来说，count固定为32)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.mov_status rxfifo &lt; &lt;n&gt;</span><br><span class="line">.mov_status txfifo &lt; &lt;n&gt;</span><br><span class="line">.mov_status irq &lt;(next|prev)&gt; set &lt;n&gt;</span><br></pre></td></tr></table></figure>
+<p>该指令用于配置指令 mov x, status 的源。可从三种情况之中选择一种进行配置，包括根据RXFIFO数量低于n、TXFIFO数量低于n、irq的第n个标志被设置(或下一个更高编号或上一个更低编号的PIO)。irq选项不支持PIO version 0。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.origin &lt;offset&gt;</span><br></pre></td></tr></table></figure>
+<p>可选的标识，指示 PIO 指令内存的偏移量，程序必须加载到此偏移量处。绝大多数情况下，该标识用于指定程序必须加载到偏移量 0，这样这些程序才能使用基于数据的 JMP 指令，并且只用几个比特来存储跳转的（绝对）地址。在程序外部，该标识无效。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.side_set &lt;count&gt; (opt) (pindirs)</span><br></pre></td></tr></table></figure>
+<p>如果出现该标识，则 &lt;count&gt; 指示使用的 side-set 比特数。还可以通过 opt 以指定 side &lt;value&gt; 对于指令是可选的（注意这样做会使 side-set 在原本需要占用的 &lt;count&gt; 个比特之外，再额外占用一个比特。这些被占用的比特均来自指令的延时比特）。最后，pindirs 可以用来指示 side-set 值应当应用于 PINDIR，而不是 PIN 上。该标识只能出现在程序的第一条指令之前。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.wrap_target</span><br></pre></td></tr></table></figure>
+<p>该标识置于某条指令之前，用于指示在程序折返时应当从哪一条指令继续执行。该标识只能在程序内部使用，且每个程序只能使用一次。如果不指定，折返目的地为程序的开头。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.wrap</span><br></pre></td></tr></table></figure>
+<p>该标识置于某条指令之后，指示在正常的控制流中（即 jmp 条件为假，或没有 jmp 的情况）执行完该指令后，程序应当折返（至 .warp_target 标识的指令）。该标识只能在程序内部使用，且每个程序只能使用一次。如果不指定，则折返点为程序的最后一条指令之后。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.lang_opt &lt;lang&gt; &lt;name&gt; &lt;option&gt;</span><br></pre></td></tr></table></figure>
+<p>为程序指定与特定语言生成器有关的选项（参见<a class="link"   target="_blank" rel="noopener" href="https://datasheets.raspberrypi.org/pico/raspberry-pi-pico-c-sdk.pdf" >SDK文档<i class="fas fa-external-link-alt"></i></a>中的”Language generators”一节）。该标识只能在程序内使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.word &lt;value&gt;</span><br></pre></td></tr></table></figure>
+<p>将一个 16 位值作为一条指令存储在程序中。该标识只能在程序内部使用。</p>
 <h3 id="3-3-2-值"><a href="#3-3-2-值" class="headerlink" title="3.3.2. 值"></a>3.3.2. 值</h3><p>下述值类型可以用于定义整数，或分支目的地。</p>
 <table>
 <thead>
@@ -466,27 +487,27 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>integer</code></td>
-<td>一个整数值，如 <code>3</code> 或 <code>-7</code></td>
+<td>integer</td>
+<td>一个整数值，如 3 或 -7</td>
 </tr>
 <tr>
-<td><code>hex</code></td>
-<td>一个十六进制值，如 <code>0xf</code></td>
+<td>hex</td>
+<td>一个十六进制值，如 0xf</td>
 </tr>
 <tr>
-<td><code>binary</code></td>
-<td>一个二进制值，如 <code>0b1001</code></td>
+<td>binary</td>
+<td>一个二进制值，如 0b1001</td>
 </tr>
 <tr>
-<td><code>symbol</code></td>
-<td>由 <code>.define</code> 定义的一个值（参见<a href="#331-%E6%8C%87%E7%A4%BA">3.3.1节</a>）</td>
+<td>symbol</td>
+<td>由 .define 定义的一个值（参见<a href="#331-%E6%A0%87%E8%AF%86%E7%AC%A6">3.3.1节</a>）</td>
 </tr>
 <tr>
-<td><code>&lt;label&gt;</code></td>
+<td>&lt;label&gt;</td>
 <td>程序中的标签所对应的指令偏移量。通常在 JMP 指令中使用（参见<a href="#342-jmp">3.4.2节</a></td>
 </tr>
 <tr>
-<td><code>( &lt;expression&gt; )</code></td>
+<td>( &lt;expression&gt; )</td>
 <td>一个可求值的表达式；参见<a href="#333-%E8%A1%A8%E8%BE%BE%E5%BC%8F">3.3.3节</a>。注意括号是必须的。</td>
 </tr>
 </tbody></table>
@@ -539,9 +560,11 @@
 <p><code>&lt;instruction&gt; (side &lt;side_set_value&gt;) ([&lt;delay_value])</code></p>
 <p>其中：</p>
 <p><code>&lt;instruction&gt;</code> 是下一节介绍的汇编指令。（参见<a href="#34-%E6%8C%87%E4%BB%A4%E9%9B%86">3.4节</a>）</p>
-<p><code>&lt;side_set_valie&gt;</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），在指令开始时，该值将应用到 side_set 管脚。注意 <code>side &lt;side_set_value&gt;</code> 中的 side-set 值的规则依赖于该程序的 <code>.side_set</code> 指示（参见<a href="#331-%E6%8C%87%E7%A4%BA">3.3.1节</a>）。<br>如果没有指定 <code>.side_set</code>，则 <code>side &lt;side_set_value&gt;</code> 就是无效的。如果指定了可选数量的 side-set 管脚，则允许使用 <code>side &lt;side_set_value&gt;</code>。如果指定了必须数量的 side-set 管脚，则 <code>side &lt;side_set_value&gt;</code> 是必须的。<br><code>&lt;side_set_value&gt;</code> 的值必须匹配 <code>.side_set</code> 指示中指定的 side-set 的比特数。</p>
-<p><code>&lt;delay_value&gt;</code> 指定在指令执行完成后需要延时的时钟周期数。<code>delay_value</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），通常在 0 ~ 31 之间（包含 0 和 31，是一个 5 比特的值），但是如果通过 <code>.side_set</code> 指示（参见<a href="#331-%E6%8C%87%E7%A4%BA">3.3.1节</a>）启用了 side-set，那么可用的比特数就会减少。如果不指定 <code>&lt;delay_value&gt;</code>，则指令没有延时。</p>
-<p><strong>注意</strong> pioasm 指令名称、关键字和指示不区分大小写。遵循 SDK 的风格，下面的“汇编语法”一节统一使用小写。</p>
+<p><code>&lt;side_set_valie&gt;</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），在指令开始时，该值将应用到 side_set 管脚。注意 <code>side &lt;side_set_value&gt;</code> 中的 side-set 值的规则依赖于该程序的 <code>.side_set</code> 指示（参见<a href="#331-%E6%A0%87%E8%AF%86%E7%AC%A6">3.3.1节</a>）。</p>
+<p>如果没有指定 <code>.side_set</code>，则 <code>side &lt;side_set_value&gt;</code> 就是无效的。如果指定了可选数量的 side-set 管脚，则允许使用 <code>side &lt;side_set_value&gt;</code>。如果指定了必须数量的 side-set 管脚，则 <code>side &lt;side_set_value&gt;</code> 是必须的。</p>
+<p><code>&lt;side_set_value&gt;</code> 的值必须匹配 <code>.side_set</code> 标识中指定的 side-set 的比特数。</p>
+<p><code>&lt;delay_value&gt;</code> 指定在指令执行完成后需要延时的时钟周期数。<code>delay_value</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），通常在 0 ~ 31 之间（包含 0 和 31，是一个 5 比特的值），但是如果通过 <code>.side_set</code> 指示（参见<a href="#331-%E6%A0%87%E8%AF%86%E7%AC%A6">3.3.1节</a>）启用了 side-set，那么可用的比特数就会减少。如果不指定 <code>&lt;delay_value&gt;</code>，则指令没有延时。</p>
+<p><strong>注意</strong> pioasm 指令名称、关键字和标识不区分大小写。遵循 SDK 的风格，下面的“汇编语法”一节统一使用小写。</p>
 <p><strong>注意</strong> 某些汇编语法中会出现都好，但逗号完全是可选的。例如 <code>out pins, 3</code> 可以写成 <code>out pins 3</code>，<code>jmp x-- label</code> 可以写成 <code>jmp x--, label</code>。“汇编语法”一节使用前一种格式。</p>
 <h3 id="3-3-7-伪指令"><a href="#3-3-7-伪指令" class="headerlink" title="3.3.7 伪指令"></a>3.3.7 伪指令</h3><p>目前，pioasm 提供一条伪指令（pseudoinstruction），以方便编程：</p>
 <p><code>nop</code>：汇编成 <code>mov y, y</code>。表示“无操作”。没有任何副作用，用于 side-set 操作，或额外的延时。</p>
@@ -570,16 +593,16 @@
 </li>
 <li>Address：要跳转到的指令地址。在指令编码中，该值为 PIO 指令内存中的绝对地址。</li>
 </ul>
-<p><code>JMP PIN</code> 会根据 <code>EXECCTRL_JMP_PIN</code> 选择的 GPIO 管脚进行跳转。<code>EXECCTRL_JMP_PIN</code> 是一个可配置选项，它从状态机可以使用的最多 32 个 GPIO 输入管脚中选择其中之一，供 JMP 使用。不依赖于状态机的其他输入映射。<br>如果该 GPIO 为高电平，则跳转。</p>
+<p><code>JMP PIN</code> 会根据 <code>EXECCTRL_JMP_PIN</code> 选择的 GPIO 管脚进行跳转。<code>EXECCTRL_JMP_PIN</code> 是一个可配置选项，它从状态机可以使用的最多 32 个 GPIO 输入管脚中选择其中之一，供 JMP 使用。不依赖于状态机的其他输入映射。如果该 GPIO 为高电平，则跳转。</p>
 <p><code>!OSRE</code> 将自上一次 <code>PULL</code> 以来移出的比特数，与移位计数阈值进行比较。移位计数阈值由 <code>SHIFTCTRL_PULL_THRESH</code> 配置。自动加载（autopull，参见<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a>）也通过该配置项配置。</p>
 <p><code>JMP X--</code> 和 <code>JMP Y--</code> 总是会将寄存器 X 或 Y 减一。减一操作与可擦写寄存器的当前值无关。跳转条件是寄存器的<em>初始值</em>，即减一操作发生之前的值。如果寄存器最初为非零值，则发生跳转。</p>
 <h4 id="3-4-2-3-汇编语法"><a href="#3-4-2-3-汇编语法" class="headerlink" title="3.4.2.3. 汇编语法"></a>3.4.2.3. 汇编语法</h4><p><code>jmp (&lt;cond&gt;) &lt;target&gt;</code></p>
 <p>其中：</p>
 <p><code>&lt;cond&gt;</code> 是上节列出的可选的条件（例如，<code>!x</code> 表示可擦写寄存器 X 为零）。如果未指定条件，则总是跳转。</p>
-<p><code>&lt;target&gt;</code> 是一个程序标签或值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），表示程序内部的指令偏移量（第一条指令的偏移量为 0）。注意，由于 PIO JMP 指令使用 PIO 指令内存之内的绝对地址，JMP 需要在运行时根据程序的加载偏移量进行调整。<br>这一步在加载程序时由 SDK 负责，但在编码 JMP 指令供 <code>OUT EXEC</code> 使用时需要留意这一点。</p>
+<p><code>&lt;target&gt;</code> 是一个程序标签或值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），表示程序内部的指令偏移量（第一条指令的偏移量为 0）。注意，由于 PIO JMP 指令使用 PIO 指令内存之内的绝对地址，JMP 需要在运行时根据程序的加载偏移量进行调整。这一步在加载程序时由 SDK 负责，但在编码 JMP 指令供 <code>OUT EXEC</code> 使用时需要留意这一点。</p>
 <h3 id="3-4-3-WAIT"><a href="#3-4-3-WAIT" class="headerlink" title="3.4.3. WAIT"></a>3.4.3. WAIT</h3><h4 id="3-4-3-1-编码"><a href="#3-4-3-1-编码" class="headerlink" title="3.4.3.1. 编码"></a>3.4.3.1. 编码</h4><p><img   src="/2025/03/08/PIO%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/figures/instruction-wait.png"  alt="WAIT"></p>
 <h4 id="3-4-3-2-操作"><a href="#3-4-3-2-操作" class="headerlink" title="3.4.3.2. 操作"></a>3.4.3.2. 操作</h4><p>等待，直到条件满足。</p>
-<p>与所有等待指令一样（参见<a href="#324-%E7%AD%89%E5%BE%85%E7%8A%B6%E6%80%81">3.2.4节</a>），延时周期在指令<em>完成</em>之后发生。也就是说，如果指定了延时周期，那么延时要直到等待条件满足<em>之后</em>才会开始。</p>
+<p>与所有等待指令一样（参见<a href="#324-%E7%AD%89%E5%BE%85%E7%8A%B6%E6%80%81">3.2.4节</a>），延时周期在指令<strong>完成</strong>之后发生。也就是说，如果指定了延时周期，那么延时要直到等待条件满足<strong>之后</strong>才会开始。</p>
 <ul>
 <li>Polarity<ul>
 <li>1：等待 1。</li>
@@ -590,7 +613,7 @@
 <li>00:<code>GPIO</code>：等待由 <code>Index</code> 选择的系统 GPIO 输入。该项为绝对 GPIO 索引，不受状态机的输入 IO 映射影响。</li>
 <li>01：<code>PIN</code>：由 <code>Index</code> 指定的输入管脚。首先会应用当前状态机的输入 IO 映射，然后利用 <code>Index</code> 选择要等待哪个输入比特。换句话说，选择的管脚就是 <code>PINCTRL_IN_BASE</code> 加上 <code>Index</code>，再对 32 取余。</li>
 <li>10：<code>IRQ</code>：等待由 <code>Index</code> 选择的 PIO IRQ 标志。</li>
-<li>11：保留</li>
+<li>11：<code>JMPPIN</code>：等待由PINCTRL_JMP_PIN配置的GPIO，可以设置一个0-3的偏移。加上偏移后不得超过32。(该模式不支持PIO version 0)</li>
 </ul>
 </li>
 <li>Index：要检查哪个管脚或比特。</li>
@@ -598,17 +621,25 @@
 <p><code>WAIT x IRQ</code> 的行为与其他 <code>WAIT</code> 源略有不同：</p>
 <ul>
 <li>如果 <code>Polarity</code> 为 1，则在等待条件满足后，当前状态机会清除选择的 IRQ 标志。</li>
-<li>标志位索引的解码方式与 <code>IRQ</code> 的索引字段相同：如果 MSB 被设置，则将状态机的 ID（0..3）加到 IRQ 索引上，加法采用两个 LSB 的模 4 加法。例如，状态机 2、标志值为 ‘0x11’，则等待标志 3，而标志值 ‘0x13’ 将等待标志 1。这样，运行同一个程序的多个状态机就可以互相同步。</li>
+<li>标志位索引的解码方式与 <code>IRQ</code> 的索引字段相同，从两个MSB进行解码：<ul>
+<li>00: 最低三位用于要等待的当前PIO的IRQ标志编号。</li>
+<li>01(PREV): 最低三位指示的IRQ编号为上一个PIO的IRQ标志。</li>
+<li>10(REL):  最低三位的值加上状态机的编号再模4作为IRQ的编号进行等待。例如状态机2的最低3位的值为1，则将等待IRQ3。状态机3的最低三位为3，则将等待IRQ2。这样，允许同一个程序的不同状态机就可以相互同步。</li>
+<li>11(NEXT): 最低三位指示的IRQ编号为上一个PIO的IRQ标志。<br>如果 MSB 被设置，则将状态机的 ID（0..3）加到 IRQ 索引上，加法采用两个 LSB 的模 4 加法。例如，状态机 2、标志值为 ‘0x11’，则等待标志 3，而标志值 ‘0x13’ 将等待标志 1。这样，运行同一个程序的多个状态机就可以互相同步。</li>
+</ul>
+</li>
 </ul>
 <p><strong>注意</strong> <code>WAIT 1 IRQ x</code> 不应当使用供中断控制器使用的 IRQ 标志，以避免与系统中断处理函数的竞合冲突。</p>
 <h4 id="3-4-3-3-汇编语法"><a href="#3-4-3-3-汇编语法" class="headerlink" title="3.4.3.3. 汇编语法"></a>3.4.3.3. 汇编语法</h4><p><code>wait &lt;polarity&gt; gpio &lt;gpio_num&gt;</code></p>
 <p><code>wait &lt;polarity&gt; pin &lt;pin_num&gt;</code></p>
-<p><code>wait &lt;polarity&gt; irq &lt;irq_num&gt; (rel)</code></p>
+<p><code>wait &lt;polarity&gt; irq &lt;irq_num&gt; (rel, next, prev)</code></p>
+<p><code>wait &lt;polarity&gt; jmppin (+ &lt;pin_offset&gt;)</code></p>
 <p>其中：</p>
 <p><code>&lt;polarity&gt;</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），指定极性（0 或 1）</p>
 <p><code>&lt;pin_num&gt;</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），指定输入管脚的编号（在状态机输入管教映射中的编号）</p>
 <p><code>&lt;gpio_num&gt;</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），指定实际的 GPIO 管脚编号</p>
 <p><code>&lt;irq_num&gt; (rel)</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），指定要等待的 IRQ 编号（0 ~ 7）。如果设置了 <code>rel</code>，则实际的 IRQ 编号的计算方式为，将 IRQ 编号的最低两个比特（<code>irq_num</code><sub>10</sub>）替换成和的最低两个比特（<code>irq_num</code><sub>10</sub> + <code>sm_num</code><sub>10</sub>），其中 <code>sm_num</code><sub>10</sub> 为状态机编号</p>
+<p><code>&lt;pin_offset&gt;</code> 是一个值，用来添加到JMP_PIN上来获得实际需要等待的引脚编号</p>
 <h3 id="3-4-4-IN"><a href="#3-4-4-IN" class="headerlink" title="3.4.4. IN"></a>3.4.4. IN</h3><h4 id="3-4-4-1-编码"><a href="#3-4-4-1-编码" class="headerlink" title="3.4.4.1. 编码"></a>3.4.4.1. 编码</h4><p><img   src="/2025/03/08/PIO%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/figures/instruction-in.png"  alt="IN"></p>
 <h4 id="3-4-4-2-操作"><a href="#3-4-4-2-操作" class="headerlink" title="3.4.4.2. 操作"></a>3.4.4.2. 操作</h4><p>从 <code>Source</code> 移位 <code>Bit count</code> 个比特到输入移位寄存器（ISR）中。移位方向由各个状态机的 <code>SHIFTCTRL_IN_SHIFTDIR</code> 决定。此外，增加输入移位计数器 <code>Bit count</code>，最大到 32。</p>
 <ul>
@@ -625,9 +656,9 @@
 </li>
 <li>Bit count：要将多少比特移位到 ISR。值为 1 ~ 32 比特，32 编码为 <code>00000</code>。</li>
 </ul>
-<p>如果启用了自动推出（autopush），那么当达到推出阈值（<code>SHIFTCTRL_PUSH_THRES</code>）时，<code>IN</code> 还会将 ISR 的内容推出到 RX FIFO。不论自动推出是否发生，<code>IN</code> 的执行时间都是一个时钟周期。<br>当自动推出发生，但 RX FIFO 满时，状态机会进入等待状态。自动推出会清空 ISR 的内容为全零，并且会清除输入移位计数器。参见<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a>。</p>
-<p><code>IN</code> 永远使用源数据的最低 <code>Bit count</code> 个比特。例如，如果 <code>PINCTRL_IN_BASE</code> 设置为 5，那么指令 <code>IN 3, PINS</code> 会读取管脚 5、6 和 7，并将这些值移入 ISR。<br>首先，ISR 会左移或右移，为新的输入数据腾出空间，然后将输入数据复制到腾出的空间中。输入数据的比特顺序与移位方向无关。</p>
-<p>使用 <code>NULL</code> 可以移位 ISR 的内容。例如，UART 会首先接受 LSB，因此必须右移。在执行 8 次 <code>IN PINS, 1</code> 指令后，输入的串行数据占据了 ISR 的 31..24 比特。<br>此时，<code>IN NULL, 24</code> 指令将会移入 24 个零比特，将输入数据移到 ISR 的 7..0 比特。另一种方式是让处理器或 DMA 从 FIFO 地址 +3 的位置读取一个字节，<br>这样可以读取 FIFO 内容的 31..24 比特。</p>
+<p>如果启用了自动推出（autopush），那么当达到推出阈值（<code>SHIFTCTRL_PUSH_THRES</code>）时，<code>IN</code> 还会将 ISR 的内容推出到 RX FIFO。不论自动推出是否发生，<code>IN</code> 的执行时间都是一个时钟周期。当自动推出发生，但 RX FIFO 满时，状态机会进入等待状态。自动推出会清空 ISR 的内容为全零，并且会清除输入移位计数器。参见<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a>。</p>
+<p><code>IN</code> 永远使用源数据的最低 <code>Bit count</code> 个比特。例如，如果 <code>PINCTRL_IN_BASE</code> 设置为 5，那么指令 <code>IN 3, PINS</code> 会读取管脚 5、6 和 7，并将这些值移入 ISR。首先，ISR 会左移或右移，为新的输入数据腾出空间，然后将输入数据复制到腾出的空间中。输入数据的比特顺序与移位方向无关。</p>
+<p>使用 <code>NULL</code> 可以移位 ISR 的内容。例如，UART 会首先接受 LSB，因此必须右移。在执行 8 次 <code>IN PINS, 1</code> 指令后，输入的串行数据占据了 ISR 的 31..24 比特。此时，<code>IN NULL, 24</code> 指令将会移入 24 个零比特，将输入数据移到 ISR 的 7..0 比特。另一种方式是让处理器或 DMA 从 FIFO 地址 +3 的位置读取一个字节，这样可以读取 FIFO 内容的 31..24 比特。</p>
 <h4 id="3-4-4-3-汇编语法"><a href="#3-4-4-3-汇编语法" class="headerlink" title="3.4.4.3. 汇编语法"></a>3.4.4.3. 汇编语法</h4><p><code>in &lt;source&gt;, &lt;bit_count&gt;</code></p>
 <p>其中：</p>
 <p><code>&lt;source&gt;</code> 是上述源之一。</p>
@@ -650,8 +681,8 @@
 </ul>
 <p>将一个 32 位值写入 <code>Destination</code>：低 <code>Bit count</code> 个比特来自 OSR，其余为零。如果 <code>SHIFTCTRL_OUT_SHIFTDIR</code> 为右，则该值为 OSR 的最低 <code>Bit count</code> 比特，否则为最高 <code>Bit count</code> 比特。</p>
 <p><code>PINS</code> 和 <code>PINDIRS</code> 使用 <code>OUT</code> 的管脚映射，参见<a href="#356-gpio-%E6%98%A0%E5%B0%84">3.5.6节</a>。</p>
-<p>如果启用自动加载（autopull），那么如果达到了加载阈值 <code>SHIFTCTRL_PULL_THRESH</code>，则自动从 TX FIFO 填充 OSR。同时输出移位计数器清零。在这种情况下，如果 TX FIFO 为空，则 <code>OUT</code> 会进入等待状态，<br>但执行时间仍然为一个时钟周期。详情参考<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a>。</p>
-<p>有了 <code>OUT EXEC</code>，指令就可以放在 FIFO 数据流中。<code>OUT</code> 本身的执行需要一个时钟周期，然后下一个周期执行来自 OSR 的指令。该机制能执行的指令类型没有限制。最初的 <code>OUT</code> 指令的延时周期将被忽略，<br>但之后执行的指令可以正常插入延时周期。</p>
+<p>如果启用自动加载（autopull），那么如果达到了加载阈值 <code>SHIFTCTRL_PULL_THRESH</code>，则自动从 TX FIFO 填充 OSR。同时输出移位计数器清零。在这种情况下，如果 TX FIFO 为空，则 <code>OUT</code> 会进入等待状态，但执行时间仍然为一个时钟周期。详情参考<a href="#354-%E8%87%AA%E5%8A%A8%E6%8E%A8%E5%87%BA%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD">3.5.4节</a>。</p>
+<p>有了 <code>OUT EXEC</code>，指令就可以放在 FIFO 数据流中。<code>OUT</code> 本身的执行需要一个时钟周期，然后下一个周期执行来自 OSR 的指令。该机制能执行的指令类型没有限制。最初的 <code>OUT</code> 指令的延时周期将被忽略，但之后执行的指令可以正常插入延时周期。</p>
 <p><code>OUT PC</code> 相当于无条件跳转到 OSR 移出的值对应的地址。</p>
 <h4 id="3-4-5-3-汇编语法"><a href="#3-4-5-3-汇编语法" class="headerlink" title="3.4.5.3. 汇编语法"></a>3.4.5.3. 汇编语法</h4><p><code>out &lt;destination&gt;, &lt;bit_count&gt;</code></p>
 <p>其中：</p>
@@ -664,7 +695,7 @@
 <li><code>Block</code>：如果设置为 1，那么在 RX FIFO 为满时，暂停执行。</li>
 </ul>
 <p><code>PUSH IFFULL</code> 也能像自动推出（autopush）那样让程序更紧凑。如果启用了自动推出，会导致 <code>IN</code> 在不恰当的时候陷入等待状态，比如状态机需要在此时判断某种外部控制信号，那么 <code>PUSH IFFULL</code> 就能派上用场了。</p>
-<p>PIO 汇编器会默认设置 <code>Block</code> 位。如果 <code>Block</code> 位没有设置，则 <code>PUSH</code> 不会在 RX FIFO 满的情况下进入等待，而是会继续立即执行下一条指令。此时，FIFO 的状态和内容不变。ISR 仍被清空为全零，<br>同时设置 <code>FDEBUG_RXSTALL</code> 标志（与 RX FIFO 满时进行阻塞 <code>PUSH</code> 或自动推出相同），表示数据已经丢失。</p>
+<p>PIO 汇编器会默认设置 <code>Block</code> 位。如果 <code>Block</code> 位没有设置，则 <code>PUSH</code> 不会在 RX FIFO 满的情况下进入等待，而是会继续立即执行下一条指令。此时，FIFO 的状态和内容不变。ISR 仍被清空为全零，同时设置 <code>FDEBUG_RXSTALL</code> 标志（与 RX FIFO 满时进行阻塞 <code>PUSH</code> 或自动推出相同），表示数据已经丢失。</p>
 <h4 id="3-4-6-3-汇编语法"><a href="#3-4-6-3-汇编语法" class="headerlink" title="3.4.6.3. 汇编语法"></a>3.4.6.3. 汇编语法</h4><p><code>push (iffull)</code></p>
 <p><code>push (iffull) block</code></p>
 <p><code>push (iffull) nonblock</code></p>
@@ -696,7 +727,7 @@
 <li>000：<code>PINS</code>（使用与 <code>OUT</code> 相同的管脚映射）</li>
 <li>001：<code>X</code>（可擦写寄存器 X）</li>
 <li>010：<code>Y</code>（可擦写寄存器 Y）</li>
-<li>011：保留</li>
+<li>011：<code>PINDIRS</code>（使用与 <code>OUT</code> 相同的管脚映射）</li>
 <li>100：<code>EXEC</code>（将数据作为指令执行）</li>
 <li>101：<code>PC</code></li>
 <li>110：<code>ISR</code>（该操作会重置输入移位计数器为零，意为空）</li>
@@ -722,9 +753,11 @@
 </ul>
 </li>
 </ul>
-<p><code>MOV PC</code> 会导致无条件跳转。<code>MOV EXEC</code> 的效果和 <code>OUT EXEC</code>（参见<a href="#345-out">3.4.5节</a>）相同，可以将寄存器的内容作为指令执行。<br><code>MOV</code> 指令自身需要一个时钟周期，<code>Source</code> 中的指令在下一个周期执行。<code>MOV EXEC</code> 上的延时周期会被忽略，但被执行的指令可以带有延时周期。</p>
+<p><code>MOV PC</code> 会导致无条件跳转。<code>MOV EXEC</code> 的效果和 <code>OUT EXEC</code>（参见<a href="#345-out">3.4.5节</a>）相同，可以将寄存器的内容作为指令执行。<code>MOV</code> 指令自身需要一个时钟周期，<code>Source</code> 中的指令在下一个周期执行。<code>MOV EXEC</code> 上的延时周期会被忽略，但被执行的指令可以带有延时周期。</p>
 <p>源 <code>STATUS</code> 的值为全 1 或全 0，取决于某些状态机的状态，如 FIFO 满&#x2F;空等。可以通过 <code>EXECCTRL_STATUS_SEL</code> 配置。</p>
-<p><code>MOV</code> 可以通过有限的几种方式操作传输的数据，由 <code>Operation</code> 参数指定。求反操作会将 <code>Destination</code> 中的每个比特设置为 <code>Source</code> 中对应比特的 NOT，<br>也就是说，1 变成 0，0 变成 1。至于反转比特顺序，如果将比特编号为 0 ~ 31 的话，该操作可以将 <code>Destination</code> 中的每个比特 n 设置为 <code>Source</code> 中的比特 31 - n。</p>
+<p><code>MOV</code> 可以通过有限的几种方式操作传输的数据，由 <code>Operation</code> 参数指定。求反操作会将 <code>Destination</code> 中的每个比特设置为 <code>Source</code> 中对应比特的 NOT，也就是说，1 变成 0，0 变成 1。至于反转比特顺序，如果将比特编号为 0 ~ 31 的话，该操作可以将 <code>Destination</code> 中的每个比特 n 设置为 <code>Source</code> 中的比特 31 - n。</p>
+<p><code>MOV dst, PINS</code> 使用IN引脚映射读取引脚的值，掩码为 <code>SHIFTCTRL_IN_COUNT</code>，读取到的最低位来自于 <code>PINCTRL_IN_BASE</code>，其余的依次高位就是对应更高位的pin，最高到达31。结果中超过 <code>SHIFTCTRL_IN_COUNT</code> 的位被设置为0。</p>
+<p><code>MOV PINDIRS, src</code> 不支持PIO version 0。</p>
 <h4 id="3-4-8-3-汇编语法"><a href="#3-4-8-3-汇编语法" class="headerlink" title="3.4.8.3. 汇编语法"></a>3.4.8.3. 汇编语法</h4><p><code>mov &lt;destination&gt;, (op) &lt;source&gt;</code></p>
 <p>其中：</p>
 <p><code>&lt;destination&gt;</code> 是上述目的地之一。</p>
@@ -739,29 +772,33 @@
 <ul>
 <li>Clear：如果为 1，则清除 <code>Index</code> 指定的标志，否则设置标志。如果指定了 <code>Clear</code>，则忽略 <code>Wait</code> 比特。</li>
 <li>Wait：等待指定标志再次变成低，即，等待某个系统中断处理函数响应该标志。</li>
-<li>Index：<ul>
-<li>3 个 LSB 比特指定一个 IRQ 索引，值为 0 ~ 7。根据 Clear 比特的值，该 IRQ 标志将被设置或清除。</li>
-<li>如果设置了 MSB，则将状态机ID（0 ~ 3）用模 4 的方式加到 IRQ 索引上，即结果是最低 2 比特。例如，状态机 2 设置标志值 0x11，将会设置 IRQ 3，而设置标志值 0x13 将会设置标志 1。</li>
+<li>Index：最低三个bit指定来IRQ的索引，值为0 ～ 7。</li>
+<li>Index Mode：Index的高2为编号偏移模式，有4种情况：<ul>
+<li>00: 默认值，最低三位的索引用于当前PIO的IRQ标志。</li>
+<li>01(PREV): 索引值用于前一个PIO的对应IRQ标志。</li>
+<li>10(REL): 最低三位值加上状态机编号再模4的值用于当前PIO的IRQ标志。</li>
+<li>11(NEXT): 索引值用于下一个PIO的对应IRQ标志。</li>
 </ul>
 </li>
 </ul>
 <p>IRQ 标志 4 ~ 7 只能被状态机使用，而 IRQ 标志 0 ~ 3 可以作为系统级别的中断，在 PIO 的两个外部中断请求线之一上使用，具体采用哪个外部中断请求线，由 <code>IRQ0_INTE</code> 和 <code>IRQ1_INTE</code> 配置。</p>
+<p>NEXT&#x2F;PREV模式可以再不同PIO之间进行同步，如果这些待同步的PIO状态机设置了时钟分频，则其分频配置必须相同，并且需要通过写入CTRL.NEXTPREV_CLKDIV_RESTART及相关的NEXT_PIO_MASK&#x2F;PREV_PIO_MASK位来同步时钟。需要注意的是，跨PIO同步在非安全代码中具有不同可访问性的PIO之间将被阻断。（NEXT&#x2F;PREEV模式不适用PIO version 0）</p>
 <p>模 4 加法可以实现 IRQ 和 WAIT 指令的“相对寻址”，用于运行同一个程序的不同状态机之间的同步。</p>
 <p>如果设置了 <code>Wait</code>，则 <code>Delay</code> 周期会等到等待期间结束后再开始。</p>
-<h4 id="3-4-9-3-汇编语法"><a href="#3-4-9-3-汇编语法" class="headerlink" title="3.4.9.3. 汇编语法"></a>3.4.9.3. 汇编语法</h4><p><code>irq &lt;irq_num&gt; (_rel)</code></p>
-<p><code>irq set &lt;irq_num&gt; (_rel)</code></p>
-<p><code>irq nowait &lt;irq_num&gt; (_rel)</code></p>
-<p><code>irq wait &lt;irq_num&gt; (_rel)</code></p>
-<p><code>irq clear &lt;irq_num&gt; (_rel)</code></p>
+<h4 id="3-4-9-3-汇编语法"><a href="#3-4-9-3-汇编语法" class="headerlink" title="3.4.9.3. 汇编语法"></a>3.4.9.3. 汇编语法</h4><p><code>irq &lt;irq_num&gt; (prev, rel, next)</code></p>
+<p><code>irq set &lt;irq_num&gt; (prev, rel, next)</code></p>
+<p><code>irq nowait &lt;irq_num&gt; (prev, rel, next)</code></p>
+<p><code>irq wait &lt;irq_num&gt; (prev, rel, next)</code></p>
+<p><code>irq clear &lt;irq_num&gt; (prev, rel, next)</code></p>
 <p>其中：</p>
-<p><code>&lt;irq_num&gt; (_rel)</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），指定要等待的 IRQ 编号（0 ~ 7）。如果存在 <code>rel</code>，则实际的 IRQ 编号的计算方式为，将 IRQ 编号（<code>irq_num</code><sub>10</sub>）的最低两比特替换为<br>（<code>&lt;irq_num</code><sub>10</sub> + <code>sm_num</code><sub>10</sub>）的最低两比特，其中 <code>sm_num</code><sub>10</sub> 为状态机编号</p>
+<p><code>&lt;irq_num&gt; (rel)</code> 是一个值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），指定要等待的 IRQ 编号（0 ~ 7）。如果存在 <code>rel</code>，则实际的 IRQ 编号的计算方式为，将 IRQ 编号（<code>irq_num</code><sub>10</sub>）的最低两比特替换为（<code>&lt;irq_num</code><sub>10</sub> + <code>sm_num</code><sub>10</sub>）的最低两比特，其中 <code>sm_num</code><sub>10</sub> 为状态机编号</p>
 <p><code>irq</code> 表示设置 IRQ，无需等待</p>
 <p><code>irq set</code> 也表示设置 IRQ，无需等待</p>
 <p><code>irq nowait</code> 还是表示设置 IRQ，无需等待</p>
 <p><code>irq wait</code> 表示设置 IRQ，然后等待 IRQ 被清除后再继续</p>
 <p><code>irq clear</code> 表示清除 IRQ</p>
 <h3 id="3-4-10-SET"><a href="#3-4-10-SET" class="headerlink" title="3.4.10. SET"></a>3.4.10. SET</h3><h4 id="3-4-10-1-编码"><a href="#3-4-10-1-编码" class="headerlink" title="3.4.10.1. 编码"></a>3.4.10.1. 编码</h4><p><img   src="/2025/03/08/PIO%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/figures/instruction-set.png"  alt="SET"></p>
-<h4 id="3-4-10-2-操作"><a href="#3-4-10-2-操作" class="headerlink" title="3.4.10.2. 操作"></a>3.4.10.2. 操作</h4><p>将立即值 <code>Data</code> 写入到 <code>Destination</code>。</p>
+<h4 id="3-4-10-2-操作"><a href="#3-4-10-2-操作" class="headerlink" title="3.4.10.2. 操作"></a>3.4.10.2. 操作</h4><p>将一个数 <code>Data</code> 写入到 <code>Destination</code>。</p>
 <ul>
 <li>Destination：<ul>
 <li>000：<code>PINS</code></li>
@@ -777,11 +814,23 @@
 <li>Data: 设置到管脚或寄存器的 5 比特的立即数。</li>
 </ul>
 <p>该指令用于设置控制信号，如时钟或芯片选择，或初始化循环计数器。由于 <code>Data</code> 只有 5 比特，因此可擦写寄存器可以 <code>SET</code> 的值为 0 ~ 31，最大可循环 32 次。</p>
-<p><code>SET</code> 和 <code>OUT</code> 的管脚映射是独立配置的。它们可以映射到不同的位置，例如，一个管脚作为时钟信号使用，另一个作为数据使用。它们的管脚范围也可以重叠：<br>UART 传输程序可以使用 <code>SET</code> 来设置开始和终止比特，用 <code>OUT</code> 指令向同一个管脚上移出 FIFO 数据。</p>
+<p><code>SET</code> 和 <code>OUT</code> 的管脚映射是独立配置的。它们可以映射到不同的位置，例如，一个管脚作为时钟信号使用，另一个作为数据使用。它们的管脚范围也可以重叠：UART 传输程序可以使用 <code>SET</code> 来设置开始和终止比特，用 <code>OUT</code> 指令向同一个管脚上移出 FIFO 数据。<code>SET</code>指令最多可以控制5个管脚的输出和方向。</p>
 <h4 id="3-4-10-3-汇编格式"><a href="#3-4-10-3-汇编格式" class="headerlink" title="3.4.10.3. 汇编格式"></a>3.4.10.3. 汇编格式</h4><p><code>set &lt;destination&gt;, &lt;value&gt;</code></p>
 <p>其中：</p>
 <p><code>&lt;destination&gt;</code> 为上述目的地之一。</p>
 <p><code>&lt;value&gt;</code> 是要设置的值（参见<a href="#332-%E5%80%BC">3.3.2节</a>），有效值为 0 ~ 31。</p>
+<h3 id="3-4-11-MOV-to-RX"><a href="#3-4-11-MOV-to-RX" class="headerlink" title="3.4.11. MOV(to RX)"></a>3.4.11. MOV(to RX)</h3><h4 id="3-4-11-1-编码"><a href="#3-4-11-1-编码" class="headerlink" title="3.4.11.1. 编码"></a>3.4.11.1. 编码</h4><p>未添加。</p>
+<h4 id="3-4-11-2-操作"><a href="#3-4-11-2-操作" class="headerlink" title="3.4.11.2. 操作"></a>3.4.11.2. 操作</h4><p>将ISR寄存器按照选定的位置写入RXFIFO。状态机可以按照任意顺序写入RXFIFO，由Y寄存器或立即数进行索引。前提是需要对SHIFTCTRL_FJOIN_RX_PUT字段进行配置，否则该操作未定义。</p>
+<p><strong>注意</strong>，RXFIFO存储寄存器只有一个读端口和写端口，任何时候每个端口的访问都值分配给其中一个（系统或状态机）。</p>
+<h4 id="3-4-11-3-汇编格式"><a href="#3-4-11-3-汇编格式" class="headerlink" title="3.4.11.3. 汇编格式"></a>3.4.11.3. 汇编格式</h4><p><code>mov rxfifo[y], isr</code><br><code>mov rxfifo[&lt;index&gt;], isr</code></p>
+<p>其中：</p>
+<p><code>y</code> 表示RXFIFO由y寄存器来索引<br><code>&lt;index&gt;</code> 使用一个立即数对RXFIFO进行索引，有效值是0～3。</p>
+<h3 id="3-4-12-MOV-from-RX"><a href="#3-4-12-MOV-from-RX" class="headerlink" title="3.4.12. MOV(from RX)"></a>3.4.12. MOV(from RX)</h3><h4 id="3-4-12-1-编码"><a href="#3-4-12-1-编码" class="headerlink" title="3.4.12.1. 编码"></a>3.4.12.1. 编码</h4><p>未添加。</p>
+<h4 id="3-4-12-2-操作"><a href="#3-4-12-2-操作" class="headerlink" title="3.4.12.2. 操作"></a>3.4.12.2. 操作</h4><p>将所选的RXFIFO条目保存到OSR寄存器。PIO可以按照任意顺序读取RXFIFO，由Y寄存器或立即数进行索引。前提是需要对SHIFTCTRL_FJOIN_RX_GET字段进行配置，否则该操作未定义。</p>
+<h4 id="3-4-12-3-汇编格式"><a href="#3-4-12-3-汇编格式" class="headerlink" title="3.4.12.3. 汇编格式"></a>3.4.12.3. 汇编格式</h4><p><code>mov osr, rxfifo[y]</code></p>
+<p><code>mov osr, rxfifo[&lt;index&gt;]</code></p>
+<p>其中：</p>
+<p><code>y</code> 表示RXFIFO由y寄存器来索引<br><code>&lt;index&gt;</code> 使用一个立即数对RXFIFO进行索引，有效值是0～3。</p>
 <h2 id="3-5-功能详解"><a href="#3-5-功能详解" class="headerlink" title="3.5. 功能详解"></a>3.5. 功能详解</h2><h3 id="3-5-1-Side-set"><a href="#3-5-1-Side-set" class="headerlink" title="3.5.1. Side-set"></a>3.5.1. Side-set</h3><p>Side-set 特性可以让状态机在执行主指令的同时，改变最多 5 个管脚的电平或方向。</p>
 <p>需要使用 side-set 的例子之一就是高速 SPI 接口，其数据比特从 OSR 推出到 GPIO，而时钟信号转换（从 1 到 0， 或从 0 到 1）必须与此同时发生。</p>
 <p>此时，一个带有 side-set 的 <code>OUT</code> 就能同时完成两项任务。</p>
@@ -813,12 +862,12 @@
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> 7 .program squarewave</span><br><span class="line"> 8     set pindirs, 1 ; Set pin to output</span><br><span class="line"> 9 again:</span><br><span class="line">10     set pins, 1 [1] ; Drive pin high and then delay for one cycle</span><br><span class="line">11     set pins, 0 ; Drive pin low</span><br><span class="line">12     jmp again ; Set PC to label `again`</span><br></pre></td></tr></table></figure>
 
-<p>程序的主题部分设置管脚为高，然后设置为低，从而产生方波的一个周期。然后整个程序进行循环，以产生周期性的输出。跳转指令本身需要一个周期，每个 <code>set</code> 指令也需要一个周期，<br>所以为了保证高低部分的长度相同，<code>set pins, 1</code> 指令增加了一个周期的延时，使状态机在执行 <code>set pins, 0</code> 指令之前等待一个周期。每次循环总共需要 4 个周期。这里有两个问题：</p>
+<p>程序的主题部分设置管脚为高，然后设置为低，从而产生方波的一个周期。然后整个程序进行循环，以产生周期性的输出。跳转指令本身需要一个周期，每个 <code>set</code> 指令也需要一个周期，所以为了保证高低部分的长度相同，<code>set pins, 1</code> 指令增加了一个周期的延时，使状态机在执行 <code>set pins, 0</code> 指令之前等待一个周期。每次循环总共需要 4 个周期。这里有两个问题：</p>
 <ol>
 <li><code>JMP</code> 占用了本可用于其他程序的指令内存</li>
 <li>执行 <code>JMP</code> 所需的额外周期导致最大输出速度降低了<em>一半</em></li>
 </ol>
-<p>由于程序计数器（<code>PC</code>）超过 31 时会自动折返为 0，因此将整个指令内存填充为 <code>set pins, 1</code> 和 <code>set pins, 0</code>，就能解决第二个问题，但这样很浪费。<br>状态机有一个硬件特性，通过配置 <code>EXECCTRL</code> 控制寄存器，就能解决大部分情况下的问题。</p>
+<p>由于程序计数器（<code>PC</code>）超过 31 时会自动折返为 0，因此将整个指令内存填充为 <code>set pins, 1</code> 和 <code>set pins, 0</code>，就能解决第二个问题，但这样很浪费。状态机有一个硬件特性，通过配置 <code>EXECCTRL</code> 控制寄存器，就能解决大部分情况下的问题。</p>
 <caption>Pico示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/squarewave_wrap.pio 第11-19行</caption>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">11 .program squarewave_wrap</span><br><span class="line">12 ; Like squarewave, but use the state machine&#x27;s .wrap hardware instead of an</span><br><span class="line">13 ; explicit jmp. This is a free (0-cycle) unconditional jump.</span><br><span class="line">14 </span><br><span class="line">15     set pindirs, 1    ; Set pin to output</span><br><span class="line">16 .wrap_target</span><br><span class="line">17     set pins, 1 [1]   ; Drive pin high and then delay for one cycle</span><br><span class="line">18     set pins, 0 [1]   ; Drive pin low and then delay for one cycle</span><br><span class="line">19 .wrap</span><br></pre></td></tr></table></figure>
@@ -829,19 +878,19 @@
 <li>否则，如果 <code>PC</code> 等于 <code>EXECCTRL_WRAP_TOP</code>，则设置 <code>PC</code> 为 <code>EXECCTRL_WRAP_BOTTOM</code></li>
 <li>否则，<code>PC</code> 加一，但如果当前值为 31，则设置为 0。</li>
 </ol>
-<p><code>pioasm</code> 中的 <code>.wrap_target</code> 和 <code>.wrap</code> 汇编指示实际上是标签。它们会导出常量，以写入到 <code>WRAP_BOTTOM</code> 和 <code>WRAP_TOP</code>中。</p>
+<p><code>pioasm</code> 中的 <code>.wrap_target</code> 和 <code>.wrap</code> 汇编标识实际上是标签。它们会导出常量，以写入到 <code>WRAP_BOTTOM</code> 和 <code>WRAP_TOP</code>中。</p>
 <caption>Pico示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/generated/squarewave_wrap.pio.h 第1-37行</caption>
 
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// -------------------------------------------------- //</span></span><br><span class="line"><span class="comment">// This file is autogenerated by pioasm; do not edit! //</span></span><br><span class="line"><span class="comment">// -------------------------------------------------- //</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> !PICO_NO_HARDWARE</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;hardware/pio.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// --------------- //</span></span><br><span class="line"><span class="comment">// squarewave_wrap //</span></span><br><span class="line"><span class="comment">// --------------- //</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> squarewave_wrap_wrap_target 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> squarewave_wrap_wrap 2</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">uint16_t</span> squarewave_wrap_program_instructions[] = &#123;</span><br><span class="line">    <span class="number">0xe081</span>, <span class="comment">//  0: set    pindirs, 1                 </span></span><br><span class="line">            <span class="comment">//     .wrap_target</span></span><br><span class="line">    <span class="number">0xe101</span>, <span class="comment">//  1: set    pins, 1                [1] </span></span><br><span class="line">    <span class="number">0xe100</span>, <span class="comment">//  2: set    pins, 0                [1] </span></span><br><span class="line">            <span class="comment">//     .wrap</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> !PICO_NO_HARDWARE</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">pio_program</span> <span class="title">squarewave_wrap_program</span> =</span> &#123;</span><br><span class="line">    .instructions = squarewave_wrap_program_instructions,</span><br><span class="line">    .length = <span class="number">3</span>,</span><br><span class="line">    .origin = <span class="number">-1</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> pio_sm_config <span class="title function_">squarewave_wrap_program_get_default_config</span><span class="params">(uint offset)</span> &#123;</span><br><span class="line">    pio_sm_config c = pio_get_default_sm_config();</span><br><span class="line">    sm_config_set_wrap(&amp;c, offset + squarewave_wrap_wrap_target, offset + squarewave_wrap_wrap);</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
 
-<p>这是 PIO 汇编器 <code>pioasm</code> 产生的原始输出，它创建了一个默认的 <code>pio_sm_config</code> 对象，其中包含了程序代码中的 <code>WRAP</code> 寄存器值。<br>也可以直接初始化控制寄存器字段。</p>
+<p>这是 PIO 汇编器 <code>pioasm</code> 产生的原始输出，它创建了一个默认的 <code>pio_sm_config</code> 对象，其中包含了程序代码中的 <code>WRAP</code> 寄存器值。也可以直接初始化控制寄存器字段。</p>
 <p><strong>注意</strong> <code>WRAP_BOTTOM</code> 和 <code>WRAP_TOP</code> 是 PIO 指令内存中的绝对地址。如果程序加载到某个偏移量，那么必须相应地调整折返地址。</p>
 <p><code>squarewave_wrap</code> 示例中插入了延时周期，所以它的行为与原版 <code>squarewave</code> 程序完全相同。但由于使用了程序折返，我们现在可以去掉延时，<br>这样输出的速度就是以前的两倍，同时还能维持高电平和低电平的时间相等。</p>
 <caption>Pico示例：https://github.com/raspberrypi/pico-examples/tree/master/pio/squarewave/squarewave_fast.pio 第12-18行</caption>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">12 .program squarewave_fast</span><br><span class="line">13 ; Like squarewave_wrap, but remove the delay cycles so we can run twice as fast.</span><br><span class="line">14     set pindirs, 1    ; Set pin to output</span><br><span class="line">15 .wrap_target</span><br><span class="line">16     set pins, 1       ; Drive pin high</span><br><span class="line">17     set pins, 0       ; Drive pin low</span><br><span class="line">18 .wrap</span><br></pre></td></tr></table></figure>
 
-<h3 id="3-5-3-FIFO-合并"><a href="#3-5-3-FIFO-合并" class="headerlink" title="3.5.3. FIFO 合并"></a>3.5.3. FIFO 合并</h3><p>默认情况下，每个状态机拥有两个 4 字长的 FIFO：一个用于将数据从系统传送到状态机（TX），一个用于反方向（RX）。但是，很多程序并不需要系统和状态机之间的双向数据传输，<br>而更长的 FIFO 却很有用，特别是在 DPI 这种高带宽的接口中。在这些情况下，可以通过 <code>SHIFTCTRL_FJOIN</code> 选项将两个 4 字长的 FIFO 合并为一个 8 字长的 FIFO。</p>
+<h3 id="3-5-3-FIFO-合并"><a href="#3-5-3-FIFO-合并" class="headerlink" title="3.5.3. FIFO 合并"></a>3.5.3. FIFO 合并</h3><p>默认情况下，每个状态机拥有两个 4 字长的 FIFO：一个用于将数据从系统传送到状态机（TX），一个用于反方向（RX）。但是，很多程序并不需要系统和状态机之间的双向数据传输，而更长的 FIFO 却很有用，特别是在 DPI 这种高带宽的接口中。在这些情况下，可以通过 <code>SHIFTCTRL_FJOIN</code> 选项将两个 4 字长的 FIFO 合并为一个 8 字长的 FIFO。</p>
 <table>
 <thead>
 <tr>
@@ -852,11 +901,11 @@
 <td align="center">图42. 可合并的双 FIFO。每个 FIFO 为 4 字长，包括 4 个数据寄存器、一个 1：4 解码器和一个 4:1 多路复用器。<br>多路复用可以在 TX 和 RX 通道之间进行写数据和读数据操作，这样所有 8 个字都可以从两个端口进行访问。</td>
 </tr>
 </tbody></table>
-<p>另一个用例是 UART。由于 UART 的 TX&#x2F;CTS 和 RX&#x2F;RTS 部分是异步的，因此它们是在两个独立的状态机上实现的。而让每个状态机的一半 FIFO 资源空闲，是一种浪费。<br>由于我们可以将两个 FIFO 合并成一个 TX FIFO 供 TX&#x2F;CTS 状态机使用，或者合并成一个 RX FIFO 供 RX&#x2F;RTS 状态机使用，这样就能利用全部资源。<br>而拥有 8 字深 FIFO 的 UART 能够处理的中断数量是 4 字深 FIFO 的 UART 的两倍。</p>
-<p>增加 FIFO 的深度（从 4 增加到 8）后，同一个状态机中的另一个 FIFO 的大小就变为零。例如，如果将 FIFO 合并供 TX 使用，那么就无法使用 RX FIFO，任何 <code>PUSH</code> 指令都会陷入等待状态。<br>在 <code>FSTAT</code> 寄存器中，RX FIFO 同时表现为 <code>RXFULL</code> 和 <code>RXEMPTY</code> 状态。而合并到 RX 的情况正相反：TX FIFO 不可用，该状态机的 <code>FSTAT</code> 中 <code>TXFULL</code> 和 <code>TXEMPTY</code> 比特均为设置状态。</p>
+<p>另一个用例是 UART。由于 UART 的 TX&#x2F;CTS 和 RX&#x2F;RTS 部分是异步的，因此它们是在两个独立的状态机上实现的。而让每个状态机的一半 FIFO 资源空闲，是一种浪费。由于我们可以将两个 FIFO 合并成一个 TX FIFO 供 TX&#x2F;CTS 状态机使用，或者合并成一个 RX FIFO 供 RX&#x2F;RTS 状态机使用，这样就能利用全部资源。而拥有 8 字深 FIFO 的 UART 能够处理的中断数量是 4 字深 FIFO 的 UART 的两倍。</p>
+<p>增加 FIFO 的深度（从 4 增加到 8）后，同一个状态机中的另一个 FIFO 的大小就变为零。例如，如果将 FIFO 合并供 TX 使用，那么就无法使用 RX FIFO，任何 <code>PUSH</code> 指令都会陷入等待状态。在 <code>FSTAT</code> 寄存器中，RX FIFO 同时表现为 <code>RXFULL</code> 和 <code>RXEMPTY</code> 状态。而合并到 RX 的情况正相反：TX FIFO 不可用，该状态机的 <code>FSTAT</code> 中 <code>TXFULL</code> 和 <code>TXEMPTY</code> 比特均为设置状态。</p>
 <p>只要 DMA 没有因为其他竞合状态而变慢，那么 8 字 FIFO 足够通过 RP2040 的 DMA 实现每个周期 1 字的速率。</p>
 <p><strong>注意</strong> 改变 <code>FJOIN</code> 会抛弃当前状态机的 FIFO 中的一切数据。如果数据不能恢复，那么必须事先清空 FIFO 队列。</p>
-<h3 id="3-5-4-自动推出和自动加载"><a href="#3-5-4-自动推出和自动加载" class="headerlink" title="3.5.4. 自动推出和自动加载"></a>3.5.4. 自动推出和自动加载</h3><p>随着 <code>OUT</code> 指令的执行，数据移出，OSR 会逐渐清空。OSR 为空后必须加载数据，比如通过 <code>PULL</code> 指令从 TX FIFO 传输一个字的数据到 OSR。类似地，ISR 为满后也必须清空。<br>一种方法是，在移位一定数量的数据之后，通过循环执行一次 <code>PULL</code>：</p>
+<h3 id="3-5-4-自动推出和自动加载"><a href="#3-5-4-自动推出和自动加载" class="headerlink" title="3.5.4. 自动推出和自动加载"></a>3.5.4. 自动推出和自动加载</h3><p>随着 <code>OUT</code> 指令的执行，数据移出，OSR 会逐渐清空。OSR 为空后必须加载数据，比如通过 <code>PULL</code> 指令从 TX FIFO 传输一个字的数据到 OSR。类似地，ISR 为满后也必须清空。一种方法是，在移位一定数量的数据之后，通过循环执行一次 <code>PULL</code>：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> 1 .program manual_pull</span><br><span class="line"> 2 .side_set 1 opt</span><br><span class="line"> 3 </span><br><span class="line"> 4 .wrap_target</span><br><span class="line"> 5     set x, 2                     ; X = bit count - 2</span><br><span class="line"> 6     pull            side 1 [1]   ; Stall here if no TX data</span><br><span class="line"> 7 bitloop:</span><br><span class="line"> 8     out pins, 1     side 0 [1]   ; Shift out data bit and toggle clock low</span><br><span class="line"> 9     jmp x-- bitloop side 1 [1]   ; Loop runs 3 times</span><br><span class="line">10     out pins, 1     side 0       ; Shift out last bit before reloading X</span><br><span class="line">11 .wrap</span><br></pre></td></tr></table></figure>
 
 <p>该程序按照每 4 个时钟周期 1 比特的速率，从每个 FIFO 字中移出 4 比特，同时输出时钟信号。当 TX FIFO 为空时，程序在时钟高电平处暂停（注意在指令暂停的周期上 side-set 依然会生效）。<br>图43演示了状态机执行该程序的过程。</p>
@@ -883,15 +932,15 @@
 <p>利用自动加载（autopull）功能，<code>manual_pull</code> 示例可以重写如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 .program autopull</span><br><span class="line">2 .side_set 1</span><br><span class="line">3 </span><br><span class="line">4 .wrap_target</span><br><span class="line">5     out pins, 1    side 0      [1]</span><br><span class="line">6     nop            side 1      [1]</span><br><span class="line">7 .wrap</span><br></pre></td></tr></table></figure>
 
-<p>这个程序比原版本更短、更简单，而且如果去掉延时的话，运行速度是原版本的<em>两倍</em>，因为通过硬件加载 OSR 是“免费”的。注意程序并不知道下一次加载之前需要移位多少比特；硬件会在达到配置好的阈值（<code>SHIFTCTRL_PULL_THRESH</code>）后自动加载，<br>所以示例程序也可以从每个 FIFO 字中移出 16 比特或 32 比特。</p>
-<p>最后，注意上述程序与原本并非<em>完全</em>相同，因为它会在时钟信号低时暂停，而不是高的时候。我们可以通过 <code>PULL IFEMPTY</code> 指令改变暂停位置，该指令使用与自动加载（autopull）同样的可配置阈值：</p>
+<p>这个程序比原版本更短、更简单，而且如果去掉延时的话，运行速度是原版本的<em>两倍</em>，因为通过硬件加载 OSR 是“免费”的。注意程序并不知道下一次加载之前需要移位多少比特；硬件会在达到配置好的阈值（<code>SHIFTCTRL_PULL_THRESH</code>）后自动加载，所以示例程序也可以从每个 FIFO 字中移出 16 比特或 32 比特。</p>
+<p>最后，注意上述程序与原本并非<strong>完全</strong>相同，因为它会在时钟信号低时暂停，而不是高的时候。我们可以通过 <code>PULL IFEMPTY</code> 指令改变暂停位置，该指令使用与自动加载（autopull）同样的可配置阈值：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 .program somewhat_manual_pull</span><br><span class="line">2 .side_set 1</span><br><span class="line">3 </span><br><span class="line">4 .wrap_target</span><br><span class="line">5     out pins, 1    side 0      [1]</span><br><span class="line">6     pull ifempty   side 1      [1]</span><br><span class="line">7 .wrap</span><br></pre></td></tr></table></figure>
 
-<p>下面是完整的示例（PIO 程序，以及一个用于加载它并运行的 C 程序），演示了如何在同一个状态机上同时启用自动加载（autopull）和自动推出（autopush）。<br>状态机 0 的功能是将数据从 TX FIFO 传输至 RX FIFO，吞吐量为每两个时钟周期一个字。该程序还演示了当 OSR 和 TX FIFO 均为空时，状态机会在执行 <code>OUT</code> 时进入暂停状态。</p>
+<p>下面是完整的示例（PIO 程序，以及一个用于加载它并运行的 C 程序），演示了如何在同一个状态机上同时启用自动加载（autopull）和自动推出（autopush）。状态机 0 的功能是将数据从 TX FIFO 传输至 RX FIFO，吞吐量为每两个时钟周期一个字。该程序还演示了当 OSR 和 TX FIFO 均为空时，状态机会在执行 <code>OUT</code> 时进入暂停状态。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 .program auto_push_pull</span><br><span class="line">2 </span><br><span class="line">3 .wrap_target</span><br><span class="line">4     out x, 32</span><br><span class="line">5     in x, 32</span><br><span class="line">6 .wrap</span><br></pre></td></tr></table></figure>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;tb.h&quot;</span> <span class="comment">// TODO this is built against existing sw tree, so that we get printf etc</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;platform.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;pio_regs.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;system.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;hardware.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;auto_push_pull.pio.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    tb_init();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Load program and configure state machine 0 for autopush/pull with</span></span><br><span class="line">    <span class="comment">// threshold of 32, and wrapping on program boundary. A threshold of 32 is</span></span><br><span class="line">    <span class="comment">// encoded by a register value of 00000.</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; count_of(auto_push_pull_program); ++i)</span><br><span class="line">        mm_pio-&gt;instr_mem[i] = auto_push_pull_program[i];</span><br><span class="line">    mm_pio-&gt;sm[<span class="number">0</span>].shiftctrl =</span><br><span class="line">            (<span class="number">1u</span> &lt;&lt; PIO_SM0_SHIFTCTRL_AUTOPUSH_LSB) |</span><br><span class="line">            (<span class="number">1u</span> &lt;&lt; PIO_SM0_SHIFTCTRL_AUTOPULL_LSB) |</span><br><span class="line">            (<span class="number">0u</span> &lt;&lt; PIO_SM0_SHIFTCTRL_PUSH_THRESH_LSB) |</span><br><span class="line">            (<span class="number">0u</span> &lt;&lt; PIO_SM0_SHIFTCTRL_PULL_THRESH_LSB);</span><br><span class="line">    mm_pio-&gt;sm[<span class="number">0</span>].execctrl =</span><br><span class="line">            (auto_push_pull_wrap_target &lt;&lt; PIO_SM0_EXECCTRL_WRAP_BOTTOM_LSB) |</span><br><span class="line">            (auto_push_pull_wrap &lt;&lt; PIO_SM0_EXECCTRL_WRAP_TOP_LSB);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Start state machine 0</span></span><br><span class="line">    hw_set_bits(&amp;mm_pio-&gt;ctrl, <span class="number">1u</span> &lt;&lt; (PIO_CTRL_SM_ENABLE_LSB + <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Push data into TX FIFO, and pop from RX FIFO</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i)</span><br><span class="line">        mm_pio-&gt;txf[<span class="number">0</span>] = i;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, mm_pio-&gt;rxf[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>图44展示了状态机执行该程序的过程。初始时，OSR 为空，所以状态机会在第一条 <code>OUT</code> 指令处等待。当 TX FIFO 中有数据时，状态机会将数据传输到 OSR 中。<br>在下一个周期，<code>OUT</code> 可以利用 OSR 中的数据执行（本例中将数据传输到可擦写寄存器 X 中），同时状态机会使用 FIFO 中的新数据填充 OSR。由于每一条 <code>IN</code> 指令都会立即填充 ISR，<br>因此 ISR 一直为空，<code>IN</code> 就会直接把数据从 X 传输到 RX FIFO。</p>
+<p>图44展示了状态机执行该程序的过程。初始时，OSR 为空，所以状态机会在第一条 <code>OUT</code> 指令处等待。当 TX FIFO 中有数据时，状态机会将数据传输到 OSR 中。在下一个周期，<code>OUT</code> 可以利用 OSR 中的数据执行（本例中将数据传输到可擦写寄存器 X 中），同时状态机会使用 FIFO 中的新数据填充 OSR。由于每一条 <code>IN</code> 指令都会立即填充 ISR，因此 ISR 一直为空，<code>IN</code> 就会直接把数据从 X 传输到 RX FIFO。</p>
 <table>
 <thead>
 <tr>
@@ -927,13 +976,13 @@
 
 <p>硬件能够在移出全部数据的同时填充 OSR，因为这两个操作可以并行执行。但是，硬件无法在同一个周期执行填充 OSR 并 ‘OUT’ 同一份数据，因为这样做会造成很长的逻辑链。</p>
 <p>可以认为，对于程序而言，填充操作是异步的，但 ‘OUT’ 就像一个数据屏障，状态机永远不能 OUT 尚未写入 FIFO 的数据。</p>
-<p>注意，在自动加载启用时，从 OSR ‘MOV’ 的操作是未定义的；根据与系统 DMA 的竞合状态，你可能会读到尚未移出的残留数据，或读到 FIFO 的新数据。与此类似，’MOV’ 到 OSR 的操作可能会覆盖刚刚自动加载进来的数据。<br>但是，’MOV’ 进 OSR 的数据永远不会被覆盖，因为 ‘MOV’ 会更新移位计数器。</p>
-<p>如果你<strong>确实</strong>需要读取 OSR 的内容，应当显式地执行某种 ‘PULL’。上面描述的不确定性是由硬件自动进行加载的代价。启用自动加载会改变 ‘PULL’ 的行为：如果 OSR 为满，则 PULL 为误操作。<br>这样做是为了避免与系统 DMA 之间的竞合冲突。它就像一个屏障：或者自动加载已经开始执行，此时 ‘PULL’ 操作无效；或者程序会在 ‘PULL’ 指令处等待，直到 FIFO 有数据。</p>
+<p>注意，在自动加载启用时，从 OSR ‘MOV’ 的操作是未定义的；根据与系统 DMA 的竞合状态，你可能会读到尚未移出的残留数据，或读到 FIFO 的新数据。与此类似，’MOV’ 到 OSR 的操作可能会覆盖刚刚自动加载进来的数据。但是，’MOV’ 进 OSR 的数据永远不会被覆盖，因为 ‘MOV’ 会更新移位计数器。</p>
+<p>如果你<strong>确实</strong>需要读取 OSR 的内容，应当显式地执行某种 ‘PULL’。上面描述的不确定性是由硬件自动进行加载的代价。启用自动加载会改变 ‘PULL’ 的行为：如果 OSR 为满，则 PULL 为误操作。这样做是为了避免与系统 DMA 之间的竞合冲突。它就像一个屏障：或者自动加载已经开始执行，此时 ‘PULL’ 操作无效；或者程序会在 ‘PULL’ 指令处等待，直到 FIFO 有数据。</p>
 <p>‘PUSH’ 不存在相似的行为，因为自动推出没有这种不确定性。</p>
-<h3 id="3-5-5-时钟分割器"><a href="#3-5-5-时钟分割器" class="headerlink" title="3.5.5. 时钟分割器"></a>3.5.5. 时钟分割器</h3><p>PIO 依靠系统时钟运行，但对于绝大多数接口来说，系统时钟太快了，而可插入的 <code>Delay</code> 周期数是有限的。像 UART 等设备需要精确地控制并改变信号的速率，最好是运行同一个程序的多个状态机也能够独立地改变速率。<br>因此，每个状态机都有一个时钟分割器。</p>
-<p>时钟分割器不会降低系统时钟速率，而是定义了多少个系统时钟周期等于执行 PIO 程序的“一个周期”。它会产生一个时钟允许信号，该信号能够在每个系统时钟周期暂停或恢复执行。<br>时钟分割器会以一定的间隔产生允许脉冲，从而状态机能够以某个固定的、比系统时钟慢很多的速率运行。</p>
-<p>时钟分割器可以简化状态机与系统之间的接口，降低延迟，而且占用的芯片面积很小。在时钟允许信号为低电平时，状态机完全处于空闲状态，不过系统仍然可以访问状态机的 FIFO 并改变其配置。</p>
-<p>时钟分割器支持 16 比特整数、8 比特分数，分数分割器采用一阶积分-微分（first-order delta-sigma）。时钟分割比例可以在 1 ~ 65536 之间以 1&#x2F;256 的增量改变。</p>
+<h3 id="3-5-5-时钟分频器"><a href="#3-5-5-时钟分频器" class="headerlink" title="3.5.5. 时钟分频器"></a>3.5.5. 时钟分频器</h3><p>PIO 依靠系统时钟运行，但对于绝大多数接口来说，系统时钟太快了，而可插入的 <code>Delay</code> 周期数是有限的。像 UART 等设备需要精确地控制并改变信号的速率，最好是运行同一个程序的多个状态机也能够独立地改变速率。因此，每个状态机都有一个独立的时钟分频器。</p>
+<p>时钟分频器不会降低系统时钟速率，而是定义了多少个系统时钟周期等于执行 PIO 程序的“一个周期”。它会产生一个时钟允许信号，该信号能够在每个系统时钟周期暂停或恢复执行。时钟分频器会以一定的间隔产生允许脉冲，从而状态机能够以某个固定的、比系统时钟慢很多的速率运行。</p>
+<p>时钟分频器可以简化状态机与系统之间的接口，降低延迟，而且占用的芯片面积很小。在时钟允许信号为低电平时，状态机完全处于空闲状态，不过系统仍然可以访问状态机的 FIFO 并改变其配置。</p>
+<p>时钟分频器支持 16 比特整数、8 比特分数，小数分频器采用一阶积分-微分（first-order delta-sigma）。时钟分割比例可以在 1 ~ 65536 之间以 1&#x2F;256 的增量改变。</p>
 <p>如果时钟分割比例设置为 1，则状态机在每个时钟周期都会执行，即全速执行：</p>
 <table>
 <thead>
@@ -953,10 +1002,10 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">图46. 整数时钟分割比例产生一个周期性的时钟允许信号。时钟分割器会不断地从 <em>n</em> 开始递减，在到达 1 时产生一个允许脉冲。</td>
+<td align="center">图46. 整数时钟分割比例产生一个周期性的时钟允许信号。时钟分频器会不断地从 <em>n</em> 开始递减，在到达 1 时产生一个允许脉冲。</td>
 </tr>
 </tbody></table>
-<p>分数分割比例会维持稳定的 <em>n + f &#x2F; 256</em> 的分割速率，其中 <em>n</em> 和 <em>f</em> 是该状态机的 <code>CLKDIV</code> 寄存器的整数和分数部分。<br>它会有选择地在 <code>n</code> 个周期到 <code>n+1</code> 个周期之间延长某个分割期间。</p>
+<p>分数分割比例会维持稳定的 <em>n + f &#x2F; 256</em> 的分割速率，其中 <em>n</em> 和 <em>f</em> 是该状态机的 <code>CLKDIV</code> 寄存器的整数和分数部分。它会有选择地在 <code>n</code> 个周期到 <code>n+1</code> 个周期之间延长某个分割期间。</p>
 <table>
 <thead>
 <tr>
@@ -964,7 +1013,7 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">图47. 分数时钟分割比例，平均分割比例为 2.5。时钟分割器会在每个分割周期上改变分数部分的值，当到达 1 时，<br>则给整数部分加 1，以延长下一个分割周期。</td>
+<td align="center">图47. 分数时钟分割比例，平均分割比例为 2.5。时钟分频器会在每个分割周期上改变分数部分的值，当到达 1 时，<br>则给整数部分加 1，以延长下一个分割周期。</td>
 </tr>
 </tbody></table>
 <p>对于较小的 <em>n</em>，分数分割比例导致的抖动可能是无法接受的。但是，当分割比例很大时，抖动几乎可以忽略不计。</p>
@@ -996,7 +1045,7 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">图49. 每个状态机对于每个 GPIO 通过写掩码选择优先级。每个 GPIO 会考虑来自四个状态机的写入电平和方向，<br>然后应用编号最大的状态机的值。</td>
+<td align="center">图49. 每个状态机对于每个 GPIO 通过写掩码选择优先级。<br>每个 GPIO 会考虑来自四个状态机的写入电平和方向，然后应用编号最大的状态机的值。</td>
 </tr>
 </tbody></table>
 <p>每个状态机在每个周期会通过其管脚映射硬件执行一次 <code>OUT</code>&#x2F;<code>SET</code> 和 side-set。这样，每个状态机都会为 GPIO 输出电平和输出允许寄存器生成 32 比特的写数据和写掩码。</p>
@@ -1004,7 +1053,7 @@
 <h4 id="3-5-6-2-输入映射"><a href="#3-5-6-2-输入映射" class="headerlink" title="3.5.6.2. 输入映射"></a>3.5.6.2. 输入映射</h4><p><code>IN</code> 指令收到的数据的方式是，LSB 映射到 <code>PINCTRL_IN_BASE</code> 设置的 GPIO，后续的更高位来自后续更高编号的 GPIO，到达 31 时折返。</p>
 <p>换句话说，<code>IN</code> 总线是 GPIO 输入值根据 <code>PINCTRL_IN_BASE</code> 的右旋结果。如果不够 32 个 GPIO，则 PIO 输入会在相应位置上填充 0， 以补齐 32 比特。</p>
 <p>像 <code>WAIT GPIO</code> 等指令会使用绝对 GPIO 编号，而不是 <code>IN</code> 数据总线中的索引。此时不会进行右旋。</p>
-<h4 id="3-5-6-3-输入同步器"><a href="#3-5-6-3-输入同步器" class="headerlink" title="3.5.6.3. 输入同步器"></a>3.5.6.3. 输入同步器</h4><p>为了保证 PIO 的稳定性，每个 GPIO 输入都有两个标准 2-fliplop 同步器。这会导致输入采样延迟两个周期，但好处是，状态机可以在任何时刻执行 <code>IN PINS</code>，而且只会看到干净的高低电平，而不会看到可能会影响状态机电路的中间值。<br>对于 UART RX 等异步接口来说这一点非常重要。</p>
+<h4 id="3-5-6-3-输入同步器"><a href="#3-5-6-3-输入同步器" class="headerlink" title="3.5.6.3. 输入同步器"></a>3.5.6.3. 输入同步器</h4><p>为了保证 PIO 的稳定性，每个 GPIO 输入都有两个标准 2-fliplop 同步器。这会导致输入采样延迟两个周期，但好处是，状态机可以在任何时刻执行 <code>IN PINS</code>，而且只会看到干净的高低电平，而不会看到可能会影响状态机电路的中间值。对于 UART RX 等异步接口来说这一点非常重要。</p>
 <p>有时某些 GPIO 可能需要跳过同步器。这样可以减少延迟，但用户必须自行保证状态机不会在错误的时刻进行采样。通常，只有 SPI 等同步接口才能做到这一点。设置 <code>INPUT_SYNC_BYPASS</code> 中的相应比特即可跳过同步器。</p>
 <p><strong>警告</strong> 对不稳定的输入进行采样会导致不可预测的状态机行为，应当避免这种情况。</p>
 <h3 id="3-5-7-强制指令和被-EXEC-的指令"><a href="#3-5-7-强制指令和被-EXEC-的指令" class="headerlink" title="3.5.7. 强制指令和被 EXEC 的指令"></a>3.5.7. 强制指令和被 EXEC 的指令</h3><p>除了指令内存外，状态机还可以从其他三个来源执行指令：</p>
@@ -1023,13 +1072,13 @@
 <li>进入一个循环，该循环反复地从 TX FIFO 加载 32 比特数据，然后将低 16 比特作为指令执行</li>
 </ul>
 <p>C 程序将状态机设置为运行状态，然后进入 <code>hang</code> 循环。在状态机执行时，C 程序强制执行一条 <code>jmp</code> 指令，使状态机跳出循环。</p>
-<p>当一条指令写入 <code>INSTR</code> 寄存器后，状态机会立即解码并执行该指令，而不会执行从 PIO 指令内存读取到的指令。<br>程序计数器不会增加，因此在下一个周期（假设 <code>INSTR</code> 寄存器强制执行的指令没有导致等待状态）状态机会从原来的位置继续执行当前程序，<br>除非写入的指令修改了 <code>PC</code>。</p>
-<p>写入 <code>INSTR</code> 寄存器的指令中的延时周期会被忽略，并立即执行，不管状态机的时钟分割器如何设置。这个接口用于执行初始化或改变流程控制，<br>所以指令会尽快执行，而不管状态机如何配置。</p>
-<p>写入 <code>INSTR</code> 的指令可以进入等待状态，此时状态机会锁住该指令，直到其完成。出现这种情况时，会设置 <code>EXECCTRL_EXEC_STALLED</code> 标志。<br>重启状态机或向 <code>INSTR</code> 写入 <code>NOP</code> 可以清除该标志。</p>
-<p>上述示例状态机程序的第二阶段使用了 <code>OUT EXEC</code> 指令。<code>OUT</code> 本身需要一个执行周期，<code>OUT</code> 执行的指令在下一个执行周期进行。注意被执行的指令之一也是 <code>OUT</code>——<br>状态机每个周期只能执行一条 <code>OUT</code> 指令。</p>
+<p>当一条指令写入 <code>INSTR</code> 寄存器后，状态机会立即解码并执行该指令，而不会执行从 PIO 指令内存读取到的指令。程序计数器不会增加，因此在下一个周期（假设 <code>INSTR</code> 寄存器强制执行的指令没有导致等待状态）状态机会从原来的位置继续执行当前程序，除非写入的指令修改了 <code>PC</code>。</p>
+<p>写入 <code>INSTR</code> 寄存器的指令中的延时周期会被忽略，并立即执行，不管状态机的时钟分频器如何设置。这个接口用于执行初始化或改变流程控制，所以指令会尽快执行，而不管状态机如何配置。</p>
+<p>写入 <code>INSTR</code> 的指令可以进入等待状态，此时状态机会锁住该指令，直到其完成。出现这种情况时，会设置 <code>EXECCTRL_EXEC_STALLED</code> 标志。重启状态机或向 <code>INSTR</code> 写入 <code>NOP</code> 可以清除该标志。</p>
+<p>上述示例状态机程序的第二阶段使用了 <code>OUT EXEC</code> 指令。<code>OUT</code> 本身需要一个执行周期，<code>OUT</code> 执行的指令在下一个执行周期进行。注意被执行的指令之一也是 <code>OUT</code>——状态机每个周期只能执行一条 <code>OUT</code> 指令。</p>
 <p><code>OUT EXEC</code> 会将 <code>OUT</code> 移出的数据写入内部的指令锁存器。下一个周期中，状态机知道它不应该执行指令内存，而是执行该锁存器的内容，而且知道此时不应当增加 <code>PC</code>。</p>
 <p>该程序在运行时会输出 “12345678”。</p>
-<p><strong>注意</strong> 如果写入 <code>INSTR</code> 的指令造成等待状态，该指令会被写入到与 <code>OUT EXEC</code> 和 <code>MOV EXEC</code> 所用的同一个锁存器，并覆盖其中保存的指令。<br>因此，如果使用了 <code>EXEC</code> 指令，那么写入 <code>INSTR</code> 的指令不能造成等待。</p>
+<p><strong>注意</strong> 如果写入 <code>INSTR</code> 的指令造成等待状态，该指令会被写入到与 <code>OUT EXEC</code> 和 <code>MOV EXEC</code> 所用的同一个锁存器，并覆盖其中保存的指令。因此，如果使用了 <code>EXEC</code> 指令，那么写入 <code>INSTR</code> 的指令不能造成等待。</p>
 
                     
                 </div>
