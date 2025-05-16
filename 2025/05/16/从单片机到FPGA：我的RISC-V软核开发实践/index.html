@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            从单片机到FPGA：我的RISC-V软核开发实践 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        从单片机到FPGA：我的RISC-V软核开发实践
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-05-16 16:16:13</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri May 16 2025 22:22:13 GMT+0800">2025-05-16 22:22:13</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h1 id="从单片机到-FPGA：我的-RISC-V-软核开发实践"><a href="#从单片机到-FPGA：我的-RISC-V-软核开发实践" class="headerlink" title="从单片机到 FPGA：我的 RISC-V 软核开发实践"></a>从单片机到 FPGA：我的 RISC-V 软核开发实践</h1><h2 id="一、单片机数据处理瓶颈引发的技术思考"><a href="#一、单片机数据处理瓶颈引发的技术思考" class="headerlink" title="一、单片机数据处理瓶颈引发的技术思考"></a>一、单片机数据处理瓶颈引发的技术思考</h2><p>在近期的项目开发中，我遭遇了一个棘手的技术挑战：需要在单片机端直接处理 2.6Msps 的数据量，而 500MHz 主频限制下，每个数据的处理时间仅有不到 200 个时钟周期。传统方案中，double 类型的高精度运算严重消耗计算资源，数据总线带宽压力巨大。经过反复优化，最终通过将数据类型替换为 long 型，并借助汇编实现部分并行处理，才勉强满足实时性要求。</p>
+<p>这次经历让我深刻意识到：单片机在面对大规模数据并行运算时存在天然局限。其冯・诺依曼架构下的顺序执行模式，难以高效处理高密度计算任务。而 FPGA 凭借硬件并行处理的特性，显然更适合这类场景。于是，我决定通过一个实战项目开启 FPGA 的学习之旅，目标是构建 STM32 与 FPGA 协同工作的异构计算系统。</p>
+<h2 id="二、项目架构设计：构建异构计算系统"><a href="#二、项目架构设计：构建异构计算系统" class="headerlink" title="二、项目架构设计：构建异构计算系统"></a>二、项目架构设计：构建异构计算系统</h2><h3 id="（一）核心功能定义"><a href="#（一）核心功能定义" class="headerlink" title="（一）核心功能定义"></a>（一）核心功能定义</h3><p>项目的核心目标是在 FPGA 内运行 RISC-V 软核，由 STM32 通过 FMC 总线完成程序加载与运行控制，并实现两者的数据交互。这一架构借鉴了工业控制中 “ARM+FPGA” 的经典组合模式：STM32 负责上层逻辑控制，FPGA 承担底层并行计算，通过内存映射的 FMC 总线实现高效通讯。</p>
+<h3 id="（二）关键技术选型"><a href="#（二）关键技术选型" class="headerlink" title="（二）关键技术选型"></a>（二）关键技术选型</h3><p><strong>RISC-V 软核</strong>：选择 <a class="link"   target="_blank" rel="noopener" href="https://github.com/YosysHQ/picorv32" >PicoRV32<i class="fas fa-external-link-alt"></i></a> 作为核心，因其轻量级设计和开源生态，便于快速集成。</p>
+<p><strong>硬件平台</strong>：</p>
+<p>FPGA 选用安路科技 EF2L45LG144B 开发板，其内置的 256KB 双端口 ERAM 成为关键：一个端口连接 RISC-V 核（32 位数据宽度），另一个端口通过 FMC 接口与 STM32（16 位数据宽度）通信，数据位宽转换通过地址低位自动选择高低字节实现。</p>
+<p>自主设计 STM32 扩展板，通过FPGA开发板预留接口与 STM32 实现硬件级联，构建完整的双核心系统。</p>
+<h2 id="三、Verilog-设计实践：从模块集成到时序优化"><a href="#三、Verilog-设计实践：从模块集成到时序优化" class="headerlink" title="三、Verilog 设计实践：从模块集成到时序优化"></a>三、Verilog 设计实践：从模块集成到时序优化</h2><h3 id="（一）顶层架构设计"><a href="#（一）顶层架构设计" class="headerlink" title="（一）顶层架构设计"></a>（一）顶层架构设计</h3><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">`<span class="keyword">timescale</span>  1 ps / 1 ps</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">module</span> top(</span><br><span class="line">    <span class="keyword">input</span> clk_ref,</span><br><span class="line">    <span class="keyword">input</span> i_rst,</span><br><span class="line"></span><br><span class="line">    <span class="keyword">inout</span> [<span class="number">15</span>:<span class="number">0</span>] fmc_data,</span><br><span class="line">    <span class="keyword">input</span> fmc_wrn,</span><br><span class="line">    <span class="keyword">input</span> fmc_rdn,</span><br><span class="line">    <span class="keyword">input</span> fmc_csn,</span><br><span class="line">    <span class="keyword">input</span> fmc_nadv</span><br><span class="line">);</span><br><span class="line">    <span class="keyword">wire</span> clk;</span><br><span class="line">    <span class="keyword">wire</span> rstn;</span><br><span class="line"></span><br><span class="line">    sys_clk u_sys_clk(</span><br><span class="line">        <span class="variable">.clk_ref</span>(clk_ref),</span><br><span class="line">        <span class="variable">.i_rst</span>(i_rst),</span><br><span class="line">        <span class="variable">.clk</span>(clk),</span><br><span class="line">        <span class="variable">.rstn</span>(rstn)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">15</span>:<span class="number">0</span>] mem_addr;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">15</span>:<span class="number">0</span>] mem_wdata;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">15</span>:<span class="number">0</span>] mem_rdata;</span><br><span class="line">    <span class="keyword">wire</span> mem_wen;</span><br><span class="line">    <span class="keyword">wire</span> mem_do;</span><br><span class="line">    fmc_bus u_fmc_bus (</span><br><span class="line">        <span class="variable">.sys_clk</span>(clk),</span><br><span class="line">        <span class="variable">.sys_rst_n</span>(rstn),</span><br><span class="line"></span><br><span class="line">        <span class="variable">.db</span>(fmc_data),</span><br><span class="line">        <span class="variable">.wrn</span>(fmc_wrn),</span><br><span class="line">        <span class="variable">.rdn</span>(fmc_rdn),</span><br><span class="line">        <span class="variable">.csn</span>(fmc_csn),</span><br><span class="line">        <span class="variable">.nadv</span>(fmc_nadv),</span><br><span class="line"></span><br><span class="line">        <span class="variable">.ram_addr</span>(mem_addr),</span><br><span class="line">        <span class="variable">.ram_wdata</span>(mem_wdata),</span><br><span class="line">        <span class="variable">.ram_rdata</span>(mem_rdata),</span><br><span class="line">        <span class="variable">.ram_wen</span>(mem_wen),</span><br><span class="line">        <span class="variable">.ram_do</span>(mem_do)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">wire</span> sram_valid;</span><br><span class="line">    <span class="keyword">assign</span> sram_valid = (mem_addr &lt; <span class="number">16&#x27;h8000</span>);</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">15</span>:<span class="number">0</span>] sram_rdata;</span><br><span class="line">    picorv32_ctrl u_picorv32_ctrl(</span><br><span class="line">        <span class="variable">.clk</span>(clk),</span><br><span class="line">        <span class="variable">.rstn</span>(rstn),</span><br><span class="line">        <span class="variable">.ram_addr</span>(mem_addr),</span><br><span class="line">        <span class="variable">.ram_wdata</span>(mem_wdata),</span><br><span class="line">        <span class="variable">.ram_wen</span>(mem_wen),</span><br><span class="line">        <span class="variable">.ram_rdata</span>(sram_rdata),</span><br><span class="line">        <span class="variable">.ram_do</span>(mem_do &amp; sram_valid)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">assign</span> mem_rdata =     sram_valid ? sram_rdata :</span><br><span class="line">                        <span class="number">16&#x27;h0000</span>;</span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<p>顶层模块采用分层设计：</p>
+<p><strong>时钟子系统</strong>：通过 FPGA 内置 PLL 生成 100MHz 稳定时钟，满足 RISC-V 核与 FMC 总线的时序要求。</p>
+<p><strong>总线接口层</strong>：FMC 模块实现异步总线协议转换，将 STM32 的 16 位 FMC 信号映射为 16 位内存接口，地址空间划分为前 64KB（RISC-V 程序区）和扩展区（预留未来功能）。</p>
+<p><strong>核心控制层</strong>：PicoRV32_CTRL 模块负责软核与内存的交互，通过双端口 RAM 实现 STM32（端口 B）与 RISC-V（端口 A）的并行访问。</p>
+<h3 id="（二）RV32核心控制"><a href="#（二）RV32核心控制" class="headerlink" title="（二）RV32核心控制"></a>（二）RV32核心控制</h3><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> picorv32_ctrl(</span><br><span class="line">    <span class="keyword">input</span> clk,</span><br><span class="line">    <span class="keyword">input</span> rstn,</span><br><span class="line"></span><br><span class="line">    <span class="keyword">input</span> [<span class="number">15</span>:<span class="number">0</span>] ram_addr,</span><br><span class="line">    <span class="keyword">input</span> [<span class="number">15</span>:<span class="number">0</span>] ram_wdata,</span><br><span class="line">    <span class="keyword">input</span> ram_wen,</span><br><span class="line">    <span class="keyword">output</span> [<span class="number">15</span>:<span class="number">0</span>] ram_rdata,</span><br><span class="line">    <span class="keyword">input</span> ram_do</span><br><span class="line">);</span><br><span class="line">    <span class="keyword">wire</span> trap;</span><br><span class="line">    <span class="keyword">wire</span> mem_valid;</span><br><span class="line">    <span class="keyword">wire</span> mem_instr;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">reg</span> mem_ready;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>]    mem_rdata;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] mem_addr;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] mem_wdata;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">3</span>:<span class="number">0</span>] mem_wstrb;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">wire</span> mem_la_read;</span><br><span class="line">    <span class="keyword">wire</span> mem_la_write;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] mem_la_addr;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] mem_la_wdata;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">3</span>:<span class="number">0</span>] mem_la_wstrb;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">reg</span> rv32_rstn;</span><br><span class="line">    <span class="keyword">reg</span> rv32_state;</span><br><span class="line">    <span class="keyword">reg</span> [<span class="number">15</span>:<span class="number">0</span>] rv32_ctrl_out;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span>@(<span class="keyword">posedge</span> clk) <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span>(~rstn) <span class="keyword">begin</span></span><br><span class="line">            rv32_rstn &lt;= <span class="number">1&#x27;b0</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            rv32_rstn &lt;= rv32_state;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span>@(<span class="keyword">posedge</span> clk) <span class="keyword">begin</span> </span><br><span class="line">        <span class="keyword">if</span>(~rstn) <span class="keyword">begin</span></span><br><span class="line">            rv32_state &lt;= <span class="number">1&#x27;b0</span>;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">if</span>(ram_do) <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">case</span>(ram_addr)</span><br><span class="line">                <span class="number">16&#x27;h4001</span>: <span class="keyword">begin</span></span><br><span class="line">                    <span class="keyword">if</span>(ram_wen)</span><br><span class="line">                        rv32_state = ram_wdata[<span class="number">0</span>];</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                        rv32_ctrl_out &lt;= &#123;<span class="number">15&#x27;b0</span>, rv32_state&#125;;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">                <span class="keyword">default</span>: <span class="keyword">begin</span></span><br><span class="line">                    rv32_ctrl_out &lt;= <span class="number">16&#x27;h0000</span>;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">endcase</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    picorv32 <span class="variable">#(.COMPRESSED_ISA(1))</span></span><br><span class="line">    picorv32_core (</span><br><span class="line">        <span class="variable">.clk</span>         (clk         ),</span><br><span class="line">        <span class="variable">.resetn</span>      (rv32_rstn   ),</span><br><span class="line">        <span class="variable">.trap</span>        (trap        ),</span><br><span class="line">        <span class="variable">.mem_valid</span>   (mem_valid   ),</span><br><span class="line">        <span class="variable">.mem_instr</span>   (mem_instr   ),</span><br><span class="line">        <span class="variable">.mem_ready</span>   (mem_ready   ),</span><br><span class="line">        <span class="variable">.mem_addr</span>    (mem_addr    ),</span><br><span class="line">        <span class="variable">.mem_wdata</span>   (mem_wdata   ),</span><br><span class="line">        <span class="variable">.mem_wstrb</span>   (mem_wstrb   ),</span><br><span class="line">        <span class="variable">.mem_rdata</span>   (mem_rdata   ),</span><br><span class="line">        <span class="variable">.mem_la_read</span> (mem_la_read ),</span><br><span class="line">        <span class="variable">.mem_la_write</span>(mem_la_write),</span><br><span class="line">        <span class="variable">.mem_la_addr</span> (mem_la_addr ),</span><br><span class="line">        <span class="variable">.mem_la_wdata</span>(mem_la_wdata),</span><br><span class="line">        <span class="variable">.mem_la_wstrb</span>(mem_la_wstrb)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] ram_32_rdata;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] ram_32_wdata;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">3</span>:<span class="number">0</span>] ram_byte_en;</span><br><span class="line">    <span class="keyword">assign</span> ram_byte_en = ram_addr[<span class="number">0</span>] == <span class="number">1&#x27;b0</span> ? <span class="number">4&#x27;b0011</span> : <span class="number">4&#x27;b1100</span>;</span><br><span class="line">    <span class="keyword">assign</span> ram_32_wdata = &#123;ram_wdata, ram_wdata&#125;;</span><br><span class="line">    <span class="keyword">assign</span> ram_rdata = (ram_addr[<span class="number">0</span>] == <span class="number">1&#x27;b0</span> &amp;&amp; ram_addr[<span class="number">15</span>:<span class="number">14</span>] == <span class="number">0</span>) ? ram_32_rdata[<span class="number">15</span>:<span class="number">0</span>] :</span><br><span class="line">                       (ram_addr[<span class="number">0</span>] == <span class="number">1&#x27;b1</span> &amp;&amp; ram_addr[<span class="number">15</span>:<span class="number">14</span>] == <span class="number">0</span>) ? ram_32_rdata[<span class="number">31</span>:<span class="number">16</span>] :</span><br><span class="line">                       rv32_ctrl_out;</span><br><span class="line">    EF2_BRAM256 u_EF2_BRAM256(</span><br><span class="line">        <span class="variable">.doa</span>(ram_32_rdata),</span><br><span class="line">        <span class="variable">.dia</span>(ram_32_wdata),</span><br><span class="line">        <span class="variable">.cea</span>(ram_do &amp; ram_addr[<span class="number">15</span>:<span class="number">14</span>] == <span class="number">0</span>),</span><br><span class="line">        <span class="variable">.clka</span>(clk),</span><br><span class="line">        <span class="variable">.wea</span>(ram_wen),</span><br><span class="line">        <span class="variable">.rsta</span>(~rstn),</span><br><span class="line">        <span class="variable">.addra</span>(ram_addr[<span class="number">13</span>:<span class="number">1</span>]),</span><br><span class="line">        <span class="variable">.weabyte</span>(ram_byte_en),</span><br><span class="line"></span><br><span class="line">        <span class="variable">.dob</span>(mem_rdata),</span><br><span class="line">        <span class="variable">.dib</span>(mem_la_wdata),</span><br><span class="line">        <span class="variable">.ceb</span>(<span class="number">1&#x27;b1</span>),</span><br><span class="line">        <span class="variable">.clkb</span>(clk),</span><br><span class="line">        <span class="variable">.web</span>(mem_la_write),</span><br><span class="line">        <span class="variable">.rstb</span>(~rstn),</span><br><span class="line">        <span class="variable">.addrb</span>(mem_la_addr[<span class="number">14</span>:<span class="number">2</span>]),</span><br><span class="line">        <span class="variable">.webbyte</span>(mem_la_wstrb)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span> @(<span class="keyword">posedge</span> clk) <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> (~rstn) <span class="keyword">begin</span></span><br><span class="line">            mem_ready &lt;= <span class="number">1&#x27;b0</span>;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            mem_ready &lt;= <span class="number">1&#x27;b1</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<p>模块内例化了两个模块，分别是rv32内核模块和BRAM模块。picorv32模块通过一个简单的内存预取接口将其连接到32k字节的内存块。picorv32_ctrl提供的整个地址空间，前面32kb直连BRAM内存块，后面32kb连接内部实现的寄存器，目前寄存器只有一个，用于控制rv32内核的复位状态来控制内核的运行。</p>
+<p>BRAM的内存宽度是32bit，前面FMC的内存宽度是16bit，所有这里做了一个巧妙的处理，通过地址低位来选择输入输出数据的高位还是低位。</p>
+<p>picorv32默认没有开启指令压缩和乘法扩展，这里通过COMPRESSED_ISA手动打开指令压缩。为了节省一点LUT资源就不开乘法扩展了。在通过riscv-gcc编译程序时的架构选型应为-march&#x3D;rv32ic。</p>
+<h3 id="（三）FMC异步接口"><a href="#（三）FMC异步接口" class="headerlink" title="（三）FMC异步接口"></a>（三）FMC异步接口</h3><p>这个接口代码应该是不复杂的，但我发现我写的代码看着很别扭，代码质量不高，所以就不展示了。😂😂😂</p>
+<h2 id="四、软件生态构建：从编译链到控制程序"><a href="#四、软件生态构建：从编译链到控制程序" class="headerlink" title="四、软件生态构建：从编译链到控制程序"></a>四、软件生态构建：从编译链到控制程序</h2><h3 id="（一）RISC-V-测试程序开发"><a href="#（一）RISC-V-测试程序开发" class="headerlink" title="（一）RISC-V 测试程序开发"></a>（一）RISC-V 测试程序开发</h3><p>采用 MounRiver Studio 开发工具中集成的 RISC-V 工具链，编写包含解密功能的测试程序：</p>
+<p><strong>启动汇编（start.S）</strong>：初始化栈指针到 1KB 地址处，建立程序运行的基本环境：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.section .init</span><br><span class="line">.global main</span><br><span class="line">lui sp, %hi(0x00001000)       // 加载栈基址高12位</span><br><span class="line">addi sp, sp, %lo(0x00001000)  // 生成完整32位地址</span><br><span class="line">jal ra, main                  // 调用C主函数</span><br><span class="line">ebreak                        // 程序结束</span><br></pre></td></tr></table></figure>
+
+<p><strong>C 语言逻辑</strong>：实现 ROT13 解密算法，将混淆字符串转换为可读信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="type">char</span> *pmem = (<span class="type">void</span>*)<span class="number">0x1000</span>;     <span class="comment">// 定义输出缓冲区</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">putc</span><span class="params">(<span class="type">char</span> c)</span></span><br><span class="line">&#123;</span><br><span class="line">    *pmem++ = c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">puts</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *s)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">int</span> j;</span><br><span class="line">    <span class="keyword">while</span> (*s)</span><br><span class="line">    &#123;</span><br><span class="line">        putc(*s++);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> *<span class="title function_">memcpy</span><span class="params">(<span class="type">void</span> *dest, <span class="type">const</span> <span class="type">void</span> *src, <span class="type">int</span> n)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">while</span> (n) </span><br><span class="line">	&#123;</span><br><span class="line">		n--;</span><br><span class="line">		((<span class="type">char</span>*)dest)[n] = ((<span class="type">char</span>*)src)[n];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dest;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 待解密的字符串</span></span><br><span class="line">    <span class="type">char</span> message[] = <span class="string">&quot;$Uryyb+Jbeyq!+Vs+lbh+pna+ernq+guvf+zrffntr+gura$gur+CvpbEI32+PCH&quot;</span></span><br><span class="line">            <span class="string">&quot;+frrzf+gb+or+jbexvat+whfg+svar.$$++++++++++++++++GRFG+CNFFRQ!$$&quot;</span>;</span><br><span class="line">    <span class="comment">// ROT13解密逻辑</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; message[i]; i++)</span><br><span class="line">        <span class="keyword">switch</span> (message[i])</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;a&#x27;</span> ... <span class="string">&#x27;m&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;A&#x27;</span> ... <span class="string">&#x27;M&#x27;</span>:</span><br><span class="line">            message[i] += <span class="number">13</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;n&#x27;</span> ... <span class="string">&#x27;z&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;N&#x27;</span> ... <span class="string">&#x27;Z&#x27;</span>:</span><br><span class="line">            message[i] -= <span class="number">13</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;$&#x27;</span>:</span><br><span class="line">            message[i] = <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;+&#x27;</span>:</span><br><span class="line">            message[i] = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出解密后的数据</span></span><br><span class="line">    <span class="built_in">puts</span>(message);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>内存链接脚本（firmware.lds）</strong>：定义 32KB 统一编址空间，整合代码与数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">MEMORY &#123;</span><br><span class="line">    mem : ORIGIN = 0x00000000, LENGTH = 0x8000</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">SECTIONS &#123;</span><br><span class="line">    .memory : &#123;</span><br><span class="line">        . = 0x000000;</span><br><span class="line">        start*(.text);</span><br><span class="line">        *(.init);</span><br><span class="line">        *(.text);</span><br><span class="line">        *(*);</span><br><span class="line">        end = .;</span><br><span class="line">        . = ALIGN(4);</span><br><span class="line">    &#125; &gt; mem</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="（二）STM32-控制程序实现"><a href="#（二）STM32-控制程序实现" class="headerlink" title="（二）STM32 控制程序实现"></a>（二）STM32 控制程序实现</h3><p>通过 FMC 总线实现固件加载与状态控制：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;incfile.h&quot;</span></span></span><br><span class="line">INCFILE(fw, <span class="string">&quot;main.bin&quot;</span>);    <span class="comment">// 嵌入二进制固件</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/* MCU Configuration--------------------------------------------------------*/</span></span><br><span class="line">  MPU_Region_InitTypeDef MPU_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Disables the MPU */</span></span><br><span class="line">  HAL_MPU_Disable();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Configure the MPU attributes for the FMC */</span></span><br><span class="line">  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;</span><br><span class="line">  MPU_InitStruct.Number           = MPU_REGION_NUMBER0;</span><br><span class="line">  MPU_InitStruct.BaseAddress      = <span class="number">0x60000000</span>;</span><br><span class="line">  MPU_InitStruct.Size             = MPU_REGION_SIZE_256MB;</span><br><span class="line">  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;</span><br><span class="line">  MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;</span><br><span class="line">  MPU_InitStruct.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;</span><br><span class="line">  MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;</span><br><span class="line">  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;</span><br><span class="line">  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL0;</span><br><span class="line">  MPU_InitStruct.SubRegionDisable = <span class="number">0x00</span>;</span><br><span class="line">  HAL_MPU_ConfigRegion(&amp;MPU_InitStruct);</span><br><span class="line">  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Reset of all peripherals, Initializes the Flash interface and the Systick. */</span></span><br><span class="line">  HAL_Init();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Configure the system clock */</span></span><br><span class="line">  SystemClock_Config();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Initialize all configured peripherals */</span></span><br><span class="line">  MX_GPIO_Init();</span><br><span class="line">  MX_FMC_Init();        <span class="comment">// 初始化FMC总线</span></span><br><span class="line">  MX_USART1_UART_Init();<span class="comment">// 初始化输出串口</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SRAM_ADDR (0x60000000)</span></span><br><span class="line">  HAL_Delay(<span class="number">1000</span>);      <span class="comment">// 等待FPGA程序上电复位完成</span></span><br><span class="line">  <span class="type">uint16_t</span> *addr = (<span class="type">void</span>*)SRAM_ADDR;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 测试FMC内存读写</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1024</span>; i++)&#123;</span><br><span class="line">      addr[i] = i;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1024</span>; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(addr[i] != i)&#123;</span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">&quot;sram error %d %d\r\n&quot;</span>, i, addr[i]);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;sram check complate\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 加载固件到FPGA</span></span><br><span class="line">  <span class="type">const</span> <span class="type">uint16_t</span> *fw = FILEPTR(fw);</span><br><span class="line">  <span class="type">int</span> fw_size = FILESIZE(fw);</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; fw_size/<span class="number">2</span>+<span class="number">1</span>; i++)&#123;</span><br><span class="line">      addr[i] = fw[i];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;firmware load complate\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 控制RISC-V运行</span></span><br><span class="line">  <span class="type">uint16_t</span> *run_enable = (<span class="type">uint16_t</span>*)(<span class="number">0x60000000</span> + (<span class="number">0x4001</span> &lt;&lt; <span class="number">1</span>));</span><br><span class="line">  *run_enable = <span class="number">1</span>; <span class="comment">// 写入1启动软核</span></span><br><span class="line">  HAL_Delay(<span class="number">1000</span>);</span><br><span class="line">  *run_enable = <span class="number">0</span>; <span class="comment">// 写入0暂停软核</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 读取并显示结果</span></span><br><span class="line">  <span class="type">const</span> <span class="type">uint16_t</span> *msg = (<span class="type">uint16_t</span>*)(<span class="number">0x60000000</span> + (<span class="number">0x1000</span>));</span><br><span class="line">  <span class="type">uint16_t</span> buf[<span class="number">64</span>];</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">64</span>; i++)&#123;</span><br><span class="line">      buf[i] = msg[i];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *msg_str = (<span class="type">void</span>*)buf;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\r\n%s\r\n&quot;</span>, msg_str);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">      HAL_Delay(<span class="number">500</span>);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;hello world\r\n&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序通过内存映射方式将 FPGA 的 ERAM 视为 STM32 的外部 SRAM，直接通过指针操作实现数据交互。控制寄存器（0x4001）的单个 bit 即可启动 &#x2F; 停止 RISC-V 核，体现了内存映射接口的简洁性。</p>
+<h2 id="五、调试过程与关键验证"><a href="#五、调试过程与关键验证" class="headerlink" title="五、调试过程与关键验证"></a>五、调试过程与关键验证</h2><h3 id="（一）时序约束要点"><a href="#（一）时序约束要点" class="headerlink" title="（一）时序约束要点"></a>（一）时序约束要点</h3><p><strong>时钟配置</strong>：对 PLL 生成的 100MHz 时钟进行时序约束，确保时钟抖动小于 500ps</p>
+<p><strong>异步接口</strong>：在 FMC 模块中使用寄存器打拍处理异步信号，避免亚稳态问题</p>
+<h3 id="（二）测试结果验证"><a href="#（二）测试结果验证" class="headerlink" title="（二）测试结果验证"></a>（二）测试结果验证</h3><p>当 STM32 完成固件加载并启动 RISC-V 核后，串口终端显示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sram check complate</span><br><span class="line">firmware load complate</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Hello World! If you can read this message then</span><br><span class="line">the PicoRV32 CPU seems to be working just fine.</span><br><span class="line"></span><br><span class="line">                TEST PASSED!</span><br></pre></td></tr></table></figure>
+
+<p>这表明：</p>
+<ul>
+<li>FMC 总线通讯正常，数据读写无误</li>
+<li>RISC-V 软核正确执行了 ROT13 解密算法</li>
+<li>双核心系统的协同控制机制有效</li>
+</ul>
+<h3 id="（三）学习RISC-V汇编"><a href="#（三）学习RISC-V汇编" class="headerlink" title="（三）学习RISC-V汇编"></a>（三）学习RISC-V汇编</h3><p>所有都正确执行后，再回过头看看RISC-V测试程序的反汇编代码，看看有没有因为编译优化而存在程序运行作弊的情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">00000000 &lt;init&gt;:</span><br><span class="line">   0:   00000137                lui     sp,0x0</span><br><span class="line">   4:   40010113                addi    sp,sp,1024 # 400 &lt;end+0x233&gt;</span><br><span class="line">   8:   0cc000ef                jal     ra,d4 &lt;main&gt;</span><br><span class="line">   c:   9002                    ebreak</span><br><span class="line"></span><br><span class="line">0000000e &lt;putc&gt;:</span><br><span class="line">   e:   15802783                lw      a5,344(zero) # 158 &lt;pmem&gt;</span><br><span class="line">  12:   00178693                addi    a3,a5,1</span><br><span class="line">  16:   14d02c23                sw      a3,344(zero) # 158 &lt;pmem&gt;</span><br><span class="line">  1a:   00a78023                sb      a0,0(a5)</span><br><span class="line">  1e:   8082                    ret</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">000000d4 &lt;main&gt;:</span><br><span class="line">  d4:   7175                    addi    sp,sp,-144</span><br><span class="line">  d6:   08000613                li      a2,128</span><br><span class="line">  da:   05400593                li      a1,84</span><br><span class="line">  de:   850a                    mv      a0,sp</span><br><span class="line">  e0:   c706                    sw      ra,140(sp)</span><br><span class="line">  e2:   3fa9                    jal     3c &lt;memcpy&gt;</span><br><span class="line">  e4:   870a                    mv      a4,sp</span><br><span class="line">  e6:   04d00593                li      a1,77</span><br><span class="line">...</span><br><span class="line">00000158 &lt;pmem&gt;:</span><br><span class="line"> 158:   1000</span><br></pre></td></tr></table></figure>
+
+<p>看看putc函数的行为，从0x158地址取出数保存到a5寄存器，a5寄存器加1后保存到a3寄存器，再将a3寄存器的值写回到0x158地址处。最后将a0寄存器的值写入a5地址下实现数据输出。这里可以看到0x158地址下的初值就是0x1000，也就是pmem变量的初值。功能同C语言描述的一致，同时也表明代码和数据为统一编址，没有区分RAM和ROM。如果要区分ROM和RAM，需要添加一些启动代码来处理data段数据的拷贝。</p>
+<p>前面RISC-V的C代码中有一个memcpy函数不知道你注意到没有，为什么需要这个函数呢？如果将这个函数删除掉，确实会导致无法编译通过。通过检查汇编才发现main函数确实会调用memcpy，根据汇编代码和map文件，main函数的逻辑是原静态字符串存储在rodata区，然后在栈上分配了一段内存来保存message数据，所以这里需要memcpy来处理一大段内存的拷贝。这也是同ARM汇编不一样的地方，学的新知识了😄</p>
+<h3 id="（四）观察RISC-V的运行"><a href="#（四）观察RISC-V的运行" class="headerlink" title="（四）观察RISC-V的运行"></a>（四）观察RISC-V的运行</h3><p>通过FPGA开发工具提供的芯片调试工具，可以去捕获观测FPGA运行过程中寄存器的值。通过观测reg_pc和mem_rdata，更加直观的看到RISC-V的运行过程和内存取值的过程。发现每个指令执行的周期为1~7个时钟周期不等。jal跳转指令执行最快，仅需1个时钟周期。内存读写指令(sw)、条件跳转(bnez)、加法(addi)指令等需要5个时钟周期。</p>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><p>回顾开发过程，学会了Verilog模块化设计的基本方法，尤其是内存接口的应用。此外还增强了对RISC-V的了解，实现了从源码、工具链再到硬件执行的完整流程。</p>
+<p>回忆起我刚毕业参加工作，那时公司研发的项目基本上全采用ARM+FPGA的开发形式，ARM侧做纯粹的软件应用逻辑，FPGA控制底层的硬件。ARM和FPGA采用FMC接口进行通讯，通过内存映射的方式传输数据，这样ARM可以很方便的和FPGA进行通讯。当年由于能力有限，我并没有太深入的去了解这其中的通讯原理。主要是当时开发ARM的和开发FPGA的是两拨人，我主要负责ARM软件的开发，并没有机会接触到FPGA开发，后来觉得非常的遗憾。</p>
+<p>通过这个小项目的开发经历也算是弥补了当年未能深入参与开发的一些遗憾。期待将项目中得到的经验应用到实际工作中，进一步探索FPGA在嵌入式领域的应用。</p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                从单片机到FPGA：我的RISC-V软核开发实践
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/05/16/从单片机到FPGA：我的RISC-V软核开发实践/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2025-05-16 16:16</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/03/08/PIO%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/"
+                                   title="PIO参考手册"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">PIO参考手册</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2025
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
