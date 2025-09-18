@@ -9,7 +9,7 @@
     
     <title>
         
-            加密算法库之mbedtls |
+            在8pin的芯片上运行Linux |
         
         耀眼的大神
     </title>
@@ -177,7 +177,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        加密算法库之mbedtls
+                        在8pin的芯片上运行Linux
                     </div>
                 
 
@@ -205,12 +205,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2025-08-01 16:50:38</span>
+                <span class="datetime">2025-09-18 16:51:40</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sat Aug 02 2025 10:34:47 GMT+0800">2025-08-02 10:34:47</span>
+                <span class="datetime" data-updated="Thu Sep 18 2025 20:20:43 GMT+0800">2025-09-18 20:20:43</span>
             </span>
         
 
@@ -236,42 +236,39 @@
                     
 
                     
-                         <p>一直对各种加密算法库都非常感兴趣，之前用wolfssllib做过一些关于RSA的非对称加密的测试。最近又在做https相关的内容，由于wolfssllib的版权问题，不方便于商业开发使用，所以准备换到mbedtls进行https相关的开发。</p>
-<p>mbedtls的移植和使用都比较简单，唯一走的弯路就是在实现底层calloc函数时出了一点意外，最开始没注意到申请的内存需要清零，因为我用的是malloc来申请内存，内存默认没有清零，导致mbedtls在进行大数运算时经常卡死或者出错，这个问题折腾了好久。</p>
-<p>用mbedtls作为https的tls层，配置基本可以照搬官方的默认配置模板，然后做一些针对特定平台的适配，主要是内存、时间、随机数生成器这方面的适配。</p>
-<p>考虑到在单片机环境不方便更新CA证书，我选择不校验服务器证书。这或许会导致中间人攻击，但是在专用通讯网络中，我认为没有这方面的风险。</p>
-<p>关于https的细节不是我今天想说的，我今天想对比一下wolfssl和mbedtls的RSA算法差异。虽然目前主流的服务器的tls都基本上是椭圆曲线加密，但是RSA作为一种非常经典的非对称加密算法，仍然值得学习。</p>
-<p>这里先对比一下wolfssl和mbedtls的RSA算法在ARM单片机(STM32H7@480MHz)上执行的效果，以生成一个2048位的密钥对来进行测试。</p>
+                         <p>今年早些时候我在<a class="link"   target="_blank" rel="noopener" href="https://dmitry.gr/index.php?r=05.Projects&proj=36.%208pinLinux" >Dmitry Grinberg<i class="fas fa-external-link-alt"></i></a>的blog上看到一个有趣的项目，他用3个8pin的芯片来运行Linux。这个项目让我进一步理解现代计算机的工作原理，所以我决定自己尝试实现这个项目。</p>
+<p>原项目通过引脚时序上的一些复用逻辑来让8pin的STM32G031得以同时驱动一片PSRAM和SD卡，但是这种用法看起来非常的麻烦，我想找一种更简单的方法来达到这个目的。</p>
+<p>后来我接触到<a class="link"   target="_blank" rel="noopener" href="https://github.com/cnlohr/mini-rv32ima" >RV32IMA<i class="fas fa-external-link-alt"></i></a>项目，该模拟器方案视乎要比uMIPS要更简单，可以运行更简单的Linux固件，这样就可以不使用SD卡了，通过一片NorFlash来存放一个简单的Linux固件。</p>
+<p>现在我的想法就是通过4片8pin的芯片来运行Linux，分别是STM32G031J6M6，APS64064L，W25Q64JV，CH340N。这4个芯片的组合可以构建一个直接插在电脑USB接口上运行的8pin的Linux系统。</p>
+<p>让我们来思考一下如何连接4个芯片。这似乎是一个非常具有挑战性的问题。</p>
+<p>各个部件应该这样连接起来，STM32需要串口一对引脚，一对下载调试引脚，SPI的3个引脚，两个片选信号引脚，还有STM32供电的3个引脚。STM32需要分配11个引脚，这已经超出了STM32G031的8个引脚了。</p>
+<p><img   src="/2025/09/18/%E5%9C%A88pin%E7%9A%84%E8%8A%AF%E7%89%87%E4%B8%8A%E8%BF%90%E8%A1%8CLinux/Hard.png"  alt="硬件连接"></p>
+<p>某些引脚或许可以分时复用来达到需求。首先，下载调试引脚只有在芯片启动时需要，芯片正常运行后就不需要了，所以可以复用为普通引脚。此外NorFlash芯片在上电后可以将数据拷贝到APS6404L芯片中，这样系统串口还未使用时就可以使用NorFlash芯片，这又能够节约一个片选信号线。这样减少了3个信号线正好满足8pin芯片的需求。</p>
+<p>哪些信号复用是一个需要好好考虑的问题。首先调试信号线固定为STM32芯片的7、8脚，且它能够与其它任何信号进行分时复用。如果SPI要使用硬件SPI的话，4、5、6引脚直接分配到SPI。剩余的2、3脚为电源引脚，最后还剩下1、7、8引脚，这三个引脚只有1脚能够作为硬件串口的RX引脚，剩下的7、8脚分配作为两个SPI芯片的片选信号线。此外8脚还需要承担串口TX的功能，所以8脚的片选必须连接到norFlash的片选。因为NorFlash可以和串口分时复用，当从Flash读取数据时，假定串口输出不可用，且从Flash读取数据只在开机读取一次，对串口的功能影响较小。</p>
+<p>最终设计的原理图如下：<br><img   src="/2025/09/18/%E5%9C%A88pin%E7%9A%84%E8%8A%AF%E7%89%87%E4%B8%8A%E8%BF%90%E8%A1%8CLinux/Schematic.png"  alt="原理图"></p>
+<p>这里除了4个8pin的芯片外，还添加了一个3脚的LDO供电芯片。USB接口选择了印制板型的TYPE-C接口，可以直接插在USB TYPE-C公头上。</p>
+<p>最终的实现效果如下，一个非常小巧的结构。PCB板材厚度一定要是0.8mm，只有该厚度能够正好插入TYPE-C公头接口中。</p>
+<center>
 <table>
-<thead>
-<tr>
-<th>lib</th>
-<th>wolfssl</th>
-<th>mbedtls</th>
-<th>mbedtls<br/>(without MBEDTLS_HAVE_ASM)</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>执行时间(秒)</td>
-<td>25.7</td>
-<td>2.17</td>
-<td>15.8</td>
-</tr>
-<tr>
-<td>堆内存使用(kb)</td>
-<td>17.2</td>
-<td>14.2</td>
-<td>14.2</td>
-</tr>
-</tbody></table>
-<p>显然在单片机上mbedtls的性能要好得多，我认为其中最关键的应该是mbedtls针对特定处理器架构所做的优化，这些优化在大整数计算性能方面有非常大的提升。</p>
-<p>通过对运行时heap区的数据进行分析，wolfssl性能偏低的原因主要是在进行大整数计算时频繁的内存分配导致的。wolfssl在生成2048长度密钥时，内存分配次数达到了20万次以上，而mbedtls生成相同的密钥数据时内存分配只有几千次。</p>
-<p>wolfssl也不是完全没有优点，通过对编译后的二进制文件进行分析，mbedtls相关函数所使用的栈空间要更多一些，总调用栈深度达到了3kb字节，而wolfssl的栈调用深度在1kb以内。</p>
-<p>了解RSA算法的开发者应该都知道，RSA密钥生成中最关键的算法就是大质数生成算法，这应该是决定两者性能关键的算法。</p>
-<p>通过分析代码来看，两者的实现都基本上差不多。首先利用随机数生成器生成一个2047位的随机数，然后判断这个树是不是质数，如果不是质数则重新生成一个，直到生成了一个可以用的质数。</p>
-<p>根据素数定理来看，在这种长度级别的整数附近，素数的密度在千分之一左右。所以这是一个需要反复试错的算法，这是无法避免的。</p>
-<p>所以为了提升效率，素数的判定上就必须要尽可能的优化。mbedtls构造了1000以内的质因数用来快速验算待判定的树是否存在一些小的因数，然后再使用Miller-Rabin算法进行素性测试。wolfssl在操作上类似，不过它的素因数表要稍微大一些，最大的素数是1619。此外，在验算两个大质数的距离时，两个库也存在区别，mbedtls先生成两个大质数P和Q，再计算它们的距离，如果距离太近的化就重新生成P和Q。而wolfssl在校验第二个质数Q的素性前先进行了距离计算，这样效率应该快一些，且当距离不满足要求时只需要重新生成Q即可。看起来在这些细节方面wolfssl的策略要更好一些，不过它的代码看起来也要复杂许多。</p>
-<p>在移植这两个算法库之余，还学习椭圆曲线加密相关的内容。RSA密钥生成过程中由于需要不断试错来寻找大质数，所以在嵌入式系统中看起来它的性能就不是很稳定。而椭圆曲线加密在这方面就要好得多，椭圆曲线的密钥生成不依赖大质数生成，无论是计算量还是稳定性都要好得多。椭圆曲线依靠椭圆曲线上的离散对数问题的复杂性来保证安全，而RSA依靠大数分解难题来保证安全性，在安全性上面椭圆曲线也应该要更好。</p>
+    <tr>
+        <td><center><img     src="layout-top.png"  ><br>顶层</center></td>
+        <td><center><img     src="layout-bottom.png"  ><br>底层</center></td>
+        <td><center><img     src="real.jpg"  ><br>实物</center></td>
+    </tr>
+</table>
+</center>
+
+<p>软件的移植参考了<a class="link"   target="_blank" rel="noopener" href="https://github.com/ElectroBoy404NotFound/pico-rv32ima" >pico-rv32ima<i class="fas fa-external-link-alt"></i></a>，我也将STM32的相关代码放在了Github上，<a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/8pin-linux" >8pin-linux<i class="fas fa-external-link-alt"></i></a>。软件实现中除了RV32软核部分，最有学习价值都就是cache的实现，使用该cache方案在一定程度上弥补了外部串行PSRAM读写效率低的状况，解决了RV32软核运行速度与外部IO速度不匹配的问题，这种技术手段可以借鉴到其它项目中。</p>
+<p>STM32的固件编译出来接近32kb，ram使用也接近8kb，基本耗尽STM32的存储资源。</p>
+<p>Linux固件文件为Image，在STM32的源码相关目录中存在。它需要提前写入到W25Q64芯片中，可用使用JLink等工具来完成。</p>
+<p>STM32芯片可以飞线引出SWD引脚，在上电后5秒内连接调试器，连接调试器后需要使用STLink修改芯片的选项字节。将nRST引脚修改为普通GPIO使用，之后再下载STM32的程序。芯片运行5秒后相关的引脚会切换到其它功能，下载调试就不可用了。该SWD接口几乎不具备调试的能力，除非将相关复用功能临时关闭。</p>
+<p>该项目几乎没有额外的调试手段来观察RV32内核的运行情况，唯一的手段是使用示波器观察SPI的CS引脚，通过该引脚可以观察软核的内存IO情况，同时也能判断RV32内核死机问题。</p>
+<p>可以看看Linux启动日志，时间戳为终端自动添加的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">[15:24:47.759] Start</span><br><span class="line">[15:24:47.769] ********************************************************************************************************************************************************************************************************************************************** // 重复输出，此时是STM32在将Linux固件从NorFlash中写入到APS64064L中。</span><br><span class="line">Image loaded sucessfuly!</span><br><span class="line">[15:25:33.150] Linux version 6.1.14mini-rv32ima (user@buildvm) (riscv32-buildroot-linux-uclibc-gcc.br_real (Buildroot -g61a3fe7e) 12.2.0, GNU ld (GNU Binutils) 2.38) #3 Thu May  4 18:56:08 UTC 2023</span><br><span class="line">[15:25:33.315] Machine model: riscv-minimal-nommu,qemu</span><br><span class="line">[15:25:33.346] Zone ranges:</span><br><span class="line">[15:25:33.390]   Normal   [mem 0x0000000080000000-0x0000000080ffefff]</span><br><span class="line">[15:25:33.425] Movable zone start for each node</span><br><span class="line">[15:25:33.459] Early memory node ranges</span><br><span class="line">[15:25:33.499]   node   0: [mem 0x0000000080000000-0x0000000080ffefff]</span><br><span class="line">[15:25:33.540] Initmem setup node 0 [mem 0x0000000080000000-0x0000000080ffefff]</span><br><span class="line">[15:25:33.679] riscv: base ISA extensions aim</span><br><span class="line">[15:25:33.719] riscv: ELF capabilities aim</span><br><span class="line">[15:25:33.780] Built 1 zonelists, mobility grouping off.  Total pages: 4063</span><br><span class="line">[15:25:33.829] Kernel command line: earlycon=uart8250,mmio,0x10000000,1000000 console=hvc0</span><br><span class="line">[15:25:33.880] Unknown kernel command line parameters &quot;earlycon=uart8250,mmio,0x10000000,1000000&quot;, will be passed to user space.</span><br><span class="line">[15:25:33.938] Dentry cache hash table entries: 2048 (order: 1, 8192 bytes, linear)</span><br><span class="line">[15:25:34.080] Inode-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)</span><br><span class="line">[15:25:34.130] mem auto-init: stack:off, heap alloc:off, heap free:off</span><br><span class="line">[15:25:34.169] Memory: 13340K/16380K available (1445K kernel code, 269K rwdata, 146K rodata, 874K init, 108K bss, 3040K reserved, 0K cma-reserved)</span><br><span class="line">[15:25:34.227] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1</span><br><span class="line">[15:25:34.269] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0</span><br><span class="line">[15:25:34.309] riscv-intc: 32 local interrupts mapped</span><br><span class="line">[15:25:34.448] clint: clint@11000000: timer running at 1000000 Hz</span><br><span class="line">[15:25:34.500] clocksource: clint_clocksource: mask: 0xffffffffffffffff max_cycles: 0x1d854df40, max_idle_ns: 3526361616960 ns</span><br><span class="line">[15:25:34.550] sched_clock: 64 bits at 1000kHz, resolution 1000ns, wraps every 2199023255500ns</span><br><span class="line">[15:25:34.600] Console: colour dummy device 80x25</span><br><span class="line">[15:25:34.839] printk: console [hvc0] enabled</span><br><span class="line">[15:25:35.318] Calibrating delay loop (skipped), value calculated using timer frequency.. 2.00 BogoMIPS (lpj=10000)</span><br><span class="line">[15:25:35.490] pid_max: default: 4096 minimum: 301</span><br><span class="line">[15:25:37.777] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)</span><br><span class="line">[15:25:38.149] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)</span><br><span class="line">[15:25:51.993] devtmpfs: initialized</span><br><span class="line">[15:26:06.741] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns</span><br><span class="line">[15:26:50.500] clocksource: Switched to clocksource clint_clocksource</span><br><span class="line">[15:29:15.250] workingset: timestamp_bits=30 max_order=12 bucket_order=0</span><br><span class="line">[15:38:46.700] Freeing unused kernel image (initmem) memory: 872K</span><br><span class="line">[15:38:46.818] This architecture does not have kernel memory protection.</span><br><span class="line">[15:38:47.094] Run /init as init process</span><br><span class="line">[15:49:25.583] Welcome to pico-rv32ima Linux</span><br><span class="line">[15:51:33.919] Jan  1 00:00:49 login[32]: root login on &#x27;console&#x27;</span><br><span class="line">[15:51:34.185] </span><br><span class="line">[15:52:19.570] ~ # </span><br><span class="line">[15:52:57.861] ~ # </span><br><span class="line">[15:52:59.748] ~ # uname -a</span><br><span class="line">[15:53:15.205] Linux pico 6.1.14mini-rv32ima #3 Thu May  4 18:56:08 UTC 2023 riscv32 GNU/Linux</span><br><span class="line">[15:53:16.133] ~ # </span><br><span class="line">[15:53:17.588] ~ # uname -a</span><br><span class="line">[15:53:23.321] Linux pico 6.1.14mini-rv32ima #3 Thu May  4 18:56:08 UTC 2023 riscv32 GNU/Linux</span><br><span class="line">[15:53:24.100] ~ # </span><br><span class="line">[15:53:25.459] ~ # free</span><br><span class="line">[15:53:36.194]               total        used        free      shared  buff/cache   available</span><br><span class="line">[15:53:36.287] Mem:          14212        1892       10984           0        1336       10376</span><br><span class="line">[15:53:41.886] ~ # </span><br><span class="line">[15:53:43.249] ~ # echo hello</span><br><span class="line">[15:54:10.550] hello</span><br><span class="line">[15:54:11.507] ~ # </span><br><span class="line">[15:54:12.871] ~ # pwd</span><br><span class="line">[15:54:29.969] /root</span><br><span class="line">[15:54:30.643] ~ # </span><br><span class="line">[15:54:32.110] ~ # ls</span><br></pre></td></tr></table></figure>
+
+<p>第30秒成功加载固件。<br>第46秒输出第一行Linux启动消息。<br>第64秒初始化设备文件系统。<br>第14分执行初始程序。<br>第27分42秒启动终端，显示命令提示符。<br>…</p>
+<p>启动花费了将近半小时是让我很意外的。执行pwd和uname -a命令都能正常响应。准备执行ls命令，等了很久都没有输出结果，我认为它应该是还在慢慢运行吧！也有可能是系统挂了！😅</p>
+<p>该软件方案在550MHz的STM32H7芯片上配合高速的SDRAM，可以非常流程的运行Linux，终端交互都没有任何问题。除了STM32G031芯片的主频低外，外部的串行PSRAM带宽低也是导致Linux运行慢的主要原因。</p>
 
                     
                 </div>
@@ -282,11 +279,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                加密算法库之mbedtls
+                在8pin的芯片上运行Linux
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2025/08/01/加密算法库之mbedtls/
+                2025/09/18/在8pin的芯片上运行Linux/
             </div>
         </div>
 
@@ -302,7 +299,7 @@
                 <div class="type">
                     发布于
                 </div>
-                <div class="content">2025-08-01 16:50</div>
+                <div class="content">2025-09-18 16:51</div>
             </div>
 
 
@@ -346,31 +343,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2025/09/18/%E5%9C%A88pin%E7%9A%84%E8%8A%AF%E7%89%87%E4%B8%8A%E8%BF%90%E8%A1%8CLinux/"
-                                   title="在8pin的芯片上运行Linux"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">在8pin的芯片上运行Linux</span>
-                                        <span class="post-nav-item">上一篇</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2025/05/16/%E4%BB%8E%E5%8D%95%E7%89%87%E6%9C%BA%E5%88%B0FPGA%EF%BC%9A%E6%88%91%E7%9A%84RISC-V%E8%BD%AF%E6%A0%B8%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5/"
-                                   title="从单片机到FPGA：我的RISC-V软核开发实践"
+                                   href="/2025/08/01/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%BA%93%E4%B9%8Bmbedtls/"
+                                   title="加密算法库之mbedtls"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">从单片机到FPGA：我的RISC-V软核开发实践</span>
+                                        <span class="post-nav-title-item text-ellipsis">加密算法库之mbedtls</span>
                                         <span class="post-nav-item">下一篇</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
