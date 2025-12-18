@@ -9,7 +9,7 @@
     
     <title>
         
-            从SHA204A思考关于嵌入式固件加密的问题 |
+            在RGBLCD上使用LVGL时踩到的一些坑 |
         
         耀眼的大神
     </title>
@@ -177,7 +177,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        从SHA204A思考关于嵌入式固件加密的问题
+                        在RGBLCD上使用LVGL时踩到的一些坑
                     </div>
                 
 
@@ -205,12 +205,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2025-10-27 20:22:03</span>
+                <span class="datetime">2025-12-18 19:15:27</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Mon Oct 27 2025 20:22:45 GMT+0800">2025-10-27 20:22:45</span>
+                <span class="datetime" data-updated="Thu Dec 18 2025 19:19:01 GMT+0800">2025-12-18 19:19:01</span>
             </span>
         
 
@@ -236,31 +236,26 @@
                     
 
                     
-                         <h1 id="从SHA204A思考关于嵌入式固件加密的问题"><a href="#从SHA204A思考关于嵌入式固件加密的问题" class="headerlink" title="从SHA204A思考关于嵌入式固件加密的问题"></a>从SHA204A思考关于嵌入式固件加密的问题</h1><p>前段时间在家整理东西时，发现一枚未使用的 SOP-8 封装芯片 —— 没有包装，也无其他信息，仅用一块泡沫加透明胶带包裹着。通过查看芯片丝印我才想起，这是几年前购入的加密芯片 ATSHA204A。</p>
-<p>当时因项目需求买入这款芯片，本打算用于相关功能测试，却因某些原因最终未能用上，便被我遗忘了。本着不浪费的原则，也为了学习这款芯片的用法及固件加密的工作原理，我决定花些时间测试其功能。</p>
-<p>此前我在一块开发板上找到了合适的测试位置，上面恰好预留了一个 SOP-8 封装的焊盘，且已连接至 STM32H7 的硬件 IIC 接口。因此，我无需花费过多时间搭建硬件测试环境。</p>
-<p>在 GitHub 上很容易找到该芯片的相关驱动代码，我没有选用官方代码库 —— 其体积过于庞大。我采用了网友移植的驱动，核心文件仅两三个，移植起来十分便捷。不过在具体移植过程中仍遇到了一些问题，主要是 MCU 主频不一致导致的通讯超时问题，做些适配调整即可解决。</p>
-<p>SHA204A 芯片实际提供的是一种校验机制，用于判定硬件是否为克隆版本，其本身并不具备固件加密功能。使用时，需先向 SHA204A 芯片写入不可读取的密钥，之后主机 MCU 通过校验该密钥，判断 SHA204A 是否为克隆版。即便攻击者能克隆整个电路板（包括 MCU 内的固件），但由于 SHA204A 内未写入正确密钥，MCU 仍能检测出异常。</p>
-<p>SHA204A 芯片会通过 SHA256 算法计算内部密钥的哈希值，MCU 端则用相同的 SHA256 算法对同一密钥计算哈希值，若两者一致则判定校验通过。由于 MCU 与 SHA204A 芯片的通讯过程可能被捕获，为避免通讯层面的重放攻击，主机 MCU 可向 SHA204A 芯片提供一个随机数（challenge），实际计算的哈希值为 SHA256（key + challenge）。这样一来，即便密钥固定不变，每次计算的哈希值也会不同。</p>
-<p>更进一步，若主机 MCU 没有安全的随机数发生器，搭配 NONCE 指令同样能避免重放攻击。具体流程为：主机先写入一个随机数（challenge，即便安全性不足也可），此时芯片内部会生成一个安全性极高的随机数（random）并返回给主机 MCU；芯片内部同时计算 token &#x3D; SHA256（challenge + random），该 token 主机无法访问；随后 SHA204A 芯片进一步计算哈希值 &#x3D; SHA256（key + token）；MCU 端则用相同算法计算哈希值。这种方式虽流程更复杂，但能进一步提升安全性。</p>
-<p>写到这里，我已基本理解该芯片的工作机制（滚动密钥等其他功能未进一步探索）。但该芯片能否成为硬件防克隆的可靠保障呢？这需要一个关键前提：MCU 内的固件需确保不被读取。若 MCU 固件被提取，意味着 MCU 侧存储的密钥存在泄露风险；一旦密钥泄露，SHA204A 的校验机制便会完全失效。</p>
-<p>为何会存在这种风险？本质上是对称加密导致的问题：SHA204A 芯片与 MCU 内运行相同的加密算法、使用相同的密钥。这意味着，只要 MCU 内的信息泄露，整个系统就会被破解。因此，我们需要一种非对称加密机制来保障系统安全性 —— 加密芯片与 MCU 分别存储私钥和公钥，即便公钥泄露，也能确保系统安全。</p>
-<p>SHA204A 的后续同类产品中，已有支持非对称加密的型号。以 ATECC608B 为例，它在兼容 ATSHA204A 的基础上，新增了密钥生成、密钥交换算法、签名与验签算法等非对称加密指令。但将其用于设备防克隆时，我认为仍存在应用缺陷：它无法写入自定义私钥，只能在芯片内部随机生成新私钥，再读取公钥。而我的设备需要批量生产，为保证设备固件的统一性，加密芯片内部的私钥最好能统一且由用户自行写入。</p>
-<p>这类验证机制有哪些应用场景呢？目前多数 MCU 的 Flash 都具备读写保护机制，在这类场景下，可能无需额外使用独立加密芯片；但对于 Flash 外置的 MCU，加密芯片仍有其用武之地。以 RP2040 为例，该芯片本身不具备安全启动功能，用 RP2040 量产的设备，其固件存在被破解的风险。</p>
-<p>最新的 RP2350 芯片新增了安全启动功能：通过 ECC 验签机制确保固件不被篡改，同时通过自定义 Bootloader 实现固件的 AES 加密。但该方案需将固件解密后加载到 SRAM 中运行，由于 SRAM 空间有限，对于固件体积较大的软件而言，此方案仍不适用。此时，搭配使用外置加密芯片或许是更优选择。</p>
-<p>不过，外置加密芯片并非防止固件克隆的绝对安全方案：一旦固件被破解，攻击者可通过逆向固件、篡改关键代码执行流程，直接绕过外置加密芯片。尽管逆向固件的难度极高，但面对高价值设备，逆向其固件仍有利可图，因此风险依然存在。</p>
-<p>行业内是否存在较好且通用的嵌入式固件防克隆解决方案呢？</p>
-<p>由于我在这一领域接触有限，但我认为，在嵌入式场景下，几乎不存在完全通用的解决方案。防止固件克隆需要从软件、硬件多个层面综合实施防御策略：</p>
-<ol>
-<li><p>物理不可克隆，避免固件被恶意提取。例如开启 Flash 读写保护、关闭调试接口等；</p>
-</li>
-<li><p>若无法避免固件被提取，则需确保固件全流程加密 —— 包括固件的部署、更新、执行环节，均需保护原始固件信息不被泄露；</p>
-</li>
-<li><p>安全启动与可信执行。固件全流程加密的前提是具备安全启动环境，在不可信环境中解密并执行固件，会存在信息泄露风险；</p>
-</li>
-<li><p>良好的软件设计。部分设计缺陷可能导致攻击者通过任意代码执行，进而 dump 出全部固件内容。</p>
-</li>
-</ol>
+                         <h1 id="在RGBLCD上使用LVGL时踩到的一些坑"><a href="#在RGBLCD上使用LVGL时踩到的一些坑" class="headerlink" title="在RGBLCD上使用LVGL时踩到的一些坑"></a>在RGBLCD上使用LVGL时踩到的一些坑</h1><p>最近入手了一块RGBLCD并口屏幕，打算替换开发板上原有的SPI串口屏。新屏幕不仅尺寸更大、分辨率更高，还支持多点触控，可玩性无疑会提升不少。不过在适配使用的过程中，我还是遇到了不少问题，这里做个简单记录，供有相似需求的开发者参考。</p>
+<h2 id="1-RGBLCD驱动适配"><a href="#1-RGBLCD驱动适配" class="headerlink" title="1. RGBLCD驱动适配"></a>1. RGBLCD驱动适配</h2><p>我选用STM32H750作为主控芯片，通过LTDC接口驱动该屏幕。LTDC的使用难度不高，按照屏幕厂家提供的参数配置相关寄存器，就能快速点亮屏幕。其中可调整的关键参数是屏幕刷新率——屏幕的并口时钟由PLL3的R分频提供，我暂将其配置为32MHz，对应屏幕刷新率约为83Hz。</p>
+<p>该屏幕分辨率为800x480，采用RGB565颜色格式，需要分配一块750KB的图像帧内存。由于单片机内置SRAM空间不足，我将这块帧内存分配到了外部SDRAM中，但由此产生了新的顾虑：外部RAM的带宽可能不足，容易出现MCU与屏幕抢占内存带宽的情况。此外，对屏幕显存进行操作时，必须格外注意D-Cache的处理，若未执行D-Cache的Clean操作，屏幕极易出现花屏问题。</p>
+<h2 id="2-将RGBLCD集成到LVGL的优化过程"><a href="#2-将RGBLCD集成到LVGL的优化过程" class="headerlink" title="2. 将RGBLCD集成到LVGL的优化过程"></a>2. 将RGBLCD集成到LVGL的优化过程</h2><p>这一环节的核心问题集中在性能优化上，主要围绕”提升帧率（目标50fps）、降低处理器负载、避免画面撕裂、防止花屏”四个方向展开。</p>
+<p>初期我采用LVGL双缓存局部刷新模式，将两块256KB的缓存（合计为屏幕内存的三分之一）同样存放在外部SDRAM中。这种方案能实现基本的显示效果，但在全屏页面滑动时，偶尔会出现画面撕裂问题，运行基准测试（benchmark）的帧率仅为37fps，未达预期目标。</p>
+<p>为彻底解决画面撕裂，我转而采用显存直通模式，分配两块750KB的内存作为显存，交替完成渲染与刷新操作。该模式的关键是配合屏幕垂直同步信号——需在屏幕刷新至最后一个像素时切换显存指针，同时依赖相关中断信号实现双显存的同步：一块用于LVGL渲染，另一块用于屏幕刷新。</p>
+<p>这里曾踩过一个频闪坑：在直通模式下实现flush_cb函数时，未判断画面是否需要刷新。后续通过调用lv_display_flush_is_last函数做判断，成功解决了不完整画面的刷新问题。</p>
+<p>后续发现LVGL内置了LTDC驱动，其实现更简洁高效，支持直通模式与局部刷新模式（局部刷新模式还可搭配DMA2D使用）。最终我选择”直通模式+双显存”的组合，将两块显存通过MPU配置为透写模式避免花屏。优化后效果显著：画面撕裂与花屏问题彻底解决，运行基准测试的帧率也略高于此前的局部刷新模式。</p>
+<h2 id="3-DMA2D的合理使用"><a href="#3-DMA2D的合理使用" class="headerlink" title="3. DMA2D的合理使用"></a>3. DMA2D的合理使用</h2><p>DMA2D可用于画面层叠与显存拷贝，而要发挥其作用，需先明确LVGL的核心流程：渲染是指LVGL将代码描述的页面组件计算为显存数据的过程，刷新则是将显存数据传输至屏幕的过程。DMA2D可参与这两个环节以降低CPU负载，但需注意一个关键限制：DMA2D无法同时服务于渲染和刷新。由于LVGL双缓存机制支持渲染与刷新并行，因此DMA2D只能二选一参与其中。</p>
+<p>通过配置宏定义可实现DMA2D的功能切换：开启LV_USE_DRAW_DMA2D宏可将DMA2D用于渲染，配置LV_ST_LTDC_USE_DMA2D_FLUSH宏可将其用于LTDC局部刷新，但这两个宏不可同时开启。结合前文采用的显存直通模式（刷新过程无需DMA2D参与），我将DMA2D优先分配给渲染过程，以最大化降低CPU负担。</p>
+<h2 id="4-DMA2D渲染中的隐藏风险"><a href="#4-DMA2D渲染中的隐藏风险" class="headerlink" title="4. DMA2D渲染中的隐藏风险"></a>4. DMA2D渲染中的隐藏风险</h2><p>DMA2D渲染的核心代码位于&#x2F;src&#x2F;draw&#x2F;dma2d&#x2F;目录下，其中lv_draw_dma2d.c文件的缓存处理逻辑存在重大隐患。凡是涉及DMA的操作，都绕不开Cache一致性问题——通常在DMA搬运数据前，需对源地址执行Clean操作，对目标地址执行Invalid操作。但在LVGL v9.4版本中，这部分逻辑被修改为全局缓存操作，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">if</span> LV_DRAW_DMA2D_CACHE</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">lv_draw_dma2d_invalidate_cache</span><span class="params">(<span class="type">const</span> <span class="type">lv_draw_dma2d_cache_area_t</span> * mem_area)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(SCB-&gt;CCR &amp; SCB_CCR_DC_Msk) &#123;</span><br><span class="line">        SCB_InvalidateDCache();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">lv_draw_dma2d_clean_cache</span><span class="params">(<span class="type">const</span> <span class="type">lv_draw_dma2d_cache_area_t</span> * mem_area)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(SCB-&gt;CCR &amp; SCB_CCR_DC_Msk) &#123;</span><br><span class="line">        SCB_CleanDCache();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这种全局D-Cache操作完全忽视了其他外设的DMA需求。例如，若某SPI外设正通过DMA读取数据，此时若因多线程调度执行SCB_CleanDCache()，会导致SPI读取的数据出错；而SCB_InvalidateDCache()的风险更高——直接丢弃缓存数据可能破坏栈内有效信息，进而导致程序跑飞。</p>
+<p>该问题源于2024年5月的一次兼容性优化提交（<a class="link"   target="_blank" rel="noopener" href="https://github.com/lvgl/lvgl/pull/8293" >feat(dma2d): improve DMA2D Compatibility by apedersen00<i class="fas fa-external-link-alt"></i></a>）。作者将原本的局部缓存处理改为全局清理，认为单片机缓存空间小，两种方式的性能开销相近且代码更简洁，相关基准测试也显示性能波动不大。但这种修改显然对D-Cache的工作机制考虑不足，引入了新的稳定性风险。</p>
+<h2 id="5-LVGL的资源开销控制"><a href="#5-LVGL的资源开销控制" class="headerlink" title="5. LVGL的资源开销控制"></a>5. LVGL的资源开销控制</h2><p>LVGL需周期性调用lv_timer_handler()处理内部周期性事件，我的实现方式是创建独立线程专门负责调度，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">lvgl_handler_task</span><span class="params">(<span class="type">void</span> *p)</span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="type">uint32_t</span> time_till_next = lv_timer_handler();</span><br><span class="line">        vTaskDelay(pdMS_TO_TICKS(time_till_next));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该任务初始栈大小设为1024字，运行Demo时却出现栈溢出问题；将栈大小提升至2048字后，问题得以解决。有趣的是，使用GCC静态栈分析工具时，并未检测到超过1024字的调用链——这大概率是LVGL内部大量函数指针与回调机制导致的，这类动态调用链难以通过静态分析覆盖，因此使用LVGL时必须通过实际测试评估栈空间需求。</p>
+<p>LVGL提供RTOS支持，开启LV_USE_OS宏后，部分异步操作可释放处理器资源，避免阻塞等待。此外，LVGL还会创建一个或多个独立线程负责渲染，将渲染过程从lv_timer_handler()中剥离。但我的实际测试显示，在单核处理器上，独立渲染线程并未提升性能，反而因线程调度与同步的额外开销导致帧率略有下降；推测在多核处理器中，通过多渲染线程并行处理，可能会实现性能突破。</p>
 
                     
                 </div>
@@ -271,11 +266,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                从SHA204A思考关于嵌入式固件加密的问题
+                在RGBLCD上使用LVGL时踩到的一些坑
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2025/10/27/从SHA204A思考关于嵌入式固件加密的问题/
+                2025/12/18/在RGBLCD上使用LVGL时踩到的一些坑/
             </div>
         </div>
 
@@ -291,7 +286,7 @@
                 <div class="type">
                     发布于
                 </div>
-                <div class="content">2025-10-27 20:22</div>
+                <div class="content">2025-12-18 19:15</div>
             </div>
 
 
@@ -335,31 +330,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2025/12/18/%E5%9C%A8RGBLCD%E4%B8%8A%E4%BD%BF%E7%94%A8LVGL%E6%97%B6%E8%B8%A9%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/"
-                                   title="在RGBLCD上使用LVGL时踩到的一些坑"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">在RGBLCD上使用LVGL时踩到的一些坑</span>
-                                        <span class="post-nav-item">上一篇</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2025/09/18/%E5%9C%A88pin%E7%9A%84%E8%8A%AF%E7%89%87%E4%B8%8A%E8%BF%90%E8%A1%8CLinux/"
-                                   title="在8pin的芯片上运行Linux"
+                                   href="/2025/10/27/%E4%BB%8ESHA204A%E6%80%9D%E8%80%83%E5%85%B3%E4%BA%8E%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%9B%BA%E4%BB%B6%E5%8A%A0%E5%AF%86%E7%9A%84%E9%97%AE%E9%A2%98/"
+                                   title="从SHA204A思考关于嵌入式固件加密的问题"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">在8pin的芯片上运行Linux</span>
+                                        <span class="post-nav-title-item text-ellipsis">从SHA204A思考关于嵌入式固件加密的问题</span>
                                         <span class="post-nav-item">下一篇</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
