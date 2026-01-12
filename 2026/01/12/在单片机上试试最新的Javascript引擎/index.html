@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            在单片机上试试最新的Javascript引擎 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        在单片机上试试最新的Javascript引擎
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-01-12 20:03:14</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Mon Jan 12 2026 20:06:38 GMT+0800">2026-01-12 20:06:38</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>前段时间，Fabrice Bellard 大佬发布了他的又一力作 <a class="link"   target="_blank" rel="noopener" href="https://github.com/bellard/mquickjs" >mquickjs<i class="fas fa-external-link-alt"></i></a>。我得知后第一时间就进行了测试，它是一款面向嵌入式软件平台的 JavaScript 引擎，能够适配嵌入式平台有限的资源环境。</p>
+<p>该引擎对 JS 特性的支持有限，功能接近 ES5。为了更好地适配嵌入式环境，牺牲部分复杂的语法特性是一种合理的设计思路。</p>
+<p>几年前我曾移植过 QuickJS，其运行时（runtime）结构复杂，移植过程颇为艰辛。而此次的 mquickjs 则简洁许多，只需对三个文件中的部分代码进行平台适配，就能顺利运行起来。</p>
+<h2 id="移植过程"><a href="#移植过程" class="headerlink" title="移植过程"></a>移植过程</h2><p>下面简单说说将其移植到单片机的过程及注意事项。</p>
+<p>首先，将代码克隆到本地，通过 Makefile 编译一遍。这么做主要是为了生成两个关键头文件——mqjs_stdlib.h 和 mquickjs_atom.h。这两个文件由主机平台上的 mqjs_stdlib 程序生成，内容主要是 JS 内部类相关的常量信息。</p>
+<p>接下来，将生成的头文件及源码中的相关文件添加到单片机工程中。其中，example_stdlib.c、example.c、mqjs_stdlib.c、mquickjs_build.c 及其关联的头文件无需使用，需剔除出工程。</p>
+<p>移植的核心工作是修改两个文件以适配目标平台的运行时，具体如下：</p>
+<h3 id="1-readline-tty-c-文件移植"><a href="#1-readline-tty-c-文件移植" class="headerlink" title="1. readline_tty.c 文件移植"></a>1. readline_tty.c 文件移植</h3><p>该文件负责 REPL（交互式解释器）模式下的输入输出交互，若无需启用 REPL 模式，此文件可省略。若保留 REPL 模式，需做如下修改：</p>
+<p>首先是 readline_tty_init 函数，该函数用于返回交互式终端的宽度。以 PC 端串口终端为例，可直接让该函数返回 80（大多数终端的默认宽度）。</p>
+<p>term_printf 是格式化输出函数，适配串口输出的实现示例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">term_printf</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *fmt, ...)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">char</span> buf[<span class="number">1024</span>];</span><br><span class="line">    <span class="type">int</span> buf_len;</span><br><span class="line">    va_list ap;</span><br><span class="line">    va_start(ap, fmt);</span><br><span class="line">    buf_len = vsnprintf(buf, <span class="keyword">sizeof</span>(buf), fmt, ap);</span><br><span class="line">    va_end(ap);</span><br><span class="line">    HAL_UART_Transmit(&amp;huart4, buf, buf_len, <span class="number">100</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>term_flush 函数用于输出刷新。若 term_printf 采用中断或 DMA 方式输出数据，可在该函数中进行数据同步，确保数据传输完成。</p>
+<p>readline_tty 是该文件的核心函数，可删除其中针对 Win32 平台的代码，但需保留 Ctrl+C 信号的处理逻辑。函数内部需重点关注 <code>len = read(0, buf, sizeof(buf));</code> 这行代码——它用于阻塞式读取数据，无数据时会阻塞等待，读取到数据后返回实际读取长度。若改用串口读取，需实现对应的非阻塞读取逻辑，示例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 需要配合缓存队列</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">HAL_UART_RxCpltCallback</span><span class="params">(UART_HandleTypeDef *huart)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(huart == &amp;huart4)&#123;</span><br><span class="line">    <span class="type">char</span> c = recv_ch;</span><br><span class="line">    HAL_UART_Receive_IT(&amp;huart4, &amp;recv_ch, <span class="number">1</span>);</span><br><span class="line">    ringbuf_put(&amp;recv_buf, c);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">uart_read</span><span class="params">(<span class="type">uint8_t</span> *buf, <span class="type">int</span> len)</span>&#123;</span><br><span class="line">  <span class="type">int</span> rlen = ringbuf_elements(&amp;recv_buf);</span><br><span class="line">  <span class="keyword">if</span>(rlen == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>((HAL_UART_GetState(&amp;huart4) &amp; <span class="number">2</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">      HAL_UART_Receive_IT(&amp;huart4, &amp;recv_ch, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(len &gt; rlen)&#123;</span><br><span class="line">    len = rlen;</span><br><span class="line">  &#125;</span><br><span class="line">  ringbuf_gets(&amp;recv_buf, (<span class="type">char</span> *)buf, len);</span><br><span class="line">  <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 替换原有 read 调用：</span></span><br><span class="line"><span class="comment">// len = read(0, buf, sizeof(buf));</span></span><br><span class="line"><span class="comment">// 改为：</span></span><br><span class="line"><span class="comment">// while(1)&#123;</span></span><br><span class="line"><span class="comment">//     len = uart_read(buf, sizeof(buf));</span></span><br><span class="line"><span class="comment">//     if(len &gt; 0) break;</span></span><br><span class="line"><span class="comment">//     HAL_Delay(1);</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>我使用 MobaXterm 的串口终端进行测试，可正常发送 Ctrl+C 信号，因此保留了原有中断信号处理逻辑。至此，readline_tty.c 文件移植完成。</p>
+<h3 id="2-mqjs-c-文件移植"><a href="#2-mqjs-c-文件移植" class="headerlink" title="2. mqjs.c 文件移植"></a>2. mqjs.c 文件移植</h3><p>将任何 C 代码移植到嵌入式平台，都需重点关注运行时依赖——明确代码所需的底层支持，才能有针对性地完成移植。mqjs.c 的核心依赖包括：动态内存管理（malloc、free）、文件读写、日期时间、延时休眠、标准输出（printf）、系统调用（exit）、随机数生成器。</p>
+<p>其中，日期时间、延时、标准输出的适配相对简单，只需替换 fwrite(…, stdout)、get_time_ms、js_date_now、nanosleep 等接口的实现即可，这些功能在嵌入式平台上均容易实现。</p>
+<p>JS_SetRandomSeed 需传入随机数种子，可利用单片机的硬件随机数发生器生成。</p>
+<p>文件读写相关逻辑集中在 compile_file、load_file 函数中，可根据需求选择性实现：若仅需运行 REPL 模式，可移除这两个函数相关的所有功能；若需通过单片机内部 Flash 实现简单文件存储，可实现 load_file 函数以支持基准测试等功能。</p>
+<p>内存管理是 mqjs 移植到单片机的关键难点：其默认需要 16MB 内存，这对于大多数单片机的内部 SRAM 而言并不现实，因此需依赖扩展 SDRAM 才能正常运行。若将内存限制在 128KB 左右，仅能在 REPL 模式下执行简单测试——执行 test_builtin.js 测试需约 500KB 内存，执行 microbench.js 基准测试则需约 8MB 内存。</p>
+<p>确定内存资源后，还需选择合适的内存管理器：C 库内存管理器、FreeRTOS 内存管理器或其他开源内存管理器均可，但需注意移植适配性。前段时间，我利用午休时间出于兴趣写了一个简单的内存分配器，虽仅作学习娱乐之用，但非常适合嵌入式裸机环境，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _MINI_MALLOC_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _MINI_MALLOC_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stddef.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> DEFAULT_HEAP</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEFAULT_HEAP (0x20000000)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEFAULT_SIZE (4096 * 1024)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HEAP_ALIGN (4)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ALLOC_MAGIC ((heap_node_t *)0xDEADBEEF)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">heap_node</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> size;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">heap_node</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="comment">// bytes[size];</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">heap_node</span> <span class="title">heap_node_t</span>;</span></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">mini_heap_init</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="type">heap_node_t</span> *node = (<span class="type">heap_node_t</span> *)DEFAULT_HEAP;</span><br><span class="line">    node-&gt;size = DEFAULT_SIZE - <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>);</span><br><span class="line">    node-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span>* <span class="title function_">mini_malloc</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> size)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(size == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    size = (size + (HEAP_ALIGN - <span class="number">1</span>)) &amp; (~(HEAP_ALIGN - <span class="number">1</span>));</span><br><span class="line">    <span class="type">heap_node_t</span> *node = (<span class="type">heap_node_t</span> *)DEFAULT_HEAP;</span><br><span class="line">    <span class="type">heap_node_t</span> *last = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">if</span>(node-&gt;size &gt;= size + <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>))&#123;</span><br><span class="line">        node-&gt;size -= (size + <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>));</span><br><span class="line">        node = (<span class="type">heap_node_t</span> *)(((<span class="type">char</span>*)(node + <span class="number">1</span>)) + node-&gt;size);</span><br><span class="line">        node-&gt;size = size;</span><br><span class="line">        node-&gt;next = ALLOC_MAGIC;</span><br><span class="line">        <span class="keyword">return</span> node + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    last = node;</span><br><span class="line">    node = node-&gt;next;</span><br><span class="line">    <span class="keyword">while</span>(node)&#123;</span><br><span class="line">        <span class="keyword">if</span>(node-&gt;size &gt;= size)&#123;</span><br><span class="line">            <span class="keyword">if</span>(node-&gt;size &lt;= size + <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>))&#123;</span><br><span class="line">                last-&gt;next = node-&gt;next;</span><br><span class="line">                node-&gt;next = ALLOC_MAGIC;</span><br><span class="line">                <span class="keyword">return</span> node + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            node-&gt;size -= (size + <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>));</span><br><span class="line">            node = (<span class="type">heap_node_t</span> *)(((<span class="type">char</span>*)(node + <span class="number">1</span>)) + node-&gt;size);</span><br><span class="line">            node-&gt;size = size;</span><br><span class="line">            node-&gt;next = ALLOC_MAGIC;</span><br><span class="line">            <span class="keyword">return</span> node + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        last = node;</span><br><span class="line">        node = node-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">mini_free</span><span class="params">(<span class="type">void</span> *ptr)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(ptr == <span class="literal">NULL</span>) <span class="keyword">return</span>;</span><br><span class="line">    <span class="type">heap_node_t</span> *node = (<span class="type">heap_node_t</span> *)DEFAULT_HEAP;</span><br><span class="line">    <span class="type">heap_node_t</span> *pnode = (<span class="type">heap_node_t</span> *)ptr;</span><br><span class="line">    pnode -= <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(pnode-&gt;next != ALLOC_MAGIC)&#123;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(node)&#123;</span><br><span class="line">        <span class="keyword">if</span>(pnode &gt; node &amp;&amp; (pnode &lt; node-&gt;next || node-&gt;next == <span class="literal">NULL</span>))&#123;</span><br><span class="line">            pnode-&gt;next = node-&gt;next;</span><br><span class="line">            node-&gt;next = pnode;</span><br><span class="line">            <span class="keyword">if</span>((<span class="type">char</span>*)node + <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>) + node-&gt;size == (<span class="type">char</span>*)pnode)&#123;</span><br><span class="line">                node-&gt;size += <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>) + pnode-&gt;size;</span><br><span class="line">                node-&gt;next = pnode-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>((<span class="type">char</span>*)node + <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>) + node-&gt;size == (<span class="type">char</span>*)(node-&gt;next))&#123;</span><br><span class="line">                node-&gt;size += <span class="keyword">sizeof</span>(<span class="type">heap_node_t</span>) + node-&gt;next-&gt;size;</span><br><span class="line">                node-&gt;next = node-&gt;next-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> ;</span><br><span class="line">        &#125;</span><br><span class="line">        node = node-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>PS：该内存分配器无线程安全机制，不建议用于生产环境，仅作学习参考。</p>
+<p>回到 mqjs 移植，最后需处理的是 exit 系统调用——这是移植过程中的一个“大坑”，原因有二：一是大多数单片机运行环境不支持标准 exit 调用；二是通过 exit 进行大跨度上下文跳转会导致资源泄露（如文件句柄、动态内存未释放）。</p>
+<p>暂不考虑资源泄露问题，可通过以下方式在单片机中模拟 exit 机制：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> jmp_buf exit_jmp;</span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">mqjs_exit</span><span class="params">(<span class="type">int</span> state)</span>&#123;</span><br><span class="line">    longjmp(exit_jmp, state);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> exit(s) mqjs_exit(s)</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">mqjs_main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(setjmp(exit_jmp))</span><br><span class="line">        <span class="keyword">goto</span> <span class="built_in">exit</span>;            </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    buf = <span class="built_in">malloc</span>(<span class="number">100</span>);</span><br><span class="line">    <span class="keyword">if</span>(buf == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="built_in">exit</span>:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此外，mquickjs.c 中还有一个易被忽略的系统调用——abort()，该函数仅用于处理极端严重的错误流程，可暂时忽略，或直接用 exit 替换。</p>
+<p>通过上述修改，可让 mqjs 快速运行起来，资源泄露问题可后续优化解决。</p>
+<h2 id="基准测试"><a href="#基准测试" class="headerlink" title="基准测试"></a>基准测试</h2><p>我在嵌入式平台上完成了完整移植（包括文件读写功能），并运行了所有测试用例，均顺利通过！下面重点说说测试过程中的关键发现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">assert</span>((<span class="number">25</span>).<span class="title function_">toExponential</span>(), <span class="string">&quot;2.5e+1&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((<span class="number">25</span>).<span class="title function_">toExponential</span>(<span class="number">0</span>), <span class="string">&quot;3e+1&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((-<span class="number">25</span>).<span class="title function_">toExponential</span>(<span class="number">0</span>), <span class="string">&quot;-3e+1&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((<span class="number">2.5</span>).<span class="title function_">toPrecision</span>(<span class="number">1</span>), <span class="string">&quot;3&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((-<span class="number">2.5</span>).<span class="title function_">toPrecision</span>(<span class="number">1</span>), <span class="string">&quot;-3&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((<span class="number">25</span>).<span class="title function_">toPrecision</span>(<span class="number">1</span>), <span class="string">&quot;3e+1&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((<span class="number">1.125</span>).<span class="title function_">toFixed</span>(<span class="number">2</span>), <span class="string">&quot;1.13&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((-<span class="number">1.125</span>).<span class="title function_">toFixed</span>(<span class="number">2</span>), <span class="string">&quot;-1.13&quot;</span>);</span><br><span class="line"><span class="title function_">assert</span>((-<span class="number">1e-10</span>).<span class="title function_">toFixed</span>(<span class="number">0</span>), <span class="string">&quot;-0&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>上述代码涉及数字转字符串功能，看似简单，却是旧版 QuickJS 的“重灾区”：QuickJS 的浮点数转字符串四舍五入精度机制依赖 C 库转换函数，导致不同编译器编译的版本在执行四舍五入时结果不一致，进而导致测试用例失败。</p>
+<p>而 mquickjs 中，数字到字符串的转换已不再依赖 C 库——dtoa.c 文件专门负责此功能。正因为不依赖 C 库，其在不同平台下的运行结果完全一致。</p>
+<p>最后对比 Windows 平台与 STM32H750 单片机执行 microbench.js 基准测试的结果：</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>i3-10100</th>
+<th></th>
+<th>STM32H750</th>
+<th></th>
+<th>SCORE(%)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TEST</td>
+<td>N</td>
+<td>TIME(ns)</td>
+<td>N</td>
+<td>TIME(ns)</td>
+<td>SCORE(%)</td>
+</tr>
+<tr>
+<td>empty_loop</td>
+<td>10000000</td>
+<td>13</td>
+<td>500000</td>
+<td>340</td>
+<td>26.15</td>
+</tr>
+<tr>
+<td>date_now</td>
+<td>2000000</td>
+<td>80</td>
+<td>20000</td>
+<td>5000</td>
+<td>62.50</td>
+</tr>
+<tr>
+<td>prop_read</td>
+<td>2000000</td>
+<td>13.5</td>
+<td>100000</td>
+<td>350</td>
+<td>25.93</td>
+</tr>
+<tr>
+<td>prop_write</td>
+<td>5000000</td>
+<td>11.5</td>
+<td>100000</td>
+<td>275</td>
+<td>23.91</td>
+</tr>
+<tr>
+<td>prop_update</td>
+<td>1000000</td>
+<td>32.5</td>
+<td>50000</td>
+<td>475</td>
+<td>14.62</td>
+</tr>
+<tr>
+<td>prop_create</td>
+<td>100000</td>
+<td>72.5</td>
+<td>2000</td>
+<td>2500</td>
+<td>34.48</td>
+</tr>
+<tr>
+<td>prop_delete</td>
+<td>1000</td>
+<td>110</td>
+<td>50</td>
+<td>3200</td>
+<td>29.09</td>
+</tr>
+<tr>
+<td>array_read</td>
+<td>1000000</td>
+<td>11</td>
+<td>50000</td>
+<td>280</td>
+<td>25.45</td>
+</tr>
+<tr>
+<td>array_write</td>
+<td>2000000</td>
+<td>9</td>
+<td>50000</td>
+<td>200</td>
+<td>22.22</td>
+</tr>
+<tr>
+<td>array_update</td>
+<td>500000</td>
+<td>31</td>
+<td>50000</td>
+<td>360</td>
+<td>11.61</td>
+</tr>
+<tr>
+<td>array_prop_create</td>
+<td>5000</td>
+<td>20</td>
+<td>200</td>
+<td>650</td>
+<td>32.50</td>
+</tr>
+<tr>
+<td>array_length_read</td>
+<td>2000000</td>
+<td>17.5</td>
+<td>100000</td>
+<td>275</td>
+<td>15.71</td>
+</tr>
+<tr>
+<td>array_length_decr</td>
+<td>2000</td>
+<td>80</td>
+<td>50</td>
+<td>3100</td>
+<td>38.75</td>
+</tr>
+<tr>
+<td>array_push</td>
+<td>5000</td>
+<td>48</td>
+<td>200</td>
+<td>1700</td>
+<td>35.42</td>
+</tr>
+<tr>
+<td>array_pop</td>
+<td>5000</td>
+<td>48</td>
+<td>200</td>
+<td>1400</td>
+<td>29.17</td>
+</tr>
+<tr>
+<td>typed_array_read</td>
+<td>500000</td>
+<td>30</td>
+<td>10000</td>
+<td>950</td>
+<td>31.67</td>
+</tr>
+<tr>
+<td>typed_array_write</td>
+<td>500000</td>
+<td>22</td>
+<td>20000</td>
+<td>600</td>
+<td>27.27</td>
+</tr>
+<tr>
+<td>closure_read</td>
+<td>2000000</td>
+<td>13.75</td>
+<td>100000</td>
+<td>250</td>
+<td>18.18</td>
+</tr>
+<tr>
+<td>closure_write</td>
+<td>5000000</td>
+<td>7.25</td>
+<td>200000</td>
+<td>175</td>
+<td>24.14</td>
+</tr>
+<tr>
+<td>global_read</td>
+<td>2000000</td>
+<td>15</td>
+<td>100000</td>
+<td>250</td>
+<td>16.67</td>
+</tr>
+<tr>
+<td>global_write_strict</td>
+<td>5000000</td>
+<td>6.75</td>
+<td>200000</td>
+<td>175</td>
+<td>25.93</td>
+</tr>
+<tr>
+<td>func_call</td>
+<td>1000000</td>
+<td>35</td>
+<td>50000</td>
+<td>650</td>
+<td>18.57</td>
+</tr>
+<tr>
+<td>closure_var</td>
+<td>1000000</td>
+<td>40</td>
+<td>50000</td>
+<td>700</td>
+<td>17.50</td>
+</tr>
+<tr>
+<td>int_arith</td>
+<td>5000</td>
+<td>22</td>
+<td>200</td>
+<td>550</td>
+<td>25.00</td>
+</tr>
+<tr>
+<td>float_arith</td>
+<td>1000</td>
+<td>100</td>
+<td>20</td>
+<td>5500</td>
+<td>55.00</td>
+</tr>
+<tr>
+<td>array_for</td>
+<td>50000</td>
+<td>24</td>
+<td>2000</td>
+<td>600</td>
+<td>25.00</td>
+</tr>
+<tr>
+<td>array_for_in</td>
+<td>20000</td>
+<td>94</td>
+<td>500</td>
+<td>2400</td>
+<td>25.53</td>
+</tr>
+<tr>
+<td>array_for_of</td>
+<td>100000</td>
+<td>17</td>
+<td>5000</td>
+<td>420</td>
+<td>24.71</td>
+</tr>
+<tr>
+<td>math_min</td>
+<td>2000</td>
+<td>55</td>
+<td>100</td>
+<td>1100</td>
+<td>20.00</td>
+</tr>
+<tr>
+<td>regexp_ascii</td>
+<td>500</td>
+<td>240</td>
+<td>10</td>
+<td>12000</td>
+<td>50.00</td>
+</tr>
+<tr>
+<td>regexp_utf16</td>
+<td>500</td>
+<td>240</td>
+<td>10</td>
+<td>15000</td>
+<td>62.50</td>
+</tr>
+<tr>
+<td>regexp_replace</td>
+<td>100</td>
+<td>1200</td>
+<td>2</td>
+<td>66000</td>
+<td>55.00</td>
+</tr>
+<tr>
+<td>string_length</td>
+<td>2000000</td>
+<td>16.25</td>
+<td>100000</td>
+<td>275</td>
+<td>16.92</td>
+</tr>
+<tr>
+<td>string_build1</td>
+<td>500</td>
+<td>800</td>
+<td>50</td>
+<td>13000</td>
+<td>16.25</td>
+</tr>
+<tr>
+<td>string_build2</td>
+<td>500</td>
+<td>800</td>
+<td>50</td>
+<td>13000</td>
+<td>16.25</td>
+</tr>
+<tr>
+<td>sort_bench</td>
+<td>1</td>
+<td>6</td>
+<td>1</td>
+<td>162.2</td>
+<td>27.03</td>
+</tr>
+<tr>
+<td>int_to_string</td>
+<td>1000000</td>
+<td>130</td>
+<td>20000</td>
+<td>5400</td>
+<td>41.54</td>
+</tr>
+<tr>
+<td>float_to_string</td>
+<td>200000</td>
+<td>460</td>
+<td>2000</td>
+<td>50000</td>
+<td>108.70</td>
+</tr>
+<tr>
+<td>string_to_int</td>
+<td>1000000</td>
+<td>100</td>
+<td>50000</td>
+<td>3400</td>
+<td>34.00</td>
+</tr>
+<tr>
+<td>string_to_float</td>
+<td>1000000</td>
+<td>135</td>
+<td>20000</td>
+<td>5200</td>
+<td>38.52</td>
+</tr>
+<tr>
+<td>total</td>
+<td></td>
+<td>5206.5</td>
+<td></td>
+<td>217862.2</td>
+<td>41.84</td>
+</tr>
+</tbody></table>
+<p>测试结果显示，STM32H750 上的执行时间约为桌面 PC（i3-10100）的 40 倍。其中，浮点运算、浮点数转字符串、正则表达式等测试项耗时较长，符合嵌入式平台的性能特点。</p>
+<p>mquickjs还支持编译后运行。通过运行test_builtin.js实测发现，先编译为字节码再运行比直接运行js文件在运行时间上节省了48%。此外，运行字节码文件时heap资源消耗也大幅度减小，执行字节文件时heap使用了323kb，而直接运行js文件所使用的heap空间为489.6kb。</p>
+<h2 id="添加一个自定义模块"><a href="#添加一个自定义模块" class="headerlink" title="添加一个自定义模块"></a>添加一个自定义模块</h2><p>基础功能移植完成后，仅能体验 JavaScript 的基本语法。为适配单片机平台，下面尝试添加一个 GPIO 控制模块，实现 IO 读写、中断检测等功能。</p>
+<p>官方代码库中的 example_stdlib.c 和 example.c 提供了模块开发的参考范式，实现自定义模块的核心步骤如下：</p>
+<h3 id="1-定义模块结构"><a href="#1-定义模块结构" class="headerlink" title="1. 定义模块结构"></a>1. 定义模块结构</h3><p>首先在 mqjs_stdlib.c 文件中定义 GPIO 类的结构，包括类名称、属性、方法等，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 类实例的属性及方法</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> JSPropDef js_gpio_proto[] = &#123;</span><br><span class="line">    JS_CGETSET_DEF(<span class="string">&quot;value&quot;</span>, js_gpio_read, js_gpio_write), <span class="comment">// 可读写属性</span></span><br><span class="line">    JS_CFUNC_DEF(<span class="string">&quot;write&quot;</span>, <span class="number">1</span>, js_gpio_write),     <span class="comment">// 修改 IO 电平（1 个参数）</span></span><br><span class="line">    JS_CFUNC_DEF(<span class="string">&quot;read&quot;</span>, <span class="number">0</span>, js_gpio_read),       <span class="comment">// 读取 IO 电平（无参数）</span></span><br><span class="line">    JS_CFUNC_DEF(<span class="string">&quot;watch&quot;</span>, <span class="number">1</span>, js_gpio_watch),     <span class="comment">// 设置 IO 中断回调函数</span></span><br><span class="line">    JS_PROP_END</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 类静态属性及方法（此处无需定义）</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> JSPropDef js_gpio[] = &#123;</span><br><span class="line">    JS_PROP_END,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 自定义类 ID</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> JS_CLASS_GPIO (JS_CLASS_USER + 0)</span></span><br><span class="line"><span class="comment">// 类定义：类名称、构造函数参数个数、构造函数、类 ID、静态方法、实例属性、父类、析构函数</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> JSClassDef js_gpio_obj = JS_CLASS_DEF(<span class="string">&quot;GPIO&quot;</span>, <span class="number">3</span>, js_gpio_constructor, JS_CLASS_GPIO, js_gpio, js_gpio_proto, <span class="literal">NULL</span>, js_gpio_finalizer);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-注册模块到全局对象"><a href="#2-注册模块到全局对象" class="headerlink" title="2. 注册模块到全局对象"></a>2. 注册模块到全局对象</h3><p>将定义的 js_gpio_obj 类添加到全局对象列表中，使 JavaScript 代码可直接访问，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> JSPropDef js_global_object[] = &#123;</span><br><span class="line">    <span class="comment">// ... 其他全局对象 ...</span></span><br><span class="line">    JS_CFUNC_DEF(<span class="string">&quot;print&quot;</span>, <span class="number">1</span>, js_print),</span><br><span class="line">    JS_PROP_CLASS_DEF(<span class="string">&quot;GPIO&quot;</span>, &amp;js_gpio_obj), <span class="comment">// 注册 GPIO 类</span></span><br><span class="line">    <span class="comment">// ... 其他全局对象 ...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>修改完成后，重新运行 mqjs_build 工具，生成新的 mqjs_stdlib.h 头文件。</p>
+<h3 id="3-实现模块核心逻辑"><a href="#3-实现模块核心逻辑" class="headerlink" title="3. 实现模块核心逻辑"></a>3. 实现模块核心逻辑</h3><p>接下来需用 C 语言实现 GPIO 类的构造函数、析构函数、属性读写、方法等核心逻辑——这是模块开发的核心难点。</p>
+<h4 id="（1）构造函数实现"><a href="#（1）构造函数实现" class="headerlink" title="（1）构造函数实现"></a>（1）构造函数实现</h4><p>GPIO 构造函数接收 3 个参数：引脚编号（如 “PA0”）、IO 方向（”in” 输入 &#x2F; “out” 输出）、上下拉状态（”up” 上拉 &#x2F; “down” 下拉 &#x2F; “none” 无）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 保存 GPIO 硬件信息</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    GPIO_TypeDef *GPIOx;</span><br><span class="line">    <span class="type">uint16_t</span> GPIO_Pin;</span><br><span class="line">&#125; <span class="type">js_gpio_data_t</span>;</span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">JavaScript 调用示例：</span></span><br><span class="line"><span class="comment">var pa0;</span></span><br><span class="line"><span class="comment">pa0 = new GPIO(&quot;PA0&quot;, &quot;in&quot;, &quot;up&quot;);</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">JSValue <span class="title function_">js_gpio_constructor</span><span class="params">(JSContext *ctx, JSValue *this_val, <span class="type">int</span> argc, JSValue *argv)</span>&#123;</span><br><span class="line">    JSValue obj;</span><br><span class="line">    <span class="comment">// 检查是否通过 new 关键字调用</span></span><br><span class="line">    <span class="keyword">if</span> (!(argc &amp; FRAME_CF_CTOR))</span><br><span class="line">        <span class="keyword">return</span> JS_ThrowTypeError(ctx, <span class="string">&quot;must be called with new&quot;</span>);</span><br><span class="line">    argc &amp;= ~FRAME_CF_CTOR;</span><br><span class="line">    <span class="comment">// 检查参数个数</span></span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">3</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> JS_ThrowTypeError(ctx, <span class="string">&quot;invalid arguments&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配 GPIO 数据内存</span></span><br><span class="line">    <span class="type">js_gpio_data_t</span> *gpio = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">js_gpio_data_t</span>));</span><br><span class="line">    <span class="keyword">if</span>(gpio == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> JS_ThrowInternalError(ctx, <span class="string">&quot;out of memory&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 创建类实例</span></span><br><span class="line">    obj = JS_NewObjectClassUser(ctx, JS_CLASS_GPIO);</span><br><span class="line">    <span class="keyword">if</span> (JS_IsException(obj))&#123;</span><br><span class="line">        <span class="built_in">free</span>(gpio);</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 绑定私有数据到类实例</span></span><br><span class="line">    JS_SetOpaque(ctx, obj, gpio);</span><br><span class="line">    <span class="comment">// 解析参数</span></span><br><span class="line">    JSCStringBuf buf;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *str;</span><br><span class="line">    <span class="comment">// 解析引脚编号（如 &quot;PA0&quot;）</span></span><br><span class="line">    str = JS_ToCString(ctx, argv[<span class="number">0</span>], &amp;buf);</span><br><span class="line">    js_gpio_init(gpio, str);</span><br><span class="line">    <span class="comment">// 解析 IO 方向</span></span><br><span class="line">    str = JS_ToCString(ctx, argv[<span class="number">1</span>], &amp;buf);</span><br><span class="line">    <span class="type">int</span> mode = <span class="built_in">strcmp</span>(str, <span class="string">&quot;in&quot;</span>) == <span class="number">0</span> ? GPIO_MODE_INPUT : GPIO_MODE_OUTPUT_PP;</span><br><span class="line">    <span class="comment">// 解析上下拉状态</span></span><br><span class="line">    str = JS_ToCString(ctx, argv[<span class="number">2</span>], &amp;buf);</span><br><span class="line">    <span class="type">int</span> pull = GPIO_NOPULL;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strcmp</span>(str, <span class="string">&quot;up&quot;</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">        pull = GPIO_PULLUP;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">strcmp</span>(str, <span class="string">&quot;down&quot;</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">        pull = GPIO_PULLDOWN;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 使能 GPIO 时钟</span></span><br><span class="line">    <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOA)&#123;</span><br><span class="line">        __HAL_RCC_GPIOA_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOB)&#123;</span><br><span class="line">        __HAL_RCC_GPIOB_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOC)&#123;</span><br><span class="line">        __HAL_RCC_GPIOC_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOD)&#123;</span><br><span class="line">        __HAL_RCC_GPIOD_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOE)&#123;</span><br><span class="line">        __HAL_RCC_GPIOE_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOF)&#123;</span><br><span class="line">        __HAL_RCC_GPIOF_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOG)&#123;</span><br><span class="line">        __HAL_RCC_GPIOG_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOH)&#123;</span><br><span class="line">        __HAL_RCC_GPIOH_CLK_ENABLE();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(gpio-&gt;GPIOx == GPIOI)&#123;</span><br><span class="line">        __HAL_RCC_GPIOI_CLK_ENABLE();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 初始化 GPIO 配置</span></span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    GPIO_InitStruct.Pin = gpio-&gt;GPIO_Pin;</span><br><span class="line">    GPIO_InitStruct.Mode = mode;</span><br><span class="line">    GPIO_InitStruct.Pull = pull;</span><br><span class="line">    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;</span><br><span class="line">    HAL_GPIO_Init(gpio-&gt;GPIOx, &amp;GPIO_InitStruct);</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 解析引脚编号到硬件 GPIO 结构体</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">js_gpio_init</span><span class="params">(<span class="type">js_gpio_data_t</span> *gpio, <span class="type">const</span> <span class="type">char</span> *name)</span>&#123;</span><br><span class="line">    <span class="comment">// 解析端口（如 &quot;PA0&quot; 中的 &quot;A&quot;）</span></span><br><span class="line">    <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;A&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOA;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;B&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOB;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;C&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOC;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;D&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOD;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;E&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOE;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;F&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOF;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;G&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOG;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;H&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOH;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(name[<span class="number">1</span>] == <span class="string">&#x27;I&#x27;</span>)&#123;</span><br><span class="line">        gpio-&gt;GPIOx = GPIOI;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 解析引脚号（如 &quot;PA0&quot; 中的 &quot;0&quot;）</span></span><br><span class="line">    gpio-&gt;GPIO_Pin = (<span class="number">1</span> &lt;&lt; (name[<span class="number">2</span>] - <span class="string">&#x27;0&#x27;</span>)); <span class="comment">// todo：可扩展支持两位引脚号（如 PA10）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键说明：通过 <code>JS_NewObjectClassUser</code> 创建自定义类实例，通过 <code>JS_SetOpaque</code> 绑定私有数据（GPIO 硬件信息）；通过 <code>JS_ToCString</code> 将 JavaScript 参数转为 C 字符串，需注意 <code>JSCStringBuf</code> 缓存的长度限制（5 字节），避免传入过长字符串。</p>
+<h4 id="（2）IO-读写方法实现"><a href="#（2）IO-读写方法实现" class="headerlink" title="（2）IO 读写方法实现"></a>（2）IO 读写方法实现</h4><p>读写方法直接调用 HAL 库接口操作底层 IO，逻辑简单，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读取 IO 电平</span></span><br><span class="line">JSValue <span class="title function_">js_gpio_read</span><span class="params">(JSContext *ctx, JSValue *this_val, <span class="type">int</span> argc, JSValue *argv)</span>&#123;</span><br><span class="line">    <span class="type">js_gpio_data_t</span> *gpio = JS_GetOpaque(ctx, *this_val);</span><br><span class="line">    <span class="type">int</span> v = HAL_GPIO_ReadPin(gpio-&gt;GPIOx, gpio-&gt;GPIO_Pin);</span><br><span class="line">    <span class="keyword">return</span> JS_NewInt32(ctx, v);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 写入 IO 电平</span></span><br><span class="line">JSValue <span class="title function_">js_gpio_write</span><span class="params">(JSContext *ctx, JSValue *this_val, <span class="type">int</span> argc, JSValue *argv)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (JS_IsInt(argv[<span class="number">0</span>]))&#123;</span><br><span class="line">        <span class="type">js_gpio_data_t</span> *gpio = JS_GetOpaque(ctx, *this_val);</span><br><span class="line">        <span class="type">int</span> v = JS_VALUE_GET_INT(argv[<span class="number">0</span>]);</span><br><span class="line">        v = v ? GPIO_PIN_SET : GPIO_PIN_RESET;</span><br><span class="line">        HAL_GPIO_WritePin(gpio-&gt;GPIOx, gpio-&gt;GPIO_Pin, v);</span><br><span class="line">        <span class="keyword">return</span> JS_UNDEFINED;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> JS_ThrowTypeError(ctx, <span class="string">&quot;must be write integer&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）中断检测功能实现"><a href="#（3）中断检测功能实现" class="headerlink" title="（3）中断检测功能实现"></a>（3）中断检测功能实现</h4><p>中断检测是模块开发的难点：JavaScript 引擎为单线程模型，无类似 MicroPython 的全局锁机制，中断处理不能脱离 JS 线程独立运行。mquickjs 提供了<code>JS_SetInterruptHandler</code> 接口，用于绑定全局中断轮询函数，可在该函数中处理多个中断事件。</p>
+<h5 id="步骤-1：绑定全局中断处理函数"><a href="#步骤-1：绑定全局中断处理函数" class="headerlink" title="步骤 1：绑定全局中断处理函数"></a>步骤 1：绑定全局中断处理函数</h5><p>官方代码仅在 REPL 模式下绑定中断处理函数，为支持脚本运行时的中断响应，需在创建 JS 上下文后全局绑定，代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 全局中断处理函数</span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">js_interrupt_handler</span><span class="params">(JSContext *ctx, <span class="type">void</span> *opaque)</span></span><br><span class="line">&#123;</span><br><span class="line">    js_gpio_interrupt_handler(ctx); <span class="comment">// GPIO 中断处理</span></span><br><span class="line">    <span class="keyword">return</span> readline_is_interrupted(); <span class="comment">// 保留 Ctrl+C 中断检测</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在创建 JS 上下文后绑定</span></span><br><span class="line">ctx = JS_NewContext(mem); <span class="comment">// mem 为内存分配器相关指针，前文内存管理部分已定义</span></span><br><span class="line"><span class="keyword">if</span> (!ctx) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 绑定全局中断处理函数，实现中断轮询</span></span><br><span class="line">JS_SetInterruptHandler(ctx, js_interrupt_handler, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="步骤-2：GPIO-中断绑定处理机制"><a href="#步骤-2：GPIO-中断绑定处理机制" class="headerlink" title="步骤 2：GPIO 中断绑定处理机制"></a>步骤 2：GPIO 中断绑定处理机制</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先定义了一个结构体，保存gpio对象和回调函数</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    JSGCRef func;</span><br><span class="line">    JSGCRef gpio_ref;</span><br><span class="line">    <span class="type">void</span> *opaque;</span><br><span class="line">    BOOL allocated;</span><br><span class="line">    <span class="type">uint8_t</span> last_value;</span><br><span class="line">&#125; <span class="type">js_gpio_watcher_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里使用静态数组保存gpio对象和回调函数，如果需要无线绑定watch，需要改为链表模式</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> JS_GPIO_WATCH_COUNT (10)</span></span><br><span class="line"><span class="type">static</span> <span class="type">js_gpio_watcher_t</span> js_gpio_watch_list[JS_GPIO_WATCH_COUNT] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">js_gpio_watcher_t</span>* <span class="title function_">get_watcher_by_val</span><span class="params">(JSValue val)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; JS_GPIO_WATCH_COUNT; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (js_gpio_watch_list[i].allocated &amp;&amp; </span><br><span class="line">            js_gpio_watch_list[i].gpio_ref.val == val)</span><br><span class="line">            <span class="keyword">return</span> &amp;js_gpio_watch_list[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">js_gpio_watcher_t</span>* <span class="title function_">get_watcher_by_opaque</span><span class="params">(<span class="type">void</span> *opaque)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; JS_GPIO_WATCH_COUNT; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (js_gpio_watch_list[i].allocated &amp;&amp; </span><br><span class="line">            js_gpio_watch_list[i].opaque == opaque)</span><br><span class="line">            <span class="keyword">return</span> &amp;js_gpio_watch_list[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">js_gpio_watcher_t</span>* <span class="title function_">get_idle_watcher</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; JS_GPIO_WATCH_COUNT; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (!js_gpio_watch_list[i].allocated)</span><br><span class="line">            <span class="keyword">return</span> &amp;js_gpio_watch_list[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">function io_watch(v)&#123;</span></span><br><span class="line"><span class="comment">    console.log(&quot;irq&quot;);</span></span><br><span class="line"><span class="comment">    console.log(this.value);</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">pa0.watch(io_watch);</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">JSValue <span class="title function_">js_gpio_watch</span><span class="params">(JSContext *ctx, JSValue *this_val, <span class="type">int</span> argc, JSValue *argv)</span>&#123;</span><br><span class="line">    <span class="type">js_gpio_watcher_t</span> *watcher = get_watcher_by_val(*this_val);</span><br><span class="line">    <span class="keyword">if</span>(watcher)&#123;</span><br><span class="line">        JS_DeleteGCRef(ctx, &amp;watcher-&gt;func);</span><br><span class="line">        JS_DeleteGCRef(ctx, &amp;watcher-&gt;gpio_ref);</span><br><span class="line">        watcher-&gt;allocated = FALSE;</span><br><span class="line">        <span class="keyword">return</span> JS_UNDEFINED;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(JS_IsNull(argv[<span class="number">0</span>]))&#123;</span><br><span class="line">        <span class="keyword">return</span> JS_UNDEFINED;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!JS_IsFunction(ctx, argv[<span class="number">0</span>]))</span><br><span class="line">        <span class="keyword">return</span> JS_ThrowTypeError(ctx, <span class="string">&quot;not a function&quot;</span>);</span><br><span class="line"></span><br><span class="line">    watcher = get_idle_watcher();</span><br><span class="line">    <span class="keyword">if</span>(watcher == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> JS_ThrowInternalError(ctx, <span class="string">&quot;too many watchers&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    JSValue *pfunc = JS_AddGCRef(ctx, &amp;watcher-&gt;func);</span><br><span class="line">    *pfunc = argv[<span class="number">0</span>];</span><br><span class="line">    JSValue *gpio_obj = JS_AddGCRef(ctx, &amp;watcher-&gt;gpio_ref);</span><br><span class="line">    *gpio_obj = *this_val;</span><br><span class="line">    watcher-&gt;opaque = JS_GetOpaque(ctx, *this_val);</span><br><span class="line">    watcher-&gt;allocated = TRUE;</span><br><span class="line"></span><br><span class="line">    <span class="type">js_gpio_data_t</span> *gpio = watcher-&gt;opaque;</span><br><span class="line">    watcher-&gt;last_value = HAL_GPIO_ReadPin(gpio-&gt;GPIOx, gpio-&gt;GPIO_Pin);</span><br><span class="line">    <span class="keyword">return</span> JS_UNDEFINED;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在watch处理函数中，首先需要查询当前GPIO是否已经绑定了中断处理函数，如果已经绑定了则需要进行解绑操作。如果传入的是null而不是一个函数，则说明仅进行解绑而不需要绑定新的函数。<br>绑定新的函数时，需要保存gpio对象和回调函数。不能脱离js线程保存JSValue类型的变量，需要使用JSGCRef来间接引用保存数据。这是因为JS的内存管理方式和GC机制导致引用的变量不能脱离js线程保存。mquickj的内存管理依靠一个free指针来哪些空间被使用和释放，所以在进行非连续空间的释放时，垃圾回收机制需要将不连续的内存进行合并，所以JS内部对象的实际存储地址会随着垃圾回收移动而改变。所以不能直接保存JSValue类型的变量。相关的逻辑可以看看函数<code>js_malloc</code>、<code>js_free</code>、<code>gc_compact_heap</code>。<br>起初我没有意识到JSValue的存储问题导致，导致频繁的内存存储，跟踪了很久的代码。最后发现原作者已经在readme文件中强调了该问题。</p>
+<h5 id="步骤-3：GPIO-中断处理函数"><a href="#步骤-3：GPIO-中断处理函数" class="headerlink" title="步骤 3：GPIO 中断处理函数"></a>步骤 3：GPIO 中断处理函数</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">js_gpio_interrupt_handler</span><span class="params">(JSContext *ctx)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; countof(js_gpio_watch_list); i++)&#123;</span><br><span class="line">        <span class="type">js_gpio_watcher_t</span> *watcher = &amp;js_gpio_watch_list[i];</span><br><span class="line">        <span class="keyword">if</span>(watcher-&gt;allocated == FALSE)&#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        JSValue gpio_obj = watcher-&gt;gpio_ref.val;</span><br><span class="line">        <span class="type">js_gpio_data_t</span> *gpio = JS_GetOpaque(ctx, gpio_obj);</span><br><span class="line">        <span class="type">uint8_t</span> value = HAL_GPIO_ReadPin(gpio-&gt;GPIOx, gpio-&gt;GPIO_Pin);</span><br><span class="line">        <span class="keyword">if</span>(value != watcher-&gt;last_value)&#123;</span><br><span class="line">            watcher-&gt;last_value = value;</span><br><span class="line">            <span class="keyword">if</span> (JS_StackCheck(ctx, <span class="number">3</span>))&#123;</span><br><span class="line">                <span class="keyword">return</span> ;</span><br><span class="line">            &#125;</span><br><span class="line">            JS_PushArg(ctx, JS_NewInt32(ctx, value));   <span class="comment">// arg[0]</span></span><br><span class="line">            JS_PushArg(ctx, watcher-&gt;func.val);         <span class="comment">// func</span></span><br><span class="line">            JS_PushArg(ctx, gpio_obj);                  <span class="comment">// this</span></span><br><span class="line">            JSValue ret = JS_Call(ctx, <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> (JS_IsException(ret))&#123;</span><br><span class="line">                <span class="keyword">return</span> ;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过watch列表检查哪些GPIO需要监控IO的状态。当IO的电平状态发生变化时通过JS_Call执行对应的回调函数。</p>
+<h4 id="（4）析构函数别忘了"><a href="#（4）析构函数别忘了" class="headerlink" title="（4）析构函数别忘了"></a>（4）析构函数别忘了</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">js_gpio_finalizer</span><span class="params">(JSContext *ctx, <span class="type">void</span> *opaque)</span>&#123;</span><br><span class="line">    <span class="type">js_gpio_data_t</span> *gpio = opaque;</span><br><span class="line">    HAL_GPIO_DeInit(gpio-&gt;GPIOx, gpio-&gt;GPIO_Pin);</span><br><span class="line"></span><br><span class="line">    <span class="type">js_gpio_watcher_t</span> *watcher = get_watcher_by_opaque(opaque);</span><br><span class="line">    <span class="keyword">if</span>(watcher)&#123;</span><br><span class="line">        JS_DeleteGCRef(ctx, &amp;watcher-&gt;func);</span><br><span class="line">        JS_DeleteGCRef(ctx, &amp;watcher-&gt;gpio_ref);</span><br><span class="line">        watcher-&gt;allocated = FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(opaque);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要强调一点，由于在watch调用中引用了GPIO自身，所以这里出现了内存的循环依赖链，对GC垃圾回收来说，即使GPIO对象的变量引用丢失，其内存也不会被释放。需要确保对象释放前主动调用watch(null)来解除绑定关系，以确保垃圾回收能够正常释放相关内存。</p>
+<h3 id="3-GPIO模块测试"><a href="#3-GPIO模块测试" class="headerlink" title="3. GPIO模块测试"></a>3. GPIO模块测试</h3><p>测试代码如下：</p>
+<ol>
+<li><p>周期性设置GPIO的状态</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sleep</span>(<span class="params">delayMs</span>) &#123;</span><br><span class="line"> <span class="keyword">if</span> (<span class="keyword">typeof</span> delayMs !== <span class="string">&#x27;number&#x27;</span> || <span class="built_in">isNaN</span>(delayMs) || delayMs &lt; <span class="number">0</span>) &#123;</span><br><span class="line">     <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;delayMs type error&#x27;</span>); </span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">var</span> startTime = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line"> <span class="keyword">while</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - startTime &lt; delayMs) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> ph9;</span><br><span class="line">ph9 = <span class="keyword">new</span> <span class="title function_">GPIO</span>(<span class="string">&quot;PH9&quot;</span>, <span class="string">&quot;out&quot;</span>, <span class="string">&quot;none&quot;</span>);</span><br><span class="line">ph9.<span class="property">value</span> = <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line"> ph9.<span class="title function_">write</span>(<span class="number">1</span> - ph9.<span class="property">value</span>); <span class="comment">// toggle</span></span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(ph9.<span class="property">value</span>);</span><br><span class="line"> <span class="title function_">sleep</span>(<span class="number">800</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里先定义了一个sleep函数，用于延时等待。使用GPIO类创建一个gpio对象来操作ph9引脚，每0.8秒反转GPIO的状态。</p>
+</li>
+<li><p>读取GPIO</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">load</span>(<span class="string">&quot;sleep.js&quot;</span>)</span><br><span class="line"><span class="keyword">var</span> ph4;</span><br><span class="line">ph4 = <span class="keyword">new</span> <span class="title function_">GPIO</span>(<span class="string">&quot;PH4&quot;</span>, <span class="string">&quot;in&quot;</span>, <span class="string">&quot;up&quot;</span>); <span class="comment">// PH4 input pull up</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ph4.<span class="property">value</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(ph4.<span class="property">value</span>);</span><br><span class="line"> <span class="title function_">sleep</span>(<span class="number">800</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将前面的sleep函数单独保存为一个文件，并加载进来。然后每0.8秒读取并输出p4引脚的状态，通实际控制引脚的电平变化确认功能正常。</p>
+</li>
+<li><p>监听GPIO</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">ph4_irq</span>(<span class="params">value</span>)&#123;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;PH4 interrupt: &quot;</span> + value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> ph4;</span><br><span class="line">ph4 = <span class="keyword">new</span> <span class="title function_">GPIO</span>(<span class="string">&quot;PH4&quot;</span>, <span class="string">&quot;in&quot;</span>, <span class="string">&quot;up&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ph4.<span class="property">value</span>);</span><br><span class="line">ph4.<span class="title function_">watch</span>(ph4_irq);</span><br><span class="line"><span class="title function_">sleep</span>(<span class="number">8000</span>);</span><br></pre></td></tr></table></figure>
+
+<p>执行该代码后，点击对应引脚的按钮，能够看到输出的对应中断信息。</p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>后续考虑扩展一些更加复杂的模块，比如将网络协议栈集成进来等，实现方法可以参考这里的GPIO模块实现方法。现在基础的框架已经做好了，后面的功能慢慢添加。总的来说mqjs移植要比micropython要简单很多，但micropython的功能更多，资源消耗也要少一些。相比于lua这类脚本语言来说，js又能体现语法上的灵活性优势。所以mquickjs是一个值得学习和研究的一个嵌入式软件项目。</p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                在单片机上试试最新的Javascript引擎
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2026/01/12/在单片机上试试最新的Javascript引擎/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2026-01-12 20:03</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/12/18/%E5%9C%A8RGBLCD%E4%B8%8A%E4%BD%BF%E7%94%A8LVGL%E6%97%B6%E8%B8%A9%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/"
+                                   title="在RGBLCD上使用LVGL时踩到的一些坑"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">在RGBLCD上使用LVGL时踩到的一些坑</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2026
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
