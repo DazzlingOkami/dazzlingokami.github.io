@@ -177,210 +177,6 @@
                 <div class="home-post-item-bottom border-box">
                     
                     <h3 class="home-post-title border-box">
-                        <a href="/2023/08/30/%E7%BB%9F%E8%AE%A1FreeRTOS%E4%B8%AD%E5%90%84%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%88%A9%E7%94%A8%E7%8E%87/">
-                            统计FreeRTOS中各个线程的处理器利用率
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            
-大约是在一年前，我在工作中遇到了需要分析嵌入式系统性能的需求，需要查看系统在关键时间点上，部分任务是否存在执行时间过长导致系统实时性能降低的情况。我在基于FreeRTOS的系统中设计了一段非侵入式的代码，能够获取到各个线程实时的处理器利用率，进而分...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Wed Aug 30 2023 22:21:10 GMT+0800"
-                >2023-08-30 22:21:10</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2023/08/30/%E7%BB%9F%E8%AE%A1FreeRTOS%E4%B8%AD%E5%90%84%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%88%A9%E7%94%A8%E7%8E%87/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2023/08/30/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">
-                            更优雅的使用Protothreads协程框架
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            PT协程框架PT(Protothreads)是一个轻量级的多任务框架，区别于一般基于栈的RTOS，它实现多任务的基本原理是通过语句间的任意跳转来实现任务切换，所以实现多任务的开销比较小。
-我们看一段示例代码来了解其用法。
-12345678910111...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Wed Aug 30 2023 22:10:28 GMT+0800"
-                >2023-08-30 22:10:28</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2023/08/30/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">
-                            PT协程的一个小扩展
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            在之前的文章中介绍了使用链表来更加优雅的使用PT协程。我最近发现了当初实现的一个错误，现在已经修复了。
-这里不是为了讨论之前的实现，而是介绍一个更有意思的东西。我在之前的实现基础上，实现了一个更加优雅的函数来利用协程，这应该是一种异步编程的技巧，或者...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Mon Aug 28 2023 14:40:26 GMT+0800"
-                >2023-08-28 14:40:26</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2023/08/28/PT%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%89%A9%E5%B1%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
-                        <a href="/2023/05/07/%E5%AE%9E%E7%8E%B0%E7%8B%AC%E6%9C%89%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%80%BB%E7%BA%BF/">
-                            实现独有的硬件通信总线
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            背景前段时间开发了一个嵌入式软件，其中有一个功能是使用PWM驱动一个无源的蜂鸣器，根据以往的经验来看，这是一个非常简单的功能，不过在实际操作时遇到了一个很多人往往都忽略的问题。我们硬件选择的单片机没有硬件PWM功能，只有普通的定时器，这就意味着我们只...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Sun May 07 2023 13:31:59 GMT+0800"
-                >2023-05-07 13:31:59</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2023/05/07/%E5%AE%9E%E7%8E%B0%E7%8B%AC%E6%9C%89%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%80%BB%E7%BA%BF/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
                         <a href="/2023/05/07/%E5%88%9D%E5%AD%A6%E5%B0%84%E9%A2%91%E4%BF%A1%E5%8F%B7/">
                             初学射频信号
                         </a>
@@ -419,6 +215,109 @@
 
     
         <a class="home-read-more" href="/2023/05/07/%E5%88%9D%E5%AD%A6%E5%B0%84%E9%A2%91%E4%BF%A1%E5%8F%B7/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/04/11/%E4%B8%80%E4%B8%AA%E5%9B%B0%E6%89%B0%E6%88%91%E5%BE%88%E4%B9%85%E7%9A%84%E9%97%AE%E9%A2%98/">
+                            一个困扰我很久的问题
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            大约在一年半前，我写了一篇文章介绍如何统计FreeRTOS系统中任务的实时CPU占用率的方法，其中最关键的是使用DWT计数器。我一直认为这个计数器在任意条件下都是能够正确运行的，直到我把它运用到Cortex-M7内核中。
+正常情况下Cortex-M7...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Tue Apr 11 2023 21:21:00 GMT+0800"
+                >2023-04-11 21:21:00</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2023/04/11/%E4%B8%80%E4%B8%AA%E5%9B%B0%E6%89%B0%E6%88%91%E5%BE%88%E4%B9%85%E7%9A%84%E9%97%AE%E9%A2%98/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2023/04/08/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">
+                            更优雅的使用Protothreads协程框架
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            PT协程框架PT(Protothreads)是一个轻量级的多任务框架，区别于一般基于栈的RTOS，它实现多任务的基本原理是通过语句间的任意跳转来实现任务切换，所以实现多任务的开销比较小。
+我们看一段示例代码来了解其用法。
+12345678910111...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Sat Apr 08 2023 19:51:00 GMT+0800"
+                >2023-04-08 19:51:00</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2023/04/08/%E6%9B%B4%E4%BC%98%E9%9B%85%E7%9A%84%E4%BD%BF%E7%94%A8Protothreads%E5%8D%8F%E7%A8%8B%E6%A1%86%E6%9E%B6/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
     
 </div>
 
@@ -486,56 +385,6 @@
                 <div class="home-post-item-bottom border-box">
                     
                     <h3 class="home-post-title border-box">
-                        <a href="/2022/11/12/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E6%A0%88%E5%9B%9E%E6%BA%AF%E6%9C%BA%E5%88%B6/">
-                            ARM嵌入式开发中的栈回溯机制
-                        </a>
-                    </h3>
-
-                    <div class="home-post-content keep-markdown-body">
-                        
-                            两种ABI规范根据编译器的实现不同，存在两种ABI机制，分别为APCS(ARM Procedure Call Standard)和AAPCS(ARM Archtecture Procedure Call Standard)。两种机制存在明显的区别，且...
-                        
-                    </div>
-
-                    
-
-<div class="post-meta-info-container border-box home">
-    <div class="post-meta-info border-box">
-        
-            <span class="meta-info-item border-box">
-                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
-                                                                                data-updated="Sat Nov 12 2022 12:39:12 GMT+0800"
-                >2022-11-12 12:39:12</span>
-            </span>
-        
-
-        
-
-        
-
-        
-
-        
-        
-        
-        
-    </div>
-
-    
-        <a class="home-read-more" href="/2022/11/12/ARM%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E6%A0%88%E5%9B%9E%E6%BA%AF%E6%9C%BA%E5%88%B6/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
-    
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-post-item">
-
-                
-
-                <div class="home-post-item-bottom border-box">
-                    
-                    <h3 class="home-post-title border-box">
                         <a href="/2022/11/12/Macro%20returning%20the%20number%20of%20arguments%20it%20is%20given%20in%20C/">
                             Macro returning the number of arguments it is given in C?
                         </a>
@@ -576,6 +425,107 @@
 
     
         <a class="home-read-more" href="/2022/11/12/Macro%20returning%20the%20number%20of%20arguments%20it%20is%20given%20in%20C/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2022/11/10/%E5%AE%9E%E7%8E%B0%E7%8B%AC%E6%9C%89%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%80%BB%E7%BA%BF/">
+                            实现独有的硬件通信总线
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            背景前段时间开发了一个嵌入式软件，其中有一个功能是使用PWM驱动一个无源的蜂鸣器，根据以往的经验来看，这是一个非常简单的功能，不过在实际操作时遇到了一个很多人往往都忽略的问题。我们硬件选择的单片机没有硬件PWM功能，只有普通的定时器，这就意味着我们只...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Thu Nov 10 2022 11:21:33 GMT+0800"
+                >2022-11-10 11:21:33</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2022/11/10/%E5%AE%9E%E7%8E%B0%E7%8B%AC%E6%9C%89%E7%9A%84%E7%A1%AC%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%80%BB%E7%BA%BF/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2022/09/10/%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E8%B0%A8%E6%85%8E%E6%93%8D%E4%BD%9CCache/">
+                            我们需要谨慎操作Cache
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            
+成都有疫情有半个月了，在家办公的日子总是很枯燥的，很多的工作无法正常开展。今天有时间，我尝试对Ymodem的传输效率进行优化并完善其中的一些细节实现，本来一个简单的优化工作却牵出一个严重的问题，并最终折腾了一天才解决。这是一个并不典型的内存溢出问题...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Sat Sep 10 2022 11:58:00 GMT+0800"
+                >2022-09-10 11:58:00</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2022/09/10/%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E8%B0%A8%E6%85%8E%E6%93%8D%E4%BD%9CCache/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
     
 </div>
 
@@ -676,6 +626,56 @@
 
     
         <a class="home-read-more" href="/2022/08/11/FreeRTOS%E4%B8%8A%E5%AE%9E%E7%8E%B0swap%E6%9C%BA%E5%88%B6/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
+    
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-post-item">
+
+                
+
+                <div class="home-post-item-bottom border-box">
+                    
+                    <h3 class="home-post-title border-box">
+                        <a href="/2022/07/25/%E5%86%85%E5%AD%98%E9%99%B7%E9%98%B1%EF%BC%8C%E4%B8%80%E7%A7%8D%E5%86%85%E5%AD%98%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+                            内存陷阱，一种内存调试方法
+                        </a>
+                    </h3>
+
+                    <div class="home-post-content keep-markdown-body">
+                        
+                            需求场景在一个多任务系统中，当一个全局可访问的数据出现了异常，如何排查问题呢？由于在多任务环境中，各个任务并行运行，一般的单步跟踪调试很难定位问题。逐个屏蔽代码又可能会导致问题无法复现。使用内存断点是比较好的方法，但是大多数集成开发环境对该功能的支持...
+                        
+                    </div>
+
+                    
+
+<div class="post-meta-info-container border-box home">
+    <div class="post-meta-info border-box">
+        
+            <span class="meta-info-item border-box">
+                <i class="icon fa-solid fa-file-circle-plus"></i>&nbsp;<span class="home-post-history"
+                                                                                data-updated="Mon Jul 25 2022 20:23:44 GMT+0800"
+                >2022-07-25 20:23:44</span>
+            </span>
+        
+
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+        <a class="home-read-more" href="/2022/07/25/%E5%86%85%E5%AD%98%E9%99%B7%E9%98%B1%EF%BC%8C%E4%B8%80%E7%A7%8D%E5%86%85%E5%AD%98%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">阅读全文&nbsp;<i class="icon fas fa-angle-right"></i></a>
     
 </div>
 
