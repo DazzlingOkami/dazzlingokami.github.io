@@ -9,7 +9,7 @@
     
     <title>
         
-            学习zynq7010中ARM处理器的中断处理机制 |
+            使用AI重构Heatshrink算法：从C到C#的高效迁移之旅 |
         
         耀眼的大神
     </title>
@@ -177,7 +177,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        学习zynq7010中ARM处理器的中断处理机制
+                        使用AI重构Heatshrink算法：从C到C#的高效迁移之旅
                     </div>
                 
 
@@ -205,12 +205,12 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2026-01-23 15:26:58</span>
+                <span class="datetime">2026-04-24 13:38:33</span>
             </span>
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sun Jan 25 2026 10:06:00 GMT+0800">2026-01-25 10:06:00</span>
+                <span class="datetime" data-updated="Fri Apr 24 2026 21:23:32 GMT+0800">2026-04-24 21:23:32</span>
             </span>
         
 
@@ -236,18 +236,36 @@
                     
 
                     
-                         <p>最近在使用zynq7010的PS模块时，需要通过PS端的ARM处理器读写SD卡上的文件，实际测试发现SDK中的SD卡底层驱动实现为轮询模式，导致数据读写时会长时间占用CPU。因为PS端运行了SDK中经过适配的FreeRTOS系统，所以我觉得需要对SD卡驱动进行适当的修改，通过中断配合信号量机制来避免处理器阻塞的问题。</p>
-<p>通过xilinx SDK中的一项外设用法示例学习中断的用法，大概知道了在裸机环境下的使用中断的大概流程。</p>
-<p>通过Xil_ExceptionRegisterHandler注册全局异常处理函数，我们将常用的外设中断会集中到一个异常上(XIL_EXCEPTION_ID_IRQ_INT)。</p>
-<p>全局中断管理由xscugic模块负载，所以一般需要Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,XScuGic_InterruptHandler,IntcInstancePtr); ，这样外设的中断信号才能到达xscugic模块。</p>
-<p>在xscugic模块中再通过XScuGic_Connect绑定sd外设的中断信号，并使用XScuGic_Enable控制每个外设的中断使能。</p>
-<p>首先裸机模式下的异常中断向量表定义在asm_vectors.S文件中，中断入口为IRQHandler，在该函数中执行由Xil_ExceptionRegisterHandler注册的实际中断处理函数。在FreeeRTOS环境中，情况会变得不一样。</p>
-<p>在FreeRTOS配置下，整个向量表被重定义了，在port_asm_vectors.S文件中可以看到新的向量表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.section .vectors</span><br><span class="line">_vector_table:</span><br><span class="line">_freertos_vector_table:</span><br><span class="line">	B	  _boot</span><br><span class="line">	B	  FreeRTOS_Undefined</span><br><span class="line">	ldr   pc, _swi</span><br><span class="line">	B	  FreeRTOS_PrefetchAbortHandler</span><br><span class="line">	B	  FreeRTOS_DataAbortHandler</span><br><span class="line">	NOP	  /* Placeholder for address exception vector*/</span><br><span class="line">	LDR   PC, _irq</span><br><span class="line">	B	  FreeRTOS_FIQHandler</span><br><span class="line"></span><br><span class="line">_irq:   .word FreeRTOS_IRQ_Handler</span><br><span class="line">_swi:   .word FreeRTOS_SWI_Handler</span><br></pre></td></tr></table></figure>
-
-<p>实际的中断处理函数为FreeRTOS_IRQ_Handler，但是该函数任然没有直接调用到外设中断处理上，在FreeRTOS_IRQ_Handler函数中进行了最关键的中断嵌套计数(ulPortInterruptNesting)。通过进一步执行vApplicationIRQHandler函数来执行外设中断，这里在vApplicationIRQHandler函数中直接获取了xscugic模块的中断向量表。至此，完整的中断调用流程分析完毕。</p>
-<p>相比于裸机环境，在FreeRTOS下，可以绕过xil_exception模块的异常管理，直接使用FreeRTOS的xPortInstallInterruptHandler或原始的XScuGic_Connect来绑定外设中断。</p>
-<p>相比于Cortex-M单片机来说，显然该处理器的外设中断响应要明显慢于Cortex-M的中断机制，CM单片机基本上每个外设在中断向量表上都有独立的位置，能够快速触发中断响应，而Cortex-A9处理器的外设中断需要层层分发，实时性看起来要弱一些。</p>
+                         <h1 id="使用AI重构Heatshrink算法：从C到C-的高效迁移之旅"><a href="#使用AI重构Heatshrink算法：从C到C-的高效迁移之旅" class="headerlink" title="使用AI重构Heatshrink算法：从C到C#的高效迁移之旅"></a>使用AI重构Heatshrink算法：从C到C#的高效迁移之旅</h1><h2 id="背景与需求"><a href="#背景与需求" class="headerlink" title="背景与需求"></a>背景与需求</h2><p>在日常开发中，我经常使用AI辅助编写局部代码，但这一次，我决定挑战一个更完整的项目任务：将C语言实现的Heatshrink压缩算法重构为C#版本。</p>
+<p>项目背景是这样的：我们需要在PC上位机通过低功耗蓝牙(BLE)向设备传输文件，受限于BLE characteristic的MTU大小和协议同步机制，传输速度仅有约10kb&#x2F;s。为了提升传输效率，我想到了之前在单片机上测试过的Heatshrink算法——它资源占用低，对文本的压缩率可达40%左右，非常适合我们的文本传输场景。</p>
+<h2 id="挑战与决策"><a href="#挑战与决策" class="headerlink" title="挑战与决策"></a>挑战与决策</h2><p>然而，Heatshrink只有C语言实现，而上位机是用WPF开发的C#项目。虽然找到了一些C#包装的DLL版本，但兼容性问题让我望而却步。直接移植算法虽然代码量不大，但内部算法细节复杂，人工移植工作量不小。最终，我决定借助AI的力量来完成这个任务。</p>
+<h2 id="AI重构过程"><a href="#AI重构过程" class="headerlink" title="AI重构过程"></a>AI重构过程</h2><h3 id="快速生成初始版本"><a href="#快速生成初始版本" class="headerlink" title="快速生成初始版本"></a>快速生成初始版本</h3><p>我将Heatshrink的原始代码库（包括C源码、Makefile和README等文件）交给代码助手，要求它重构为C#版本。AI迅速分析了代码结构，不到3分钟就输出了完整的重构方案和结果，效率之高令人惊讶。</p>
+<h3 id="测试与问题暴露"><a href="#测试与问题暴露" class="headerlink" title="测试与问题暴露"></a>测试与问题暴露</h3><p>AI生成的代码通过了100多字节的小数据集测试，但当我将其应用到实际文件压缩时，问题出现了：一个25KB的文件压缩后只有几百字节，明显不符合预期。</p>
+<p>我将问题反馈给AI，它生成了新的测试用例并开始了修改-测试的循环，反复对比与原始C代码的差异。然而，20分钟过去了，问题依然没有解决。</p>
+<h3 id="人工干预与问题定位"><a href="#人工干预与问题定位" class="headerlink" title="人工干预与问题定位"></a>人工干预与问题定位</h3><p>这时我意识到，AI在调试复杂问题时仍有局限性。我打开两个调试窗口，同步对比C#和C版本的代码执行过程，使用相同的测试文件输入。</p>
+<p>最终，我定位到了问题所在：压缩类中的Poll方法实现有误，该方法没有正确处理压缩数据长度的返回值。在C语言中，这个值是通过指针参数返回的，而AI没有意识到这个参数的返回值用途。</p>
+<h3 id="问题解决与验证"><a href="#问题解决与验证" class="headerlink" title="问题解决与验证"></a>问题解决与验证</h3><p>我将调试发现告诉AI后，它立即理解了问题并完成了修复。随后，它还添加了更多测试用例来验证算法的准确性。</p>
+<p>为了确保C#版本与原始C版本的兼容性，我下载了标准测试文本alice29.txt，用C程序压缩得到alice29.txt.hs，然后将这两个文件交给AI。AI基于此设计了专门的测试用例，验证了C#程序与C程序的数据互操作性。</p>
+<h2 id="经验与感悟"><a href="#经验与感悟" class="headerlink" title="经验与感悟"></a>经验与感悟</h2><h3 id="AI的优势与局限"><a href="#AI的优势与局限" class="headerlink" title="AI的优势与局限"></a>AI的优势与局限</h3><p>通过这次尝试，我深刻体会到AI在代码重构方面的巨大优势：</p>
+<ul>
+<li><strong>速度快</strong>：将原本可能需要3天的工作缩短到了2小时</li>
+<li><strong>代码理解能力强</strong>：能够快速分析并理解复杂的算法实现</li>
+<li><strong>生成代码质量高</strong>：基础功能实现准确</li>
+</ul>
+<p>但同时也暴露了AI的一些局限性：</p>
+<ul>
+<li><strong>调试能力不足</strong>：在面对复杂问题时，难以自主定位和解决深层次的逻辑错误</li>
+<li><strong>测试方法单一</strong>：倾向于使用相似的测试用例，缺乏创新性的测试思路</li>
+</ul>
+<h3 id="最佳实践建议"><a href="#最佳实践建议" class="headerlink" title="最佳实践建议"></a>最佳实践建议</h3><p>基于这次经验，我认为在使用AI进行代码重构时：</p>
+<ol>
+<li><strong>提供完整的上下文</strong>：包括原始代码、相关文档和具体需求</li>
+<li><strong>设计多样化的测试用例</strong>：覆盖不同规模和类型的输入</li>
+<li><strong>保持人工监督</strong>：在关键节点进行代码审查和测试验证</li>
+<li><strong>合理利用AI的优势</strong>：让AI处理重复性工作，人类专注于创造性和调试工作</li>
+</ol>
+<h2 id="成果与开源"><a href="#成果与开源" class="headerlink" title="成果与开源"></a>成果与开源</h2><p>最终，我成功完成了Heatshrink算法的C#版本重构，项目完整源码已按照原项目的许可要求开源到<a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/HeatshrinkCSharp" >Github<i class="fas fa-external-link-alt"></i></a>。</p>
+<p>这次经历让我对AI辅助开发有了更全面的认识：AI不是替代人类开发者，而是成为我们的得力助手，帮助我们更高效地完成复杂任务。在未来的开发中，我会继续探索AI与人类协作的最佳方式，让技术创新的脚步走得更快、更稳。</p>
 
                     
                 </div>
@@ -258,11 +276,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                学习zynq7010中ARM处理器的中断处理机制
+                使用AI重构Heatshrink算法：从C到C#的高效迁移之旅
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2026/01/23/学习zynq7010中ARM处理器的中断处理机制/
+                2026/04/24/使用AI重构代码库的经历/
             </div>
         </div>
 
@@ -278,7 +296,7 @@
                 <div class="type">
                     发布于
                 </div>
-                <div class="content">2026-01-23 15:26</div>
+                <div class="content">2026-04-24 13:38</div>
             </div>
 
 
@@ -322,31 +340,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2026/04/24/%E4%BD%BF%E7%94%A8AI%E9%87%8D%E6%9E%84%E4%BB%A3%E7%A0%81%E5%BA%93%E7%9A%84%E7%BB%8F%E5%8E%86/"
-                                   title="使用AI重构Heatshrink算法：从C到C#的高效迁移之旅"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">使用AI重构Heatshrink算法：从C到C#的高效迁移之旅</span>
-                                        <span class="post-nav-item">上一篇</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2026/01/12/%E5%9C%A8%E5%8D%95%E7%89%87%E6%9C%BA%E4%B8%8A%E8%AF%95%E8%AF%95%E6%9C%80%E6%96%B0%E7%9A%84Javascript%E5%BC%95%E6%93%8E/"
-                                   title="在单片机上试试最新的Javascript引擎"
+                                   href="/2026/01/23/%E5%AD%A6%E4%B9%A0zynq7010%E4%B8%ADARM%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"
+                                   title="学习zynq7010中ARM处理器的中断处理机制"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">在单片机上试试最新的Javascript引擎</span>
+                                        <span class="post-nav-title-item text-ellipsis">学习zynq7010中ARM处理器的中断处理机制</span>
                                         <span class="post-nav-item">下一篇</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
