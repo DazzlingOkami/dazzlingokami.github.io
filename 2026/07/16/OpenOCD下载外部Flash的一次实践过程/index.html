@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            OpenOCD下载外部Flash的一次实践过程 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        OpenOCD下载外部Flash的一次实践过程
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-07-16 15:48:17</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Fri Jul 17 2026 21:44:13 GMT+0800">2026-07-17 21:44:13</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="实现使用openocd配合cmsis-dap实现将固件下载到片外Flash"><a href="#实现使用openocd配合cmsis-dap实现将固件下载到片外Flash" class="headerlink" title="实现使用openocd配合cmsis-dap实现将固件下载到片外Flash"></a>实现使用openocd配合cmsis-dap实现将固件下载到片外Flash</h2><p>在使用STM32单片机时，使用调试器下载固件到外部Flash并不是一件很简单的事，因为单片机本身没有提供这样的功能。为了实现将固件下载到外部Flash，出现了一个东西叫下载算法，将一部分用于控制Flash的代码固件写入到RAM中，再配合调试来实现将固件传输并编程到外部Flash中。</p>
+<p>常见的STlink和Jlink对于下载算法的格式和通讯协议都有固定的模板，虽然有模板格式可供使用，但在实践时仍然有一定的难度。而且换不同的下载器就要对应不同的下载算法，如果外部Flash的IO绑定关系变化了也要重新编译新的下载算法，所以在使用的灵活性上也较差。</p>
+<h2 id="OpenOCD的方案"><a href="#OpenOCD的方案" class="headerlink" title="OpenOCD的方案"></a>OpenOCD的方案</h2><p>OpenOCD同样支持对STM32的外部Flash进行编程，但它不需要去编译下载算法，仅通过一个配置脚本就能打通与外部Flash的连接。</p>
+<p>在配置脚本中需要做以下设置：</p>
+<ul>
+<li>设置调试适配器，例如stlink或CMSIS-DAP</li>
+<li>指定芯片型号</li>
+<li>通过配置芯片寄存器使能主要的时钟</li>
+<li>通过配置芯片寄存器完成GPIO的配置</li>
+<li>通过配置芯片寄存器完成QSPI\OSPI的初始化工作</li>
+</ul>
+<p>其中前面两项很简单，参考openocd中的一些配置模板就能完成。</p>
+<p>后面三项内容要稍微复杂一些，需要直接通过写寄存器的方式来让外设初始化完成并正常工作，所以部分需要有一定的耐心。</p>
+<p>需要三条基本的openocd指令：</p>
+<ul>
+<li>mww addr value：在指定的地址写入一个32位数，注意地址对齐</li>
+<li>mmw addr setbits clearbits：通过两个掩码来操作指定地址下内存的值，方便单独设置或清除指定bit</li>
+<li>mdw addr [count]: 读取指定内存的值，可选数据长度</li>
+</ul>
+<p>依靠这三条指令就能完成对各个时钟外设的初始化工作，这部分工作一定要有耐心，对照芯片手册的寄存器表和C代码模板来完成寄存器的设定。</p>
+<p>openocd中有部分示例cfg可以参考，但需要检查是否与自己的板子适配。</p>
+<p>GPIO部分的配置有工具可以直接生成配置代码，工具在openocd中可以找到。<a class="link"   target="_blank" rel="noopener" href="https://github.com/openocd-org/openocd" >https://github.com/openocd-org/openocd<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl gpio_conf_stm32.pl -c <span class="string">&quot;PB06:AF10:V, PB02:AF09:V, PD13:AF09:V, PD12:AF09:V, PD11:AF09:V, PE02:AF09:V&quot;</span> -b 0x58020000</span><br></pre></td></tr></table></figure>
+<p>其中-b是设置GPIO外设的基地址，具体的值需要查芯片手册。<br>-c选项是设置与QSPI外设相关的GPIO配置。</p>
+<p>格式是这样的：端口号:配置:速度<br>其中端口号就是STM32的端口号名称，配置有AFx(复用功能，例如AF10)、PP(推挽输出)、PO(开漏输出)、INUP(上拉输入)、INDO(下拉输入)，速度有L(低速)、M(中速)、H(高速)、V(超高速)</p>
+<p>上面这段代码，生成了如下的配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># PB06:AF10:V, PB02:AF09:V, PD13:AF09:V, PD12:AF09:V, PD11:AF09:V, PE02:AF09:V</span><br><span class="line"># Port B: PB06:AF10:V, PB02:AF09:V</span><br><span class="line">mmw 0x58020400 0x00002020 0x00001010    ;# MODER</span><br><span class="line">mmw 0x58020408 0x00003030 0x00000000    ;# OSPEEDR</span><br><span class="line">mmw 0x5802040C 0x00000000 0x00003030    ;# PUPDR</span><br><span class="line">mmw 0x58020420 0x0A000900 0x05000600    ;# AFRL</span><br><span class="line"># Port D: PD13:AF09:V, PD12:AF09:V, PD11:AF09:V</span><br><span class="line">mmw 0x58020C00 0x0A800000 0x05400000    ;# MODER</span><br><span class="line">mmw 0x58020C08 0x0FC00000 0x00000000    ;# OSPEEDR</span><br><span class="line">mmw 0x58020C0C 0x00000000 0x0FC00000    ;# PUPDR</span><br><span class="line">mmw 0x58020C24 0x00999000 0x00666000    ;# AFRH</span><br><span class="line"># Port E: PE02:AF09:V</span><br><span class="line">mmw 0x58021000 0x00000020 0x00000010    ;# MODER</span><br><span class="line">mmw 0x58021008 0x00000030 0x00000000    ;# OSPEEDR</span><br><span class="line">mmw 0x5802100C 0x00000000 0x00000030    ;# PUPDR</span><br><span class="line">mmw 0x58021020 0x00000900 0x00000600    ;# AFRL</span><br></pre></td></tr></table></figure>
+
+<p>QSPI的配置是最麻烦的，需要配置QSPI外设，初始化外部Flash芯片，正常开启映射模式后就能使用了。</p>
+<p>openocd启动后，执行reset init命令可以触发执行自定义的寄存器配置。</p>
+<p>这里需要注意的时，需要根据实际的Flash型号来设置一些参数、比如Flash大小(FSIZE)、地址大小(ADSIZE)等，一项不正确就会导致无法读写外部Flash。</p>
+<p>我在最后开启Flash Memory Mapped卡了一段时间，最终排查就是ADSIZE和DCYC配置不当导致的，我的w25q64jv仅支持3字节地址模式，但是我在4字节地址模式下调试了很久，数据能读取，但是无法执行擦除操作。后面意识到ADSIZE配置错误，修正后数据读取又出错了，但是观察读取到的数据很明显的DCYC配置不正确导致的，修复后就能正常工作了。</p>
+<p>按照w25q64jv手册的意思，芯片上电或复位后的DCYC&#x3D;2，但是我需要配置为6才能正常工作，我不知道是不是复位指令没生效，但是我在我的Bootloader中确实通过0xC0指令修改过Read Parameters。这部分内容还需要仔细核对一遍。</p>
+<p>Reset指令如果按照4线模式再执行一次，DCYC需要设置为0才能正常工作。这又是为什么呢？这说明复位指令已经生效了。那为什么在w25qxx中设置的dummy clocks和QSPI中的DCYC始终差2呢？</p>
+<h2 id="附上我的openocd脚本配置"><a href="#附上我的openocd脚本配置" class="headerlink" title="附上我的openocd脚本配置"></a>附上我的openocd脚本配置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"># This is for using CMSIS-DAP</span><br><span class="line">source [find interface/cmsis-dap.cfg]</span><br><span class="line">transport select swd</span><br><span class="line">set CHIPNAME stm32h750xx</span><br><span class="line"></span><br><span class="line">set QUADSPI  1</span><br><span class="line">set OCTOSPI1 0</span><br><span class="line">set OCTOSPI2 0</span><br><span class="line"></span><br><span class="line">source [find target/stm32h7x.cfg]</span><br><span class="line">reset_config none separate</span><br><span class="line"></span><br><span class="line">proc qspi_init &#123; qpi &#125; &#123;</span><br><span class="line">    mmw 0x580244E0 0x000007FF 0             ;# RCC_AHB4ENR |= GPIOAEN-GPIOKEN (enable clocks)</span><br><span class="line">    mmw 0x580244D4 0x00004000 0             ;# RCC_AHB3ENR |= QSPIEN (enable clock)</span><br><span class="line">    sleep 1                                 ;# Wait for clock startup</span><br><span class="line"></span><br><span class="line">    # PB06:AF10:V, PB02:AF09:V, PD13:AF09:V, PD12:AF09:V, PD11:AF09:V, PE02:AF09:V</span><br><span class="line"></span><br><span class="line">    # Port B: PB06:AF10:V, PB02:AF09:V</span><br><span class="line">    mmw 0x58020400 0x00002020 0x00001010    ;# MODER</span><br><span class="line">    mmw 0x58020408 0x00003030 0x00000000    ;# OSPEEDR</span><br><span class="line">    mmw 0x5802040C 0x00000000 0x00003030    ;# PUPDR</span><br><span class="line">    mmw 0x58020420 0x0A000900 0x05000600    ;# AFRL</span><br><span class="line">    # Port D: PD13:AF09:V, PD12:AF09:V, PD11:AF09:V</span><br><span class="line">    mmw 0x58020C00 0x0A800000 0x05400000    ;# MODER</span><br><span class="line">    mmw 0x58020C08 0x0FC00000 0x00000000    ;# OSPEEDR</span><br><span class="line">    mmw 0x58020C0C 0x00000000 0x0FC00000    ;# PUPDR</span><br><span class="line">    mmw 0x58020C24 0x00999000 0x00666000    ;# AFRH</span><br><span class="line">    # Port E: PE02:AF09:V</span><br><span class="line">    mmw 0x58021000 0x00000020 0x00000010    ;# MODER</span><br><span class="line">    mmw 0x58021008 0x00000030 0x00000000    ;# OSPEEDR</span><br><span class="line">    mmw 0x5802100C 0x00000000 0x00000030    ;# PUPDR</span><br><span class="line">    mmw 0x58021020 0x00000900 0x00000600    ;# AFRL</span><br><span class="line"></span><br><span class="line">    # for single flash mode w25q64jv</span><br><span class="line">    mww 0x52005000 0x05500018               ;# QUADSPI_CR: PRESCALER=5, APMS=1, FTHRES=1, FSEL=0, DFM=0, SSHIFT=1, TCEN=1</span><br><span class="line">    mww 0x52005004 0x00160701               ;# QUADSPI_DCR: FSIZE=0x16, CSHT=0x05, CKMODE=0</span><br><span class="line">                                            ;# FSIZE flash的大小。</span><br><span class="line"></span><br><span class="line">    mww 0x52005030 0x00001000               ;# QUADSPI_LPTR: deactivate CS after 4096 clocks when FIFO is full</span><br><span class="line">                                            ;# 11010000000000 10 010100000011</span><br><span class="line">    mww 0x52005014 0x0D002503               ;# QUADSPI_CCR: FMODE=0x3, DMODE=0x1, DCYC=0x0, ADSIZE=0x2, ADMODE=0x1, IMODE=0x1</span><br><span class="line">    mmw 0x52005000 0x00000001 0             ;# QUADSPI_CR: EN=1</span><br><span class="line"></span><br><span class="line">    # Exit QPI mode</span><br><span class="line">    #mmw 0x52005000 0x00000002 0            ;# QUADSPI_CR: ABORT=1</span><br><span class="line">    #mww 0x52005014 0x000003FF              ;# QUADSPI_CCR: FMODE=0x0, DMODE=0x0, DCYC=0x0, ADSIZE=0x0, ADMODE=0x0, IMODE=0x3, INSTR=Exit QPI</span><br><span class="line">    sleep 1</span><br><span class="line"></span><br><span class="line">    # Reset flash</span><br><span class="line">    mmw 0x52005000 0x00000002 0             ;# QUADSPI_CR: ABORT=1</span><br><span class="line">    mww 0x52005014 0x00000166               ;# QUADSPI_CCR: FMODE=0x0, DMODE=0x0, DCYC=0x0, ADSIZE=0x0, ADMODE=0x0, IMODE=0x1, INSTR=0x66</span><br><span class="line">    mww 0x52005014 0x00000199               ;# QUADSPI_CCR: FMODE=0x0, DMODE=0x0, DCYC=0x0, ADSIZE=0x0, ADMODE=0x0, IMODE=0x1, INSTR=0x99</span><br><span class="line">    sleep 1</span><br><span class="line"></span><br><span class="line">    # Enter QPI mode</span><br><span class="line">    mmw 0x52005000 0x00000002 0             ;# QUADSPI_CR: ABORT=1</span><br><span class="line">    mww 0x52005014 0x00000138               ;# QUADSPI_CCR: FMODE=0x0, DMODE=0x0, DCYC=0x0, ADSIZE=0x0, ADMODE=0x0, IMODE=0x1, INSTR=Enter QPI</span><br><span class="line">    sleep 1</span><br><span class="line"></span><br><span class="line">    # Do need set read parameters? INSTR=0xC0</span><br><span class="line">    # TODO</span><br><span class="line"></span><br><span class="line">    # memory-mapped read mode with 3-byte addresses</span><br><span class="line">    mmw 0x52005000 0x00000002 0             ;# QUADSPI_CR: ABORT=1</span><br><span class="line">    mww 0x5200501C 0x000000EF               ;# QUADSPI_ABR: AlternateBytes=0xEF</span><br><span class="line">    mww 0x52005014 0x0F18EFEB               ;# QUADSPI_CCR: FMODE=0x3, DMODE=0x3, DCYC=0x6, ADSIZE=0x3, ADMODE=0x3, IMODE=0x3, INSTR=Fast Read Quad I/O </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$_CHIPNAME.cpu0 configure -event reset-init &#123;</span><br><span class="line">    global QUADSPI</span><br><span class="line">    mmw 0x52002000 0x00000004 0x0000000B    ;# FLASH_ACR: 4 WS for 192 MHZ HCLK</span><br><span class="line">    mmw 0x58024400 0x00000001 0x00000018    ;# RCC_CR: HSIDIV=1, HSI on</span><br><span class="line">    mmw 0x58024410 0x10000000 0xEE000007    ;# RCC_CFGR: MCO2=system, MCO2PRE=8, HSI as system clock</span><br><span class="line">    mww 0x58024418 0x00000040               ;# RCC_D1CFGR: D1CPRE=1, D1PPRE=2, HPRE=1</span><br><span class="line">    mww 0x5802441C 0x00000440               ;# RCC_D2CFGR: D2PPRE2=2, D2PPRE1=2</span><br><span class="line">    mww 0x58024420 0x00000040               ;# RCC_D3CFGR: D3PPRE=2</span><br><span class="line">    mww 0x58024428 0x00000040               ;# RCC_PPLCKSELR: DIVM3=0, DIVM2=0, DIVM1=4, PLLSRC=HSI</span><br><span class="line">    mmw 0x5802442C 0x0001000C 0x00000002    ;# RCC_PLLCFGR: PLL1RGE=8MHz to 16MHz, PLL1VCOSEL=wide</span><br><span class="line">    mww 0x58024430 0x01070217               ;# RCC_PLL1DIVR: 192 MHz: DIVR1=2, DIVQ=8, DIVP1=2, DIVN1=24</span><br><span class="line">    mmw 0x58024400 0x01000000 0             ;# RCC_CR: PLL1ON=1</span><br><span class="line">    sleep 1</span><br><span class="line">    mmw 0x58024410 0x00000003 0             ;# RCC_CFGR: PLL1 as system clock</span><br><span class="line">    sleep 1</span><br><span class="line"></span><br><span class="line">    adapter speed 4000</span><br><span class="line"></span><br><span class="line">    echo &quot;start&quot;</span><br><span class="line"></span><br><span class="line">    if &#123; $QUADSPI &#125; &#123;</span><br><span class="line">        qspi_init 1</span><br><span class="line">        flash probe 1</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我用的测试开发板是WeActStudio的STM32H750Mini。</p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                OpenOCD下载外部Flash的一次实践过程
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2026/07/16/OpenOCD下载外部Flash的一次实践过程/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2026-07-16 15:48</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/06/23/TensorFlow%20Lite%E7%A7%BB%E6%A4%8D%E6%AD%A5%E9%AA%A4/"
+                                   title="TensorFlow Lite 移植步骤"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">TensorFlow Lite 移植步骤</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2026
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
