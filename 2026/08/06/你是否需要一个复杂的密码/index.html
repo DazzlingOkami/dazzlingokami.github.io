@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            你是否需要一个复杂的密码 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        你是否需要一个复杂的密码
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-08-06 21:03:10</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Thu Aug 06 2026 21:03:39 GMT+0800">2026-08-06 21:03:39</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <blockquote>
+<p>我日常使用的一款APP在打开登录时经常会提醒我的密码已经超过180天未修改，为了更好的安全性之类的原因，每次都会弹出一个页面让我选择是否需要修复密码，虽然这个选择可以跳过，但是我对这样更改密码的要求总是非常反感的。</p>
+</blockquote>
+<p>我很早之前就发现过一个社会学现象，大多数网站和终端app在注册时都要求设置一个复杂的密码，还贴心的将密码复杂度显示出来，要求密码必须包含大小写字母数字符号等。但他们忽略了一个事实，那就是用户根本无法记住如此复杂的密码。为了方便下次登录，用户可能会将密码设为记住模式或将密码的副本保存到记事本文本中，这反而增加了密码泄露的风险。由于无法记住密码，可能下次登录不得已选择忘记密码流程来重置密码，但是这个重置密码的流程本身也是密码泄露的一个突破口。</p>
+<p>这是信息安全领域经典的<strong>密码策略悖论</strong>，严苛的静态密码复杂度规则，在不配套基础设施的前提下，<strong>提升了理论安全上限，却显著推高人为侧泄露风险，整体安全收益经常为负</strong>。</p>
+<h3 id="一、强制复杂密码引出的用户行为"><a href="#一、强制复杂密码引出的用户行为" class="headerlink" title="一、强制复杂密码引出的用户行为"></a>一、强制复杂密码引出的用户行为</h3><p>当人脑记忆负荷超过阈值，普通用户只有几种应对手段，全部引入新漏洞：</p>
+<p>1.浏览器、APP自动保存密码</p>
+<ul>
+<li><p>设备一旦被入侵、失窃，所有保存的密码批量失窃；</p>
+</li>
+<li><p>浏览器密码数据库如果未强加密，或系统账号被突破，直接拖走全部凭据；</p>
+<p>很多人没有设备锁屏密码，电脑 &#x2F; 手机随手放，攻击者不需要破解网站，直接窃取本地密码库。</p>
+</li>
+</ul>
+<p>2.明文密码记录到记事本</p>
+<p>无加密明文存储，一旦文件被同步到云盘、电脑被入侵、文件意外分享，密码直接裸奔。远不如一个好记但熵适中的密码。</p>
+<p>3.复杂密码+微小改动</p>
+<p>强制复杂密码的本意是阻止简单的密码，但是当用户输入一串数字后才发现密码太弱，用户最常见的做法是在数字前后将几个字母或符号，结果就是倒逼用户发明“伪复杂密码”。看似满足了平台的要求，但它事实的有效熵大打折扣。一旦其中一个网站的密码泄露，攻击者通过模式推导就能撞库其它平台的账号。</p>
+<h3 id="二、经常重置密码引入的额外攻击面"><a href="#二、经常重置密码引入的额外攻击面" class="headerlink" title="二、经常重置密码引入的额外攻击面"></a>二、经常重置密码引入的额外攻击面</h3><p>重置密码本身不会泄露你的密码，但重置通道是一个独立的攻击入口。许多人将密码重置的验证通道选择手机短信或邮箱，每次重置密码后都会遗留历史消息在短信或邮箱中，一旦邮箱被盗，所有关联的平台都会面临风险。短信验证码也存在嗅探攻击、验证码拦截、SIM卡盗窃的攻击风险。</p>
+<p>频繁重置导致用户对“重置流程”麻木，更容易点击钓鱼邮件中伪造的“重置链接”。当用户习惯了隔三差五收重置邮件，就不会对异常的重置请求产生警惕。</p>
+<h3 id="三、复杂密码本身是安全的"><a href="#三、复杂密码本身是安全的" class="headerlink" title="三、复杂密码本身是安全的"></a>三、复杂密码本身是安全的</h3><p>复杂密码本身没有错，但仅仅依靠单一的复杂密码就是一种策略错误。人类生物的记忆存在硬件上限，普通人可靠记忆的高熵密码数量可能只有3个左右。平台一刀切强制要求密码的复杂度，完全不考虑人类的认知极限，属于典型的纸面安全。</p>
+<p>现行的国际身份认证标准也要求：</p>
+<ul>
+<li><p>1.废除强制定期更换密码；</p>
+</li>
+<li><p>2.不强制要求必须混合大小写、数字、符号；</p>
+</li>
+<li><p>3.禁止常见密码；</p>
+</li>
+<li><p>4.有限考虑多因素认证MFA。</p>
+</li>
+</ul>
+<h3 id="四、密码管理器"><a href="#四、密码管理器" class="headerlink" title="四、密码管理器"></a>四、密码管理器</h3><p>由于用户苦于平台对密码复杂度的要求，大量的用户也开始使用密码管理器来管理各种平台的账号密码，比如常见的Apple密码、Microsoft 密码管理器、1Password等。</p>
+<p>密码管理器的本质就是行业内也承认的一个事实：人类无法记忆大量高熵密码。</p>
+<p>平台单方面强制要求复杂密码，不如让应用更好的兼容密码管理器来的好。</p>
+<h3 id="五、一个很现实的问题"><a href="#五、一个很现实的问题" class="headerlink" title="五、一个很现实的问题"></a>五、一个很现实的问题</h3><p>以上说的这些问题，或许平台运营方是知道的，但是它这样选择的原因就是为了规避自身责任。在设置了复杂度密码规则后如果遭遇密码泄露，平台方就可以对外宣称：”我们已经要求用户使用高强度密码“，满足合规要求。</p>
+<p>规则只在乎平台合规，不考虑用户真实行为，最终造成安全失效。</p>
+<h3 id="六、如何加固账号安全性"><a href="#六、如何加固账号安全性" class="headerlink" title="六、如何加固账号安全性"></a>六、如何加固账号安全性</h3><p>无论是平台的建设者还是终端普通用户，都应该达成一套共识：</p>
+<ul>
+<li><p>1.不强制要求”伪复杂“密码；</p>
+</li>
+<li><p>2.设置密码长度底线并过滤常见的弱密码；</p>
+</li>
+<li><p>3.开启多因素认证，尤其是高价值账号；</p>
+</li>
+<li><p>4.密码管理器兼容；</p>
+</li>
+<li><p>5.在没有已知密码泄露的情况下不要强制定期修改密码；</p>
+</li>
+</ul>
+<h3 id="七、你是否需要一个复杂的密码"><a href="#七、你是否需要一个复杂的密码" class="headerlink" title="七、你是否需要一个复杂的密码"></a>七、你是否需要一个复杂的密码</h3><p>为了让你直观了解到一个密码有多复杂，这里引入密钥信息熵的概念。它是衡量密码不确定性的一个指标，是评估密码强度的核心标准。一个10位的数字密码信息熵为33bit。大多数人的密码可能就是一个不超过14位的字母+数字组合的密码，其信息熵只有约83bit。</p>
+<p>但这远远达不到密码学公认的安全底线128bit。这还是考虑随机均匀的情况下得到的数据，如果密码中存在模式行为则密码的有效熵还会更低。</p>
+<p>高熵密码如果逼迫人脑记忆则几乎必然产生旁路泄露，纸面熵再高也没有意义。安全永远是一个体系，不能只盯着一个密码的复杂度。攻击者永远会选择整个体系链条中最薄弱的环节，而这个最弱的环节可能不是密码的强弱，而是人的行为。</p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                你是否需要一个复杂的密码
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2026/08/06/你是否需要一个复杂的密码/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2026-08-06 21:03</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/07/16/OpenOCD%E4%B8%8B%E8%BD%BD%E5%A4%96%E9%83%A8Flash%E7%9A%84%E4%B8%80%E6%AC%A1%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B/"
+                                   title="OpenOCD下载外部Flash的一次实践过程"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">OpenOCD下载外部Flash的一次实践过程</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2026
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
