@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="耀眼的大神">
+    
+    <title>
+        
+            使用PIO驱动JTAG时序 |
+        
+        耀眼的大神
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/blog.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"dazzlingokami.github.io","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#0066cc","title":"耀眼的大神","author":"耀眼的大神","avatar":"/images/face.webp","favicon":"images/blog.svg"},"menu":{"Home":"/","Archives":"/archives","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Keep writing and Keep loving.","hitokoto":false},"social_contact":{"enable":false,"links":{"github":null,"weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"facebook":null,"email":null}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"category":false,"tag":false,"announcement":null,"post_datetime":"created"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["嵌入式软件工程师"]},"word_count":{"wordcount":false,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":true,"share":false,"reward":{"enable":false,"img_link":null,"text":null},"img_align":"center"},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"default"},"toc":{"enable":false,"number":false,"expand_all":false,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":false,"page_pv":false}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2020,"word_count":false,"record":{"enable":false},"site_deploy":{"enable":false,"provider":"github","url":null}},"inject":{"enable":false,"css":[null],"js":[null]},"root":"","source_data":{},"version":"4.2.3"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+            <a class="site-name border-box" href="/">
+               耀眼的大神
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        使用PIO驱动JTAG时序
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/face.webp">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">WangGaojie</span>
+                                
+                                    <span class="author-badge">Lv4</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-10-24 14:16:42</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Sat Oct 24 2026 14:17:11 GMT+0800">2026-10-24 14:17:11</span>
+            </span>
+        
+
+        
+
+        
+
+        
+        
+        
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="制作新的CMSIS-DAP下载器"><a href="#制作新的CMSIS-DAP下载器" class="headerlink" title="制作新的CMSIS-DAP下载器"></a>制作新的CMSIS-DAP下载器</h2><p>最近的业余时间都在研究做一些有意思的CMSIS-DAP兼容的调试器，之前做了一个带触摸屏的脱机下载器，做完之后感觉很有意思，主要是非常享受开发探索的过程，包括焊接PCBA、外壳建模这些都比较好玩儿。</p>
+<p>最近又完成了一个比较有价值的事情，让RP2350单片机的PIO能够同时兼容驱动SWD和JTAG。之前做的那些调试器都只完成了SWD调试功能，主要是平时JTAG也基本上不怎么用。但有句话说的好，JTAG可以不用，但不能没有。</p>
+<p>这次的设计目标就是做一个拥有20P的JTAG连接器端口的下载，使用RP2350芯片驱动，所有的驱动端口带可调参考电压的收发缓冲芯片。在动手做PCBA之前，我已经和AI充分讨论过可行性，在兼容SWD模式的情况下增加对JTAG的支持是可行的。但是AI给我的两个方案都存在一些性能问题被我抛弃了，转头我结合AI的思路找到了一条可行且高效的方案。</p>
+<p>SWD模式的支持可以参考树莓派官方的设计方案，我的JTAG模式的支持也是在其之上魔改的。树莓派官方虽然在半年前就在讨论支持JTAG，但是一直没有下文。自己动手才是最有意思的事情。</p>
+<h2 id="硬件外围驱动与信号"><a href="#硬件外围驱动与信号" class="headerlink" title="硬件外围驱动与信号"></a>硬件外围驱动与信号</h2><p>首先介绍一下我的外围驱动电路，TCK、TDI、TDO都是单向的信号，之间经过一个数据缓冲芯片即可，TMS&#x2F;SWD的信号要稍微复杂些，JTAG模式下TMS信号仅输出，但在SWD模式中它会频繁的切换收发方向。pico官方固件的做法是用一个IO保持持续输入，另一个IO保持输出并在需要读取数据时将输出IO切换到高阻态。这种方法的缺点是除了要控制外部缓冲器的开关外，还需要切换内部IO的方向。原固件时用PIO指令来切换方向，这种做法其实并不高明，它除了挤占TCK的时序外，还占用PIO指令空间。</p>
+<p>我驱动SWD信号的方案是用两个IO信号，分别作为输入和输出，即SWD_DO和SWD_DI，两个IO经过缓冲芯片后并联到外部的SWD，SWD_DI的输入缓冲是常开的。SWD_DO的输出是通过另一个IO驱动的。这样RP2350内部不需要切换IO方向，通过一个IO来控制当前的SWD是由哪个端口驱动。</p>
+<p>完整的信号通路是这样的：</p>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>通路</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SWD_DO &#x2F; TMS</td>
+<td>GPIO6 → 缓冲器 A → 外部</td>
+<td>缓冲器 A 的通断由 <code>PROBE_SWD_DOE_PIN</code>（GPIO4）控制，高 &#x3D; 正常驱动，低 &#x3D; 高阻</td>
+</tr>
+<tr>
+<td>SWD_DI</td>
+<td>外部 → GPIO5</td>
+<td>独立输入线，经过独立的缓冲器</td>
+</tr>
+<tr>
+<td>TCK&#x2F;SWCLK</td>
+<td>GPIO3，PIO sideset输出</td>
+<td>两种模式共用</td>
+</tr>
+<tr>
+<td>TDI</td>
+<td>GPIO0，JTAG 下归 PIO 输出 TDI；SWD 下归 CDC 桥 UART0 TX</td>
+<td>UART TX 在 JTAG 模式改由 GPIO12 输出</td>
+</tr>
+<tr>
+<td>TDO</td>
+<td>GPIO2，JTAG 下由 PIO 输入</td>
+<td>独立输入通路，与 DOE 无关；已置 <code>input_sync_bypass</code></td>
+</tr>
+<tr>
+<td>nTRST</td>
+<td>GPIO9，推挽输出</td>
+<td></td>
+</tr>
+<tr>
+<td>nRESET</td>
+<td>GPIO7，开漏模拟</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>TDO 与 SWD_DI 都是独立输入线，不经缓冲器 A，因此读回不受 DOE 影响。而 TMS 与 SWD_DO 共用 GPIO6、必须经缓冲器输出，所以 <strong>JTAG 扫描期间 DOE 必须恒为 1</strong>。</p>
+<p>PIO程序中通过IN、OUT指令与外部GPIO交换数据，SWD模式和JTAG模式下的IO绑定需要动态切换。SWD模式下，数据输出OUT绑定到SWD_DO，数据输入IN绑定到SWD_DI。JTAG模式下数据输出OUT绑定到TDI，数据输入IN绑定到TDO。</p>
+<p>两个复位引脚作为普通IO控制即可，这里要注意nRESET必须用开漏输出，不能推挽输出高电平，否则与其它的复位电路一起工作时会发生短路。</p>
+<p>这里还有注意一点，为了兼容Jlink的20P端口定义，TDI端口在SWD模式中是复用作为串口的TX使用的。在模式切换时需要注意串口端口的切换。</p>
+<h2 id="PIO程序"><a href="#PIO程序" class="headerlink" title="PIO程序"></a>PIO程序</h2><p>下面这段程序就是该项目最具精华的部分了，尤其是实现TMS序列的驱动，我自认为很有创意，整个项目的代码虽然完全由AI完成，但其中的细节和巧思都是我反复斟酌打磨的结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">.program probe</span><br><span class="line">.side_set 2 opt</span><br><span class="line"></span><br><span class="line">public turnaround_cmd:</span><br><span class="line">turnaround_bitloop:</span><br><span class="line">    nop                         [1]  side 0x0</span><br><span class="line">    jmp x-- turnaround_bitloop  [1]  side 0x1</span><br><span class="line">    jmp get_next_cmd</span><br><span class="line"></span><br><span class="line">public write_cmd:</span><br><span class="line">    pull</span><br><span class="line">public short_write_cmd:</span><br><span class="line">write_bitloop:</span><br><span class="line">    out pins, 1                 [1]  side 0x2   ; Data is output by host on negedge</span><br><span class="line">    jmp x-- write_bitloop       [1]  side 0x3   ; ...and captured by target on posedge</span><br><span class="line">                                                ; Fall through to next command</span><br><span class="line">.wrap_target</span><br><span class="line">public get_next_cmd:</span><br><span class="line">    pull                             side 0x0   ; SWCLK initially low, OEn disabled</span><br><span class="line">    out x, 7                                    ; Get bit count</span><br><span class="line">    out pc, 5                                   ; Go to command routine</span><br><span class="line"></span><br><span class="line">read_bitloop:</span><br><span class="line">    nop                                         ; Additional delay on taken loop branch</span><br><span class="line">public read_cmd:</span><br><span class="line">    in pins, 1                  [1]  side 0x1   ; Data is captured by host on posedge</span><br><span class="line">    jmp x-- read_bitloop             side 0x0</span><br><span class="line">    push</span><br><span class="line">    jmp get_next_cmd                            ; Fall through to next command</span><br><span class="line"></span><br><span class="line">; JTAG commands. TMS shares the SWD_DO pin (set pin group, base configured per mode</span><br><span class="line">; on the C side), TDI is driven by the out pin group (same base), TDO is sampled by</span><br><span class="line">; the in pin group. Sideset bit 1 = DOE must stay 1, otherwise the external buffer</span><br><span class="line">; goes high-Z and TMS cannot be driven.</span><br><span class="line">public jtag_tms_lo_cmd:</span><br><span class="line">    set pins, 0                      side 0x2   ; DOE=1, TCK=0</span><br><span class="line">    jmp get_next_cmd</span><br><span class="line"></span><br><span class="line">public jtag_tms_hi_cmd:</span><br><span class="line">    set pins, 1                      side 0x2</span><br><span class="line">    jmp get_next_cmd</span><br><span class="line"></span><br><span class="line">; TMS sequence: after &quot;set&quot;, &quot;out pc, 5&quot; loads the entry address of the next beat</span><br><span class="line">; (a 5-bit field in the command word), so one FIFO command chains 1 to 4 beats of</span><br><span class="line">; &quot;TMS + clock&quot; without dispatching a command on every beat.</span><br><span class="line">public jtag_tms_seq_lo_cmd:</span><br><span class="line">    set pins, 0                 [1]  side 0x2   ; 2 cycles: TMS=0, TCK low</span><br><span class="line">    out pc, 5                   [1]  side 0x3   ; 2 cycles: load next entry, TCK high</span><br><span class="line"></span><br><span class="line">public jtag_tms_seq_hi_cmd:</span><br><span class="line">    set pins, 1                 [1]  side 0x2</span><br><span class="line">    out pc, 5                   [1]  side 0x3</span><br><span class="line"></span><br><span class="line">public jtag_rw_cmd:</span><br><span class="line">    pull                                        ; second FIFO word carries TDI data</span><br><span class="line">public jtag_rw_short_cmd:                       ; TDI inlined in command word [31:12]</span><br><span class="line">jtag_rw_bitloop:</span><br><span class="line">    out pins, 1                 [1]  side 0x2   ; 2 cycles: TCK low, shift out one TDI bit</span><br><span class="line">    in pins, 1                       side 0x3   ; 1 cycle: TCK high, sample TDO</span><br><span class="line">    jmp x-- jtag_rw_bitloop          side 0x2   ; 1 cycle: TCK low, gives TDO 3 cycles to settle</span><br><span class="line">    push</span><br><span class="line">.wrap</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="实测效果"><a href="#实测效果" class="headerlink" title="实测效果"></a>实测效果</h2><p>我将PCBA焊接完成并把固件开发调试完成后，实测在SWD模式下时钟频率能够跑的30MHz以上，JTAG模式能将时钟跑到25MHz以上。我的测试目标板时STM32F407芯片，这是否是这个调试器的极限还是未知的。</p>
+<p>但有一点是可以确定的，那就是RP2350的USB不是480M的高速USB，性能的瓶颈永远不是底层的IO驱动时序和单片机的频率。</p>
+<h2 id="项目开源"><a href="#项目开源" class="headerlink" title="项目开源"></a>项目开源</h2><p>项目的完整代码提交到了 <a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/debugprobe_jtag" >https://github.com/DazzlingOkami/debugprobe_jtag<i class="fas fa-external-link-alt"></i></a></p>
+<p>但非常抱歉的是因为项目中之前包含了一些敏感信息，我就将历史提交信息删除了，但相关的设计细节都有非常详细的文档可以参考。</p>
+<h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><p>我认为这个PIO的玩法已经到头了，脱机下载也做了好几个设备了。后面我打算用FPGA来开发一些相关的设备，那样应该更有意思。</p>
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                使用PIO驱动JTAG时序
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2026/10/24/使用PIO驱动JTAG时序/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    作者
+                </div>
+                <div class="content">耀眼的大神</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    发布于
+                </div>
+                <div class="content">2026-10-24 14:16</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    许可
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="复制版权信息" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/09/04/AI%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%86%99%E7%9A%84%E6%9B%B4%E8%AF%A6%E7%BB%86%E4%B8%80%E4%BA%9B/"
+                                   title="AI提示词写的更详细一些"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">AI提示词写的更详细一些</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    if (hexo-config('comment') && hexo-config('comment.enable') == true && hexo-config('comment.use')) {
+  if (hexo-config('comment.use') == "valine") {
+    @import "./valine.styl"
+  }
+  else if (hexo-config('comment.use') == "gitalk") {
+    @import "./gitalk.styl"
+  }
+  else if (hexo-config('comment.use') == "twikoo") {
+    @import "./twikoo.styl"
+  }
+  else if (hexo-config('comment.use') == "waline") {
+    @import "./waline.styl"
+  }
+}
+
+.comments-container {
+  display inline-block
+  width 100%
+  margin-top var(--component-gap)
+
+  .comment-area-title {
+    width 100%
+    color var(--text-color-3)
+    font-size 1.38rem
+    line-height 2
+
+    i {
+      color var(--text-color-3)
+    }
+
+    +keep-tablet() {
+      font-size 1.2rem
+    }
+  }
+
+
+  .configuration-items-error-tip {
+    display flex
+    align-items center
+    margin-top 1rem
+    color var(--text-color-3)
+    font-size 1rem
+
+    i {
+      margin-right 0.3rem
+      color var(--text-color-3)
+      font-size 1.2rem
+    }
+  }
+
+  .comment-plugin-fail {
+    display none
+    flex-direction column
+    align-items center
+    justify-content space-around
+    width 100%
+    padding 2rem
+
+    .fail-tip {
+      color var(--text-color-3)
+      font-size 1.1rem
+    }
+
+    .reload {
+      margin-top 1rem
+    }
+  }
+
+  .comment-plugin-loading {
+    flex-direction column
+    padding 1rem
+    color var(--text-color-3)
+
+    .loading-icon {
+      color var(--text-color-4)
+      font-size 2rem
+    }
+
+    .load-tip {
+      margin-top 1rem
+      color var(--text-color-4)
+      font-size 1.1rem
+    }
+  }
+}
+
+                
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+        &copy;&nbsp;<span>2020</span>&nbsp;-&nbsp;2026
+        
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">耀眼的大神</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+        <div class="count-info info-item">
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.3/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+</body>
+</html>
