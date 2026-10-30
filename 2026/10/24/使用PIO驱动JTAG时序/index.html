@@ -210,7 +210,7 @@
 
             <span class="meta-info-item post-update-date">
                 <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                <span class="datetime" data-updated="Sat Oct 24 2026 14:17:11 GMT+0800">2026-10-24 14:17:11</span>
+                <span class="datetime" data-updated="Fri Oct 30 2026 20:33:17 GMT+0800">2026-10-30 20:33:17</span>
             </span>
         
 
@@ -236,10 +236,13 @@
                     
 
                     
-                         <h2 id="制作新的CMSIS-DAP下载器"><a href="#制作新的CMSIS-DAP下载器" class="headerlink" title="制作新的CMSIS-DAP下载器"></a>制作新的CMSIS-DAP下载器</h2><p>最近的业余时间都在研究做一些有意思的CMSIS-DAP兼容的调试器，之前做了一个带触摸屏的脱机下载器，做完之后感觉很有意思，主要是非常享受开发探索的过程，包括焊接PCBA、外壳建模这些都比较好玩儿。</p>
+                         <h2 id="制作新的CMSIS-DAP调试器"><a href="#制作新的CMSIS-DAP调试器" class="headerlink" title="制作新的CMSIS-DAP调试器"></a>制作新的CMSIS-DAP调试器</h2><p>最近的业余时间都在研究做一些有意思的CMSIS-DAP兼容的调试器，之前做了一个带触摸屏的脱机调试器，做完之后感觉很有意思，主要是非常享受开发探索的过程，包括焊接PCBA、外壳建模这些都比较好玩儿。</p>
 <p>最近又完成了一个比较有价值的事情，让RP2350单片机的PIO能够同时兼容驱动SWD和JTAG。之前做的那些调试器都只完成了SWD调试功能，主要是平时JTAG也基本上不怎么用。但有句话说的好，JTAG可以不用，但不能没有。</p>
 <p>这次的设计目标就是做一个拥有20P的JTAG连接器端口的下载，使用RP2350芯片驱动，所有的驱动端口带可调参考电压的收发缓冲芯片。在动手做PCBA之前，我已经和AI充分讨论过可行性，在兼容SWD模式的情况下增加对JTAG的支持是可行的。但是AI给我的两个方案都存在一些性能问题被我抛弃了，转头我结合AI的思路找到了一条可行且高效的方案。</p>
 <p>SWD模式的支持可以参考树莓派官方的设计方案，我的JTAG模式的支持也是在其之上魔改的。树莓派官方虽然在半年前就在讨论支持JTAG，但是一直没有下文。自己动手才是最有意思的事情。</p>
+<p>该版本还重点优化调试器的传输速度，用该版本的调试器向STM32H7芯片写SRAM，速度可以超过500k字节每秒，已经非常接近USB2.0FS的速度极限了。</p>
+<h2 id="项目开源"><a href="#项目开源" class="headerlink" title="项目开源"></a>项目开源</h2><p>项目的完整代码提交到了 <a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/debugprobe_jtag" >https://github.com/DazzlingOkami/debugprobe_jtag<i class="fas fa-external-link-alt"></i></a></p>
+<p>但非常抱歉的是因为项目中之前包含了一些敏感信息，我就将历史提交信息删除了，但相关的设计细节都有非常详细的文档可以参考。</p>
 <h2 id="硬件外围驱动与信号"><a href="#硬件外围驱动与信号" class="headerlink" title="硬件外围驱动与信号"></a>硬件外围驱动与信号</h2><p>首先介绍一下我的外围驱动电路，TCK、TDI、TDO都是单向的信号，之间经过一个数据缓冲芯片即可，TMS&#x2F;SWD的信号要稍微复杂些，JTAG模式下TMS信号仅输出，但在SWD模式中它会频繁的切换收发方向。pico官方固件的做法是用一个IO保持持续输入，另一个IO保持输出并在需要读取数据时将输出IO切换到高阻态。这种方法的缺点是除了要控制外部缓冲器的开关外，还需要切换内部IO的方向。原固件时用PIO指令来切换方向，这种做法其实并不高明，它除了挤占TCK的时序外，还占用PIO指令空间。</p>
 <p>我驱动SWD信号的方案是用两个IO信号，分别作为输入和输出，即SWD_DO和SWD_DI，两个IO经过缓冲芯片后并联到外部的SWD，SWD_DI的输入缓冲是常开的。SWD_DO的输出是通过另一个IO驱动的。这样RP2350内部不需要切换IO方向，通过一个IO来控制当前的SWD是由哪个端口驱动。</p>
 <p>完整的信号通路是这样的：</p>
@@ -294,11 +297,129 @@
 <h2 id="PIO程序"><a href="#PIO程序" class="headerlink" title="PIO程序"></a>PIO程序</h2><p>下面这段程序就是该项目最具精华的部分了，尤其是实现TMS序列的驱动，我自认为很有创意，整个项目的代码虽然完全由AI完成，但其中的细节和巧思都是我反复斟酌打磨的结果。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">.program probe</span><br><span class="line">.side_set 2 opt</span><br><span class="line"></span><br><span class="line">public turnaround_cmd:</span><br><span class="line">turnaround_bitloop:</span><br><span class="line">    nop                         [1]  side 0x0</span><br><span class="line">    jmp x-- turnaround_bitloop  [1]  side 0x1</span><br><span class="line">    jmp get_next_cmd</span><br><span class="line"></span><br><span class="line">public write_cmd:</span><br><span class="line">    pull</span><br><span class="line">public short_write_cmd:</span><br><span class="line">write_bitloop:</span><br><span class="line">    out pins, 1                 [1]  side 0x2   ; Data is output by host on negedge</span><br><span class="line">    jmp x-- write_bitloop       [1]  side 0x3   ; ...and captured by target on posedge</span><br><span class="line">                                                ; Fall through to next command</span><br><span class="line">.wrap_target</span><br><span class="line">public get_next_cmd:</span><br><span class="line">    pull                             side 0x0   ; SWCLK initially low, OEn disabled</span><br><span class="line">    out x, 7                                    ; Get bit count</span><br><span class="line">    out pc, 5                                   ; Go to command routine</span><br><span class="line"></span><br><span class="line">read_bitloop:</span><br><span class="line">    nop                                         ; Additional delay on taken loop branch</span><br><span class="line">public read_cmd:</span><br><span class="line">    in pins, 1                  [1]  side 0x1   ; Data is captured by host on posedge</span><br><span class="line">    jmp x-- read_bitloop             side 0x0</span><br><span class="line">    push</span><br><span class="line">    jmp get_next_cmd                            ; Fall through to next command</span><br><span class="line"></span><br><span class="line">; JTAG commands. TMS shares the SWD_DO pin (set pin group, base configured per mode</span><br><span class="line">; on the C side), TDI is driven by the out pin group (same base), TDO is sampled by</span><br><span class="line">; the in pin group. Sideset bit 1 = DOE must stay 1, otherwise the external buffer</span><br><span class="line">; goes high-Z and TMS cannot be driven.</span><br><span class="line">public jtag_tms_lo_cmd:</span><br><span class="line">    set pins, 0                      side 0x2   ; DOE=1, TCK=0</span><br><span class="line">    jmp get_next_cmd</span><br><span class="line"></span><br><span class="line">public jtag_tms_hi_cmd:</span><br><span class="line">    set pins, 1                      side 0x2</span><br><span class="line">    jmp get_next_cmd</span><br><span class="line"></span><br><span class="line">; TMS sequence: after &quot;set&quot;, &quot;out pc, 5&quot; loads the entry address of the next beat</span><br><span class="line">; (a 5-bit field in the command word), so one FIFO command chains 1 to 4 beats of</span><br><span class="line">; &quot;TMS + clock&quot; without dispatching a command on every beat.</span><br><span class="line">public jtag_tms_seq_lo_cmd:</span><br><span class="line">    set pins, 0                 [1]  side 0x2   ; 2 cycles: TMS=0, TCK low</span><br><span class="line">    out pc, 5                   [1]  side 0x3   ; 2 cycles: load next entry, TCK high</span><br><span class="line"></span><br><span class="line">public jtag_tms_seq_hi_cmd:</span><br><span class="line">    set pins, 1                 [1]  side 0x2</span><br><span class="line">    out pc, 5                   [1]  side 0x3</span><br><span class="line"></span><br><span class="line">public jtag_rw_cmd:</span><br><span class="line">    pull                                        ; second FIFO word carries TDI data</span><br><span class="line">public jtag_rw_short_cmd:                       ; TDI inlined in command word [31:12]</span><br><span class="line">jtag_rw_bitloop:</span><br><span class="line">    out pins, 1                 [1]  side 0x2   ; 2 cycles: TCK low, shift out one TDI bit</span><br><span class="line">    in pins, 1                       side 0x3   ; 1 cycle: TCK high, sample TDO</span><br><span class="line">    jmp x-- jtag_rw_bitloop          side 0x2   ; 1 cycle: TCK low, gives TDO 3 cycles to settle</span><br><span class="line">    push</span><br><span class="line">.wrap</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h2 id="实测效果"><a href="#实测效果" class="headerlink" title="实测效果"></a>实测效果</h2><p>我将PCBA焊接完成并把固件开发调试完成后，实测在SWD模式下时钟频率能够跑的30MHz以上，JTAG模式能将时钟跑到25MHz以上。我的测试目标板时STM32F407芯片，这是否是这个调试器的极限还是未知的。</p>
-<p>但有一点是可以确定的，那就是RP2350的USB不是480M的高速USB，性能的瓶颈永远不是底层的IO驱动时序和单片机的频率。</p>
-<h2 id="项目开源"><a href="#项目开源" class="headerlink" title="项目开源"></a>项目开源</h2><p>项目的完整代码提交到了 <a class="link"   target="_blank" rel="noopener" href="https://github.com/DazzlingOkami/debugprobe_jtag" >https://github.com/DazzlingOkami/debugprobe_jtag<i class="fas fa-external-link-alt"></i></a></p>
-<p>但非常抱歉的是因为项目中之前包含了一些敏感信息，我就将历史提交信息删除了，但相关的设计细节都有非常详细的文档可以参考。</p>
-<h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><p>我认为这个PIO的玩法已经到头了，脱机下载也做了好几个设备了。后面我打算用FPGA来开发一些相关的设备，那样应该更有意思。</p>
+<h2 id="实测效果与分析"><a href="#实测效果与分析" class="headerlink" title="实测效果与分析"></a>实测效果与分析</h2><p>我将PCBA焊接完成并把固件开发调试完成后，实测在SWD模式下时钟频率能够跑的30MHz以上，JTAG模式能将时钟跑到25MHz以上。我的测试目标板时STM32F407芯片，这是否是这个调试器的极限还是未知的。</p>
+<p>理论上CMSIS-DAP使用bulk模式传输数据包会比HID快得多，但这有一些前提。那就是上位机能够使用队列来发送请求，将我的CMSIS-DAP的队列长度设置到8之后，我发现在openocd(v0.12)中速度仅仅比无队列版本提升了一倍，无队列版本写入SRAM的速度在46kB&#x2F;s，打开队列后速度来到了95kb&#x2F;b。</p>
+<p>经过深入的排查，发现openocd在该版本中限制了队列的长度：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmsis_dap_handle-&gt;packet_count = MIN(MAX_PENDING_REQUESTS, pkt_cnt);</span><br></pre></td></tr></table></figure>
+<p>在该版本的openocd中，无论CMSIS-DAP中设置的包队列长度是多少，都会有一个下限，值为3。但是仍然不能解释我实测的95kb&#x2F;s，95kb&#x2F;s相对于队列中仅有一个在排队处理。通过抓取CMSIS-DAP的日志也能确认这一点。</p>
+<p>为了分析速度问题，更进一步锁定到openocd使用libusb库时调用阻塞存在用法问题，在函数cmsis_dap_swd_run_queue实现中，检测到当前的队列中存在待处理数据时，本来应该无阻塞的读取数据，结果实际上是阻塞的模式进行调用。导致openocd的队列在未满的情况下出现了阻塞。在目前的openocd主线版本中这个问题已经解决，默认最小队列也增加到了4。但是目前主线没有发表正式的版本，要体验更快的性能只能自己编译或使用其它分支的发布版。</p>
+<p>在SWD协议中，每写入32bit的数据实际上至少需要46个TCK时钟，即20MHz的时钟时写SRAM的速度最高为1.7MB&#x2F;s，30MHz时钟的写入速度为2.6MB&#x2F;s。</p>
+<p>USB2.0FS的USB数据包大小为64字节，使用DAP_TransferBlock请求是，有效数据承载为56字节。每毫秒的bulk事务可以传输最多19个满载数据包。考虑到有DAP的响应数据包等因素，如果按照满载10个数据包计算，则写SRAM的最高速度为560kb&#x2F;s。该速度对应的SWD时钟为6.44MHz。</p>
+<p>在RP2350的USB上实测bulk的吞吐能力，每次PC写入64的字节包，设备返回4字节的数据包。在常规的一收一发模式下，能够达到每秒4839个请求。如果是批量发送再批量接收，每秒可以达到6105个请求。异步收发模式下，每秒能够达到8541个请求。将主机端的处理深度由4增加到8后，提升仅有1%。以最新版本的openocd的队列长度4作为测试基准比较有意义。</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>depth</th>
+<th>响应</th>
+<th>请求&#x2F;秒</th>
+<th>OUT</th>
+<th>IN</th>
+<th>合计</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>serial</td>
+<td>1</td>
+<td>4 B</td>
+<td>5162</td>
+<td>330.3 KB&#x2F;s</td>
+<td>20.6 KB&#x2F;s</td>
+<td>351.0 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>batch</td>
+<td>4</td>
+<td>4 B</td>
+<td>6693</td>
+<td>428.3 KB&#x2F;s</td>
+<td>26.8 KB&#x2F;s</td>
+<td>455.1 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>batch</td>
+<td>8</td>
+<td>4 B</td>
+<td>6929</td>
+<td>443.4 KB&#x2F;s</td>
+<td>27.7 KB&#x2F;s</td>
+<td>471.1 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>1</td>
+<td>4 B</td>
+<td>10103</td>
+<td>647.0 KB&#x2F;s</td>
+<td>40.4 KB&#x2F;s</td>
+<td>687.4 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>2</td>
+<td>4 B</td>
+<td>10430</td>
+<td>667.6 KB&#x2F;s</td>
+<td>41.7 KB&#x2F;s</td>
+<td>709.3 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>4</td>
+<td>4 B</td>
+<td>10409</td>
+<td>666.2 KB&#x2F;s</td>
+<td>41.6 KB&#x2F;s</td>
+<td>707.8 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>8</td>
+<td>4 B</td>
+<td>9996</td>
+<td>639.8 KB&#x2F;s</td>
+<td>40.0 KB&#x2F;s</td>
+<td>679.7 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>16</td>
+<td>4 B</td>
+<td>10181</td>
+<td>651.6 KB&#x2F;s</td>
+<td>40.7 KB&#x2F;s</td>
+<td>692.3 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>8</td>
+<td>16 B</td>
+<td>10243</td>
+<td>655.6 KB&#x2F;s</td>
+<td>163.9 KB&#x2F;s</td>
+<td>819.5 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>8</td>
+<td>32 B</td>
+<td>9740</td>
+<td>623.8 KB&#x2F;s</td>
+<td>311.7 KB&#x2F;s</td>
+<td>935.5 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>async</td>
+<td>8</td>
+<td>64 B</td>
+<td>7989</td>
+<td>511.7 KB&#x2F;s</td>
+<td>511.3 KB&#x2F;s</td>
+<td>1023.0 KB&#x2F;s</td>
+</tr>
+</tbody></table>
+<p>在RP2350芯片上如果要让双核MCU跑满，除了RTOS任务调度要配置合理外，将程序放到SRAM中运行是非常有必要的。如果程序不放到SRAM中运行，两个核心的任务会同时抢占XIP的缓存，导致整体性能及其不稳定，尤其是在追求极限下载速度时。</p>
+<h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><p>目前我看到市面上有量产版本的DAPLink设备能够将SRAM写入测试速度跑到1MB&#x2F;s。我认为这个PIO的玩法已经到头了，脱机下载也做了好几个设备了。后面我打算用FPGA来开发一些相关的设备，主要是为了消除底层JTAG时序间的“气泡”。将读写速度做到2MB&#x2F;s，成本控制到100元内。<br>慢慢玩儿吧。</p>
 
                     
                 </div>
@@ -394,91 +515,12 @@
                 
 
                 
-                    if (hexo-config('comment') && hexo-config('comment.enable') == true && hexo-config('comment.use')) {
-  if (hexo-config('comment.use') == "valine") {
-    @import "./valine.styl"
-  }
-  else if (hexo-config('comment.use') == "gitalk") {
-    @import "./gitalk.styl"
-  }
-  else if (hexo-config('comment.use') == "twikoo") {
-    @import "./twikoo.styl"
-  }
-  else if (hexo-config('comment.use') == "waline") {
-    @import "./waline.styl"
-  }
-}
-
-.comments-container {
-  display inline-block
-  width 100%
-  margin-top var(--component-gap)
-
-  .comment-area-title {
-    width 100%
-    color var(--text-color-3)
-    font-size 1.38rem
-    line-height 2
-
-    i {
-      color var(--text-color-3)
-    }
-
-    +keep-tablet() {
-      font-size 1.2rem
-    }
-  }
+                    
 
 
-  .configuration-items-error-tip {
-    display flex
-    align-items center
-    margin-top 1rem
-    color var(--text-color-3)
-    font-size 1rem
 
-    i {
-      margin-right 0.3rem
-      color var(--text-color-3)
-      font-size 1.2rem
-    }
-  }
 
-  .comment-plugin-fail {
-    display none
-    flex-direction column
-    align-items center
-    justify-content space-around
-    width 100%
-    padding 2rem
 
-    .fail-tip {
-      color var(--text-color-3)
-      font-size 1.1rem
-    }
-
-    .reload {
-      margin-top 1rem
-    }
-  }
-
-  .comment-plugin-loading {
-    flex-direction column
-    padding 1rem
-    color var(--text-color-3)
-
-    .loading-icon {
-      color var(--text-color-4)
-      font-size 2rem
-    }
-
-    .load-tip {
-      margin-top 1rem
-      color var(--text-color-4)
-      font-size 1.1rem
-    }
-  }
-}
 
                 
             </div>
